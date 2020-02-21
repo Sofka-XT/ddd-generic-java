@@ -21,7 +21,7 @@ public abstract class AggregateRoot {
         return changes;
     }
 
-    public Function<Consumer<? extends DomainEvent>, AggregateRoot> appendChange(DomainEvent event) {
+    protected Function<Consumer<? extends DomainEvent>, AggregateRoot> appendChange(DomainEvent event) {
         changes.add(event);
         return action -> {
             ((Consumer)action).accept(event);
@@ -32,13 +32,13 @@ public abstract class AggregateRoot {
     }
 
     @SafeVarargs
-    public final void registerActions(Consumer<? extends DomainEvent> ...actions){
+    protected final void registerActions(Consumer<? extends DomainEvent> ...actions){
         for(Consumer<? extends DomainEvent> consumer : actions){
                 handleActions.add((Consumer<? super DomainEvent>) consumer);
         }
     }
 
-    public void applyEvent(DomainEvent domainEvent){
+    protected void applyEvent(DomainEvent domainEvent){
         handleActions.forEach(consumer -> {
             try {
                 consumer.accept(domainEvent);

@@ -1,6 +1,10 @@
 package co.com.sofka.business.generic;
 
-public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase.ResponseValue> {
+import co.com.sofka.domain.generic.DomainEvent;
+
+import java.util.List;
+
+public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase.ResponseEvents> {
 
     private Q mRequestValues;
 
@@ -37,7 +41,8 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
 
     }
 
-    public interface ResponseValue {
+    public interface ResponseEvents {
+         List<DomainEvent> getDomainEvents();
     }
 
     public interface UseCaseFormat<R> {

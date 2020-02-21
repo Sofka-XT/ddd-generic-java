@@ -1,6 +1,9 @@
 package co.com.sofka.business.generic;
 
-import java.util.concurrent.CompletableFuture;
+import co.com.sofka.domain.generic.DomainEvent;
+
+import java.util.Optional;
+import java.util.concurrent.Flow;
 
 public class UseCaseHandler {
 
@@ -16,33 +19,45 @@ public class UseCaseHandler {
         return INSTANCE;
     }
 
-    public <T extends UseCase.RequestValues, R extends UseCase.ResponseValue> CompletableFuture<R> execute(
-            final UseCase<T, R> useCase, T values) {
-        CompletableFuture<R> completableFuture = new CompletableFuture<>();
+    public <T extends UseCase.RequestValues, R extends UseCase.ResponseEvents> SimplePublisher execute(final UseCase<T, R> useCase, T values) {
+        SimplePublisher publisher = new SimplePublisher();
         useCase.setRequestValues(values);
-        useCase.setUseCaseCallback(new ControllerFormatWrapper<>(completableFuture));
+        useCase.setUseCaseCallback((UseCase.UseCaseFormat<R>) publisher);
         useCase.run();
-        return completableFuture;
+        return publisher;
     }
 
 
-    private static final class ControllerFormatWrapper<V extends UseCase.ResponseValue> implements
-            UseCase.UseCaseFormat<V> {
-        private final CompletableFuture<V> publish;
+    public static UseCaseHandler getINSTANCE() {
+        return INSTANCE;
+    }
 
-        private ControllerFormatWrapper(CompletableFuture<V> publish) {
-            this.publish = publish;
+    public static final class SimplePublisher implements  UseCase.UseCaseFormat<UseCase.ResponseEvents>, Flow.Publisher<DomainEvent> {
+
+        private UseCase.ResponseEvents response;
+        private RuntimeException exception;
+
+        public SimplePublisher(){
+            super();
         }
 
         @Override
-        public void onSuccess(V response) {
-            publish.complete(response);
+        public void onSuccess(UseCase.ResponseEvents response) {
+            this.response = response;
         }
 
         @Override
-        public void onError(RuntimeException e) {
+        public void onError(RuntimeException exception) {
+            this.exception = exception;
+        }
 
-            publish.completeExceptionally(e);
+        @Override
+        public void subscribe(Flow.Subscriber<? super DomainEvent> subscriber) {
+            Optional.ofNullable(exception)
+                    .ifPresentOrElse(subscriber::onError,
+                            () -> response.getDomainEvents()
+                                    .forEach(subscriber::onNext));
+            subscriber.onComplete();
         }
     }
 }
