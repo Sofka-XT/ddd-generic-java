@@ -45,6 +45,9 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
          List<DomainEvent> getDomainEvents();
     }
 
+    public interface ResponseValues {
+    }
+
     public interface UseCaseFormat<R> {
         void onSuccess(R response);
 

@@ -68,6 +68,19 @@ public class ChangePasswordUseCaseTest {
 
 
 
+    /**
+     * Buscar escenarios para request/response por eventos o sin eventos
+     *
+     * No forzar el uso de eventos en los agregados
+     *
+     * No dependa del patron de implementacion
+     *
+     * Artefactos para la implementacion
+     *
+     * Realizar un caso de uso real con el analisis del descrubirimiento de dominio de negocio (orientado al manifiesto y a los principios)
+     *
+     * Aplimenetar un caso para trabajar con sistemas distribuidos (orientado a microservicios)
+     */
 
     public static class ChangePasswordUseCase extends UseCase<ChangePasswordUseCase.Request, ChangePasswordUseCase.Response>{
 

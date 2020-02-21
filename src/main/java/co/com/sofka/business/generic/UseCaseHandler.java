@@ -7,16 +7,16 @@ import java.util.concurrent.Flow;
 
 public class UseCaseHandler {
 
-    private static UseCaseHandler INSTANCE;
+    private static UseCaseHandler instance;
 
     private UseCaseHandler() {
     }
 
     public static UseCaseHandler getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new UseCaseHandler();
+        if (instance == null) {
+            instance = new UseCaseHandler();
         }
-        return INSTANCE;
+        return instance;
     }
 
     public <T extends UseCase.RequestValues, R extends UseCase.ResponseEvents> SimplePublisher execute(final UseCase<T, R> useCase, T values) {
@@ -25,11 +25,6 @@ public class UseCaseHandler {
         useCase.setUseCaseCallback((UseCase.UseCaseFormat<R>) publisher);
         useCase.run();
         return publisher;
-    }
-
-
-    public static UseCaseHandler getINSTANCE() {
-        return INSTANCE;
     }
 
     public static final class SimplePublisher implements  UseCase.UseCaseFormat<UseCase.ResponseEvents>, Flow.Publisher<DomainEvent> {
