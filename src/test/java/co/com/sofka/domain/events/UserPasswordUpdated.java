@@ -1,6 +1,7 @@
-package co.com.sofka.domain;
+package co.com.sofka.domain.events;
 
 import co.com.sofka.domain.generic.DomainEvent;
+import co.com.sofka.domain.values.UserPassword;
 
 public  class UserPasswordUpdated extends DomainEvent {
     public final UserPassword userPassword;
