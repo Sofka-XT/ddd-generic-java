@@ -6,14 +6,12 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class AggregateRoot {
+public abstract class AggregateRoot extends Entity<AggregateRootId> {
     private final List<DomainEvent> changes;
     private final List<Consumer<? super DomainEvent>> handleActions;
 
-    private AggregateRootId aggregateRootId;
-
     public AggregateRoot(AggregateRootId aggregateRootId) {
-        this.aggregateRootId = aggregateRootId;
+        super(aggregateRootId);
         changes = new LinkedList<>();
         handleActions = new LinkedList<>();
     }
@@ -25,7 +23,7 @@ public abstract class AggregateRoot {
         changes.add(event);
         return action -> {
             ((Consumer)action).accept(event);
-            long version = changes.stream().filter(e -> e.type.equals(event.type)).count();
+            long version = currentVersionOf(event.type);
             event.nextVersionType(version);
             return this;
         };
@@ -47,12 +45,12 @@ public abstract class AggregateRoot {
         });
     }
 
-    public void markChangesAsCommitted() {
-        changes.clear();
+    private long currentVersionOf(String eventType){
+        return changes.stream().filter(e -> e.type.equals(eventType)).count();
     }
 
-    public AggregateRootId aggregateId() {
-        return aggregateRootId;
+    public void markChangesAsCommitted() {
+        changes.clear();
     }
 
 }
