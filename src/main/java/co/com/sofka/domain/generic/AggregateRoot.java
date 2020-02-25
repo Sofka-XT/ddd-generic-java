@@ -6,11 +6,11 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public abstract class AggregateRoot extends Entity<AggregateRootId> {
+public abstract class AggregateRoot<T extends  AggregateRootId> extends Entity<T> {
     private final List<DomainEvent> changes;
     private final List<Consumer<? super DomainEvent>> handleActions;
 
-    public AggregateRoot(AggregateRootId aggregateRootId) {
+    public AggregateRoot(T aggregateRootId) {
         super(aggregateRootId);
         changes = new LinkedList<>();
         handleActions = new LinkedList<>();
