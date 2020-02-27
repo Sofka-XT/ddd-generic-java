@@ -1,4 +1,4 @@
-package co.com.sofka.infraestructure;
+package co.com.sofka.infraestructure.repository;
 
 public class QueryFaultException extends RuntimeException {
     public QueryFaultException() {

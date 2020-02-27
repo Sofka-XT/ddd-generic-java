@@ -1,4 +1,4 @@
-package co.com.sofka.infraestructure;
+package co.com.sofka.infraestructure.repository;
 
 import co.com.sofka.domain.generic.AggregateRootId;
 import co.com.sofka.domain.generic.DomainEvent;

@@ -37,8 +37,6 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
 
     protected abstract void executeUseCase(Q objectInput);
 
-
-
     public interface PubEvents extends ResponseValues {
          List<DomainEvent> getDomainEvents();
     }

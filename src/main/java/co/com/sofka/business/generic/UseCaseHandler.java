@@ -17,7 +17,9 @@ public class UseCaseHandler {
         return instance;
     }
 
-    public <T extends UseCase.RequestValues, R extends UseCase.PubEvents> SimplePublisher asyncExecutor(final UseCase<T, R> useCase, T values) {
+    public <T extends UseCase.RequestValues, R extends UseCase.PubEvents> SimplePublisher asyncExecutor(
+            final UseCase<T, R> useCase, T values) {
+
         SimplePublisher publisher = new SimplePublisher();
         useCase.setRequest(values);
         useCase.setUseCaseCallback((UseCase.UseCaseFormat<R>) publisher);
@@ -25,7 +27,9 @@ public class UseCaseHandler {
         return publisher;
     }
 
-    public <T extends UseCase.RequestValues, R extends UseCase.ResponseValues> Optional<R> syncExecutor(final UseCase<T, R> useCase, T values) {
+    public <T extends UseCase.RequestValues, R extends UseCase.ResponseValues> Optional<R> syncExecutor(
+            final UseCase<T, R> useCase, T values) {
+
         SimpleResponse<R> simpleResponse = new SimpleResponse<>();
         useCase.setRequest(values);
         useCase.setUseCaseCallback(simpleResponse);

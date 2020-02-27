@@ -19,7 +19,7 @@ public abstract class AggregateRoot<T extends  AggregateRootId> extends Entity<T
         return List.copyOf(changes);
     }
 
-    protected Function<Consumer<? extends DomainEvent>, AggregateRoot> appendChange(DomainEvent event) {
+    protected Function<Consumer<? extends DomainEvent>, AggregateRoot<T>> appendChange(DomainEvent event) {
         changes.add(event);
         return action -> {
             ((Consumer)action).accept(event);
