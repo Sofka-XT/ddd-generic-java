@@ -4,52 +4,58 @@ import co.com.sofka.domain.generic.DomainEvent;
 
 import java.util.List;
 
-public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase.ResponseEvents> {
+public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase.ResponseValues> {
 
-    private Q mRequestValues;
+    private Q request;
 
-    private UseCaseFormat<P> mUseCaseFormat;
+    private UseCaseFormat<P> useCaseFormat;
 
-    public Q getRequestValues() {
-        return mRequestValues;
+    protected Q request() {
+        return request;
     }
 
-    public void setRequestValues(Q requestValues) {
-        mRequestValues = requestValues;
+    protected void setRequest(Q request) {
+        this.request = request;
     }
 
-    public UseCaseFormat<P> emit() {
-        return mUseCaseFormat;
+    protected UseCaseFormat<P> emit() {
+        return useCaseFormat;
     }
 
-    public void setUseCaseCallback(UseCaseFormat<P> useCaseFormat) {
-        mUseCaseFormat = useCaseFormat;
+    protected void setUseCaseCallback(UseCaseFormat<P> useCaseFormat) {
+        this.useCaseFormat = useCaseFormat;
     }
 
 
-    public void run() {
+    protected void run() {
         try {
-            executeUseCase(mRequestValues);
+            executeUseCase(request);
         } catch (RuntimeException e) {
-            mUseCaseFormat.onError(e);
+            useCaseFormat.onError(e);
         }
     }
 
-    protected abstract void executeUseCase(Q requestValues);
+    protected abstract void executeUseCase(Q objectInput);
 
-    public interface RequestValues {
 
+
+    public interface PubEvents extends ResponseValues {
+         List<DomainEvent> getDomainEvents();
     }
 
-    public interface ResponseEvents {
-         List<DomainEvent> getDomainEvents();
+    public interface SubEvent extends RequestValues {
+        DomainEvent getDomainEvent();
     }
 
     public interface ResponseValues {
     }
 
+    public interface RequestValues {
+
+    }
+
     public interface UseCaseFormat<R> {
-        void onSuccess(R response);
+        void onSuccess(R output);
 
         void onError(RuntimeException e);
     }

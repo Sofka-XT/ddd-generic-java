@@ -16,7 +16,7 @@ public abstract class AggregateRoot<T extends  AggregateRootId> extends Entity<T
         handleActions = new LinkedList<>();
     }
     public List<DomainEvent> getUncommittedChanges() {
-        return changes;
+        return List.copyOf(changes);
     }
 
     protected Function<Consumer<? extends DomainEvent>, AggregateRoot> appendChange(DomainEvent event) {
@@ -46,7 +46,7 @@ public abstract class AggregateRoot<T extends  AggregateRootId> extends Entity<T
     }
 
     private long currentVersionOf(String eventType){
-        return changes.stream().filter(e -> e.type.equals(eventType)).count();
+        return changes.stream().filter(event -> event.type.equals(eventType)).count();
     }
 
     public void markChangesAsCommitted() {

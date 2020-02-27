@@ -5,6 +5,7 @@ import java.util.UUID;
 
 public abstract class DomainEvent {
     private Long versionType;
+
     public final Instant when;
     public final UUID uuid;
     public final String type;
@@ -21,7 +22,7 @@ public abstract class DomainEvent {
         this.versionType = versionType + 1;
     }
 
-    public Long currentVersionType(){
+    public Long getVersionType() {
         return versionType;
     }
 }

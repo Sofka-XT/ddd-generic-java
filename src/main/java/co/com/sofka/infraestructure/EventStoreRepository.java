@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface EventStoreRepository {
     List<DomainEvent> getEventsBy(AggregateRootId aggregateRootId) throws QueryFaultException;
-    void saveEventsWithAn(AggregateRootId aggregateRootId, List<DomainEvent> events);
+    void saveEvent(AggregateRootId aggregateRootId, DomainEvent event);
 }

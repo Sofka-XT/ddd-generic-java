@@ -1,5 +1,6 @@
 package co.com.sofka.business;
 
+import co.com.sofka.business.generic.UseCaseSubPub;
 import co.com.sofka.business.generic.UseCase;
 import co.com.sofka.business.generic.UseCaseHandler;
 import co.com.sofka.domain.*;
@@ -14,7 +15,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.concurrent.Flow;
 
 public class ChangePasswordUseCaseTest {
 
@@ -31,56 +31,22 @@ public class ChangePasswordUseCaseTest {
             }
 
             @Override
-            public void saveEventsWithAn(AggregateRootId aggregateRootId, List<DomainEvent> events) {
-                Assertions.assertTrue(events.get(0) instanceof UserPasswordUpdated);
+            public void saveEvent(AggregateRootId aggregateRootId, DomainEvent event) {
+                Assertions.assertTrue(event instanceof UserPasswordUpdated);
             }
         });
 
 
         var  request = new ChangePasswordUseCase.Request(pass, userId);
 
+
         UseCaseHandler.getInstance()
-                .execute(usecase,request)
-                .subscribe(new Flow.Subscriber<>() {
-                    @Override
-                    public void onSubscribe(Flow.Subscription subscription) {
-
-                    }
-
-                    @Override
-                    public void onNext(DomainEvent domainEvent) {
-                        System.out.println(domainEvent);
-                    }
-
-                    @Override
-                    public void onError(Throwable throwable) {
-
-                    }
-
-                    @Override
-                    public void onComplete() {
-
-                    }
-                });
+                .asyncExecutor(usecase,request);
 
     }
 
 
 
-
-    /**
-     * Buscar escenarios para request/response por eventos o sin eventos
-     *
-     * No forzar el uso de eventos en los agregados
-     *
-     * No dependa del patron de implementacion
-     *
-     * Artefactos para la implementacion
-     *
-     * Realizar un caso de uso real con el analisis del descrubirimiento de dominio de negocio (orientado al manifiesto y a los principios)
-     *
-     * Aplimenetar un caso para trabajar con sistemas distribuidos (orientado a microservicios)
-     */
 
     public static class ChangePasswordUseCase extends UseCase<ChangePasswordUseCase.Request, ChangePasswordUseCase.Response>{
 
@@ -117,11 +83,11 @@ public class ChangePasswordUseCaseTest {
 
         }
 
-        public static class Response implements  UseCase.ResponseEvents {
+        public static class Response implements UseCase.PubEvents {
             private List<DomainEvent> list;
 
             public Response(List<DomainEvent> list) {
-                this.list = List.copyOf(list);
+                this.list = list;
             }
 
             public List<DomainEvent> getDomainEvents() {
@@ -129,7 +95,6 @@ public class ChangePasswordUseCaseTest {
             }
         }
     }
-
 
 
 
