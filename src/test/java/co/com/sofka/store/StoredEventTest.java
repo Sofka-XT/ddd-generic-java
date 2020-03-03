@@ -1,9 +1,9 @@
 package co.com.sofka.store;
 
 import co.com.sofka.domain.events.UserCreated;
+import co.com.sofka.domain.values.UserId;
 import co.com.sofka.domain.values.UserName;
 import co.com.sofka.domain.values.UserPassword;
-import co.com.sofka.infraestructure.store.EventSerializer;
 import co.com.sofka.infraestructure.store.StoredEvent;
 import co.com.sofka.infraestructure.store.StoredEventSerializer;
 import org.junit.jupiter.api.Assertions;
@@ -16,7 +16,7 @@ public class StoredEventTest {
     @Test
     @DisplayName("Se debe serializar y deserializar el evento store")
     public void createEventWrapEventSerialized(){
-        UserCreated event = new UserCreated(new UserName("raul"), new UserPassword("*****"));
+        UserCreated event = new UserCreated(UserId.create(), new UserName("raul"), new UserPassword("*****"));
         StoredEvent eventStore = StoredEvent.wrapEvent(event);
         String serialized = eventStore.toString();
 
@@ -28,7 +28,7 @@ public class StoredEventTest {
     @Test
     @DisplayName("Deserializar el domain event object")
     public void deserializedDomainEvent() throws ClassNotFoundException {
-        UserCreated event = new UserCreated(new UserName("raul"), new UserPassword("*****"));
+        UserCreated event = new UserCreated(UserId.create(), new UserName("raul"), new UserPassword("*****"));
         StoredEvent eventStore = StoredEvent.wrapEvent(event);
         String serialized = eventStore.toString();
 

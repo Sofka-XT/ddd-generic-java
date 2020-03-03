@@ -27,7 +27,7 @@ public  class User extends AggregateRoot<UserId> {
         if(userName.value().length() < 5){
             throw new IllegalArgumentException("The username must be greater than 5 characters");
         }
-        appendChange(new UserCreated(userName, userPassword)).apply();
+        appendChange(new UserCreated(userId, userName, userPassword)).apply();
     }
 
 
@@ -41,7 +41,7 @@ public  class User extends AggregateRoot<UserId> {
         if(this.userPassword.equals(userPassword)){
             throw new IllegalArgumentException("The password are equal");
         }
-        appendChange(new UserPasswordUpdated(userPassword)).apply();
+        appendChange(new UserPasswordUpdated(this.entityId, userPassword)).apply();
     }
 
     /**

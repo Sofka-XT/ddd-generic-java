@@ -1,5 +1,7 @@
 package co.com.sofka.business.generic;
 
+import co.com.sofka.domain.generic.AggregateRoot;
+import co.com.sofka.domain.generic.AggregateRootId;
 import co.com.sofka.domain.generic.DomainEvent;
 
 import java.util.List;
