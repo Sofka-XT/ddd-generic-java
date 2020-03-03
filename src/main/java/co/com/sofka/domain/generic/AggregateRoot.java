@@ -42,7 +42,7 @@ public abstract class AggregateRoot<T extends  AggregateRootId> extends Entity<T
     }
 
     private long currentVersionOf(String eventType){
-        return changes.stream().filter(event -> event.type.equals(eventType)).count();
+        return changes.stream().filter(event -> event.type.equals(eventType)).count() - 1;
     }
 
     public void markChangesAsCommitted() {

@@ -4,7 +4,7 @@ package co.com.sofka.domain.generic;
 import java.util.Objects;
 import java.util.UUID;
 
-public class AggregateRootId implements ValueObject<String>{
+public class  AggregateRootId implements ValueObject<String>{
     private final String uuid;
 
     public AggregateRootId(String uuid) {
