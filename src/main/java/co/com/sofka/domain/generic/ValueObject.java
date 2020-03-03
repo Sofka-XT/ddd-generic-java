@@ -1,5 +1,5 @@
 package co.com.sofka.domain.generic;
 
-public abstract class ValueObject {
-  
+public interface ValueObject<T> {
+   T value();
 }
