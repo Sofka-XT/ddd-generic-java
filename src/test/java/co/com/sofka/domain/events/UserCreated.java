@@ -9,7 +9,7 @@ public  class UserCreated extends DomainEvent {
     final UserPassword userPassword;
 
     public UserCreated(UserName userName, UserPassword userPassword) {
-        super("user_created");
+        super("user.created");
         this.userName = userName;
         this.userPassword = userPassword;
     }

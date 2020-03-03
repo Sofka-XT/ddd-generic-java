@@ -1,6 +1,5 @@
 package co.com.sofka.business.generic;
 
-import co.com.sofka.business.generic.SimplePublisher;
 import co.com.sofka.business.generic.UseCase;
 import co.com.sofka.business.generic.UseCaseHandler;
 import co.com.sofka.domain.generic.DomainEvent;
@@ -11,15 +10,15 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Flow;
 
-public abstract class UseCaseSubPub implements Flow.Subscriber<DomainEvent> {
+public abstract class SubUseCases implements Flow.Subscriber<DomainEvent> {
 
-    private Set<UseCase<UseCase.SubEvent, UseCase.PubEvents>> useCases;
-    private Queue<SimplePublisher> publishers;
+    private Set<UseCase<UseCase.SubEvent, UseCase.ResponseValues>> useCases;
+    private Queue<UseCase.ResponseValues> responseValues;
 
 
-    public UseCaseSubPub(Set<UseCase<UseCase.SubEvent, UseCase.PubEvents>> useCases) {
+    public SubUseCases(Set<UseCase<UseCase.SubEvent, UseCase.ResponseValues>> useCases) {
         this.useCases = useCases;
-        this.publishers = new ArrayDeque<>();
+        this.responseValues = new ArrayDeque<>();
     }
 
 
@@ -33,9 +32,9 @@ public abstract class UseCaseSubPub implements Flow.Subscriber<DomainEvent> {
                 Optional.of(useCase.request().getDomainEvent())
                         .ifPresent(event -> {
                             if (event.getClass().isInstance(domainEvent)) {
-                                var values = UseCaseHandler.getInstance()
-                                        .asyncExecutor(useCase, () -> domainEvent);
-                                publishers.add(values);
+                                Optional<UseCase.ResponseValues> values = UseCaseHandler.getInstance()
+                                        .syncExecutor(useCase, () -> domainEvent);
+                                responseValues.add(values.get());
                             }
                         }));
     }
@@ -48,8 +47,8 @@ public abstract class UseCaseSubPub implements Flow.Subscriber<DomainEvent> {
     public void onComplete() {
     }
 
-    protected Queue<SimplePublisher> publishers() {
-        return publishers;
+    protected Queue<UseCase.ResponseValues> responseValues() {
+        return responseValues;
     }
 
 

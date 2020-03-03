@@ -3,37 +3,33 @@ package co.com.sofka.domain.generic;
 
 
 import java.util.*;
+
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 public abstract class AggregateRoot<T extends  AggregateRootId> extends Entity<T> {
-    private final List<DomainEvent> changes;
-    private final List<Consumer<? super DomainEvent>> handleActions;
+
+    private final List<DomainEvent> changes = new LinkedList<>();
+    private  final Set<Consumer<? super DomainEvent>> handleActions = new HashSet<>();
 
     public AggregateRoot(T aggregateRootId) {
         super(aggregateRootId);
-        changes = new LinkedList<>();
-        handleActions = new LinkedList<>();
     }
     public List<DomainEvent> getUncommittedChanges() {
         return List.copyOf(changes);
     }
 
-    protected Function<Consumer<? extends DomainEvent>, AggregateRoot<T>> appendChange(DomainEvent event) {
+    protected FunctionApply<AggregateRoot<T>> appendChange(DomainEvent event) {
         changes.add(event);
-        return action -> {
-            ((Consumer)action).accept(event);
+        return () -> {
+            applyEvent(event);
             long version = currentVersionOf(event.type);
             event.nextVersionType(version);
             return this;
         };
     }
 
-    @SafeVarargs
-    protected final void registerActions(Consumer<? extends DomainEvent> ...actions){
-        for(Consumer<? extends DomainEvent> consumer : actions){
-                handleActions.add((Consumer<? super DomainEvent>) consumer);
-        }
+    protected final void registerEntityBehavior(EntityBehaviors<?> entityBehaviors){
+        this.handleActions.addAll(entityBehaviors.behaviors);
     }
 
     protected void applyEvent(DomainEvent domainEvent){
@@ -51,6 +47,29 @@ public abstract class AggregateRoot<T extends  AggregateRootId> extends Entity<T
 
     public void markChangesAsCommitted() {
         changes.clear();
+    }
+
+    protected abstract static class EntityBehaviors<T>{
+        protected T entity;
+        protected Set<Consumer<? super DomainEvent>> behaviors = new HashSet<>();
+        protected EntityBehaviors(T entity){
+            this.entity = entity;
+        }
+
+        private Set<Consumer<? super DomainEvent>> behaviors() {
+            return behaviors;
+        }
+
+        protected EntityBehaviors<T> add(Consumer<? extends DomainEvent> behavior){
+            behaviors.add((Consumer<? super DomainEvent>)behavior);
+            return this;
+        }
+
+    }
+
+    @FunctionalInterface
+    public interface FunctionApply<T> {
+        T apply();
     }
 
 }

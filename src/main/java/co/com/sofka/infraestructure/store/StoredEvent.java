@@ -1,6 +1,8 @@
 package co.com.sofka.infraestructure.store;
 
 import co.com.sofka.domain.generic.DomainEvent;
+import co.com.sofka.infraestructure.DeserializeEventException;
+
 import java.util.Date;
 
 public final class StoredEvent {
@@ -45,16 +47,24 @@ public final class StoredEvent {
     public static StoredEvent wrapEvent(DomainEvent domainEvent) {
         return new StoredEvent(domainEvent.getClass().getCanonicalName(),
                 new Date(domainEvent.when.toEpochMilli()),
-                serializeEvent(domainEvent)
+                EventSerializer.instance().serialize(domainEvent)
         );
     }
 
-    private static String serializeEvent(DomainEvent domainEvent) {
-        return EventSerializer.instance().serialize(domainEvent);
+    public  DomainEvent deserializeEvent(){
+        try {
+            return EventSerializer
+                    .instance()
+                    .deserialize(this.getEventBody(), Class.forName(this.getTypeName()));
+        } catch (ClassNotFoundException e) {
+            throw new DeserializeEventException(e.getCause());
+        }
     }
 
     @Override
     public String toString() {
         return StoredEventSerializer.instance().serialize(this);
     }
+
+
 }

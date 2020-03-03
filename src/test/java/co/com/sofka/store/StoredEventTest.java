@@ -34,9 +34,7 @@ public class StoredEventTest {
 
         StoredEvent store = StoredEventSerializer.instance().deserialize(serialized, StoredEvent.class);
 
-        var eventSerialized = (UserCreated)EventSerializer
-                .instance()
-                .deserialize(store.getEventBody(), Class.forName(store.getTypeName()));
+        var eventSerialized = (UserCreated)store.deserializeEvent();
         Assertions.assertEquals(event.type, eventSerialized.type);
         Assertions.assertEquals(event.getUserName().value(), eventSerialized.getUserName().value());
         Assertions.assertEquals(event.getUserPassword().value(), eventSerialized.getUserPassword().value());

@@ -1,8 +1,6 @@
 package co.com.sofka.infraestructure.repository;
 
-public class QueryFaultException extends RuntimeException {
-    public QueryFaultException() {
-    }
+public class QueryFaultException extends Exception {
     public QueryFaultException(String message) {
         super(message);
     }

@@ -1,5 +1,6 @@
 package co.com.sofka.business.generic;
 
+import co.com.sofka.business.generic.SimplePublisher;
 import co.com.sofka.business.generic.UseCase;
 import co.com.sofka.business.generic.UseCaseHandler;
 import co.com.sofka.domain.generic.DomainEvent;
@@ -10,15 +11,15 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.concurrent.Flow;
 
-public abstract class UseCaseSub implements Flow.Subscriber<DomainEvent> {
+public abstract class SubPubUseCases implements Flow.Subscriber<DomainEvent> {
 
-    private Set<UseCase<UseCase.SubEvent, UseCase.ResponseValues>> useCases;
-    private Queue<UseCase.ResponseValues> responseValues;
+    private Set<UseCase<UseCase.SubEvent, UseCase.PubEvents>> useCases;
+    private Queue<SimplePublisher> publishers;
 
 
-    public UseCaseSub(Set<UseCase<UseCase.SubEvent, UseCase.ResponseValues>> useCases) {
+    public SubPubUseCases(Set<UseCase<UseCase.SubEvent, UseCase.PubEvents>> useCases) {
         this.useCases = useCases;
-        this.responseValues = new ArrayDeque<>();
+        this.publishers = new ArrayDeque<>();
     }
 
 
@@ -32,9 +33,9 @@ public abstract class UseCaseSub implements Flow.Subscriber<DomainEvent> {
                 Optional.of(useCase.request().getDomainEvent())
                         .ifPresent(event -> {
                             if (event.getClass().isInstance(domainEvent)) {
-                                Optional<UseCase.ResponseValues> values = UseCaseHandler.getInstance()
-                                        .syncExecutor(useCase, () -> domainEvent);
-                                responseValues.add(values.get());
+                                var values = UseCaseHandler.getInstance()
+                                        .asyncExecutor(useCase, () -> domainEvent);
+                                publishers.add(values);
                             }
                         }));
     }
@@ -47,8 +48,8 @@ public abstract class UseCaseSub implements Flow.Subscriber<DomainEvent> {
     public void onComplete() {
     }
 
-    protected Queue<UseCase.ResponseValues> responseValues() {
-        return responseValues;
+    protected Queue<SimplePublisher> publishers() {
+        return publishers;
     }
 
 
