@@ -1,12 +1,13 @@
 package co.com.sofka.business;
 
-import co.com.sofka.business.generic.SubUseCase;
+import co.com.sofka.business.asyn.Subscriber;
 import co.com.sofka.business.generic.UseCaseHandler;
 import co.com.sofka.domain.events.UserCreated;
 import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.domain.values.UserId;
 import co.com.sofka.domain.values.UserName;
 import co.com.sofka.domain.values.UserPassword;
+import co.com.sofka.infraestructure.bus.ErrorEvent;
 import co.com.sofka.infraestructure.bus.EventBus;
 import co.com.sofka.infraestructure.repository.EventStoreRepository;
 import co.com.sofka.infraestructure.store.StoredEvent;
@@ -46,7 +47,7 @@ public class UserCreateUseCaseTest {
 
                         Assertions.assertEquals("asdasd", userCreatedEvent.getUserPassword().value());
                         Assertions.assertEquals("rauloko", userCreatedEvent.getUserName().value());
-                        Assertions.assertEquals(1, userCreatedEvent.getVersionType());
+                        Assertions.assertEquals(1, userCreatedEvent.versionType());
                     }
 
                     @Override
@@ -81,18 +82,26 @@ public class UserCreateUseCaseTest {
             }
         };
 
-        EventBus publisher = (event) -> {
-            Assertions.assertEquals("user.created", event.type);
-            var userCreatedEvent = (UserCreated) event;
+        EventBus publisher = new EventBus() {
+            @Override
+            public void publish(DomainEvent event) {
+                Assertions.assertEquals("user.created", event.type);
+                var userCreatedEvent = (UserCreated) event;
 
-            Assertions.assertEquals("asdasd", userCreatedEvent.getUserPassword().value());
-            Assertions.assertEquals("rauloko", userCreatedEvent.getUserName().value());
-            Assertions.assertEquals(1, userCreatedEvent.getVersionType());
+                Assertions.assertEquals("asdasd", userCreatedEvent.getUserPassword().value());
+                Assertions.assertEquals("rauloko", userCreatedEvent.getUserName().value());
+                Assertions.assertEquals(1, userCreatedEvent.versionType());
+            }
+
+            @Override
+            public void publishError(ErrorEvent errorEvent) {
+
+            }
         };
 
 
         UseCaseHandler.getInstance()
                 .asyncExecutor(useCase, request)
-                .subscribe(new SubUseCase<>(repository, publisher));
+                .subscribe(new Subscriber<>(repository, publisher));
     }
 }

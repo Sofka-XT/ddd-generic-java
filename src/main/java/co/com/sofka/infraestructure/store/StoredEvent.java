@@ -5,45 +5,44 @@ import co.com.sofka.infraestructure.DeserializeEventException;
 
 import java.util.Date;
 
+/**
+ * The type Stored event.
+ *
+ * @author Raul .A Alzate
+ * @version 1.0
+ * @since 2019 -03-01
+ */
 public final class StoredEvent {
 
     private String eventBody;
     private Date occurredOn;
     private String typeName;
 
+    /**
+     * Instantiates a new Stored event.
+     */
     public StoredEvent() {
     }
 
+    /**
+     * Instantiates a new Stored event.
+     *
+     * @param typeName   the type name
+     * @param occurredOn the occurred on
+     * @param eventBody  the event body
+     */
     public StoredEvent(String typeName, Date occurredOn, String eventBody) {
         this.setEventBody(eventBody);
         this.setOccurredOn(occurredOn);
         this.setTypeName(typeName);
     }
 
-    public void setEventBody(String eventBody) {
-        this.eventBody = eventBody;
-    }
-
-    public void setOccurredOn(Date occurredOn) {
-        this.occurredOn = occurredOn;
-    }
-
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
-    }
-
-    public String getEventBody() {
-        return eventBody;
-    }
-
-    public Date getOccurredOn() {
-        return occurredOn;
-    }
-
-    public String getTypeName() {
-        return typeName;
-    }
-
+    /**
+     * Wrap event stored event.
+     *
+     * @param domainEvent the domain event
+     * @return the stored event
+     */
     public static StoredEvent wrapEvent(DomainEvent domainEvent) {
         return new StoredEvent(domainEvent.getClass().getCanonicalName(),
                 new Date(domainEvent.when.toEpochMilli()),
@@ -51,7 +50,66 @@ public final class StoredEvent {
         );
     }
 
-    public  DomainEvent deserializeEvent(){
+    /**
+     * Gets event body.
+     *
+     * @return the event body
+     */
+    public String getEventBody() {
+        return eventBody;
+    }
+
+    /**
+     * Sets event body.
+     *
+     * @param eventBody the event body
+     */
+    public void setEventBody(String eventBody) {
+        this.eventBody = eventBody;
+    }
+
+    /**
+     * Gets occurred on.
+     *
+     * @return the occurred on
+     */
+    public Date getOccurredOn() {
+        return occurredOn;
+    }
+
+    /**
+     * Sets occurred on.
+     *
+     * @param occurredOn the occurred on
+     */
+    public void setOccurredOn(Date occurredOn) {
+        this.occurredOn = occurredOn;
+    }
+
+    /**
+     * Gets type name.
+     *
+     * @return the type name
+     */
+    public String getTypeName() {
+        return typeName;
+    }
+
+    /**
+     * Sets type name.
+     *
+     * @param typeName the type name
+     */
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+
+    /**
+     * Deserialize event domain event.
+     *
+     * @return the domain event
+     */
+    public DomainEvent deserializeEvent() {
         try {
             return EventSerializer
                     .instance()
@@ -61,6 +119,11 @@ public final class StoredEvent {
         }
     }
 
+    /**
+     * To string string.
+     *
+     * @return the string
+     */
     @Override
     public String toString() {
         return StoredEventSerializer.instance().serialize(this);

@@ -4,7 +4,7 @@ import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.domain.values.UserId;
 import co.com.sofka.domain.values.UserPassword;
 
-public  class UserPasswordUpdated extends DomainEvent {
+public class UserPasswordUpdated extends DomainEvent {
     public final UserPassword userPassword;
 
     public UserPasswordUpdated(UserId userId, UserPassword userPassword) {
@@ -12,7 +12,7 @@ public  class UserPasswordUpdated extends DomainEvent {
         this.userPassword = userPassword;
     }
 
-    public UserPassword getUserPassword(){
+    public UserPassword getUserPassword() {
         return userPassword;
     }
 }

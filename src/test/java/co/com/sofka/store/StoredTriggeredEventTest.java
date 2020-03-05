@@ -11,11 +11,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
-public class StoredEventTest {
+public class StoredTriggeredEventTest {
 
     @Test
     @DisplayName("Se debe serializar y deserializar el evento store")
-    public void createEventWrapEventSerialized(){
+    public void createEventWrapEventSerialized() {
         UserCreated event = new UserCreated(UserId.create(), new UserName("raul"), new UserPassword("*****"));
         StoredEvent eventStore = StoredEvent.wrapEvent(event);
         String serialized = eventStore.toString();
@@ -34,15 +34,11 @@ public class StoredEventTest {
 
         StoredEvent store = StoredEventSerializer.instance().deserialize(serialized, StoredEvent.class);
 
-        var eventSerialized = (UserCreated)store.deserializeEvent();
+        var eventSerialized = (UserCreated) store.deserializeEvent();
         Assertions.assertEquals(event.type, eventSerialized.type);
         Assertions.assertEquals(event.getUserName().value(), eventSerialized.getUserName().value());
         Assertions.assertEquals(event.getUserPassword().value(), eventSerialized.getUserPassword().value());
     }
-
-
-
-
 
 
 }

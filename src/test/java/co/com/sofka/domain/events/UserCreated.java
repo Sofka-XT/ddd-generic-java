@@ -5,7 +5,7 @@ import co.com.sofka.domain.values.UserId;
 import co.com.sofka.domain.values.UserName;
 import co.com.sofka.domain.values.UserPassword;
 
-public  class UserCreated extends DomainEvent {
+public class UserCreated extends DomainEvent {
     final UserName userName;
     final UserPassword userPassword;
 

@@ -1,8 +1,20 @@
 package co.com.sofka.business.generic;
 
 
-import java.util.Optional;
+import co.com.sofka.business.asyn.Publisher;
+import co.com.sofka.business.support.ResponseEvents;
+import co.com.sofka.domain.generic.DomainEvent;
 
+import java.util.Optional;
+import java.util.concurrent.Flow;
+
+/**
+ * The type Use case handler.
+ *
+ * @author Raul .A Alzate
+ * @version 1.0
+ * @since 2019 -03-01
+ */
 public class UseCaseHandler {
 
     private static UseCaseHandler instance;
@@ -10,6 +22,11 @@ public class UseCaseHandler {
     private UseCaseHandler() {
     }
 
+    /**
+     * Gets instance.
+     *
+     * @return the instance
+     */
     public static UseCaseHandler getInstance() {
         if (instance == null) {
             instance = new UseCaseHandler();
@@ -17,26 +34,59 @@ public class UseCaseHandler {
         return instance;
     }
 
-    public <T extends UseCase.RequestValues, R extends UseCase.PubEvents> SimplePublisher asyncExecutor(
+    /**
+     * Async executor function subscriber.
+     *
+     * @param <T>     the type parameter
+     * @param <R>     the type parameter
+     * @param useCase the use case
+     * @param values  the values
+     * @return the function subscriber
+     */
+    public <T extends UseCase.RequestValues, R extends ResponseEvents> FunctionSubscriber asyncExecutor(
             final UseCase<T, R> useCase, T values) {
-
-        SimplePublisher publisher = new SimplePublisher();
-        useCase.setRequest(values);
-        useCase.setUseCaseCallback((UseCase.UseCaseFormat<R>) publisher);
-        useCase.run();
-        return publisher;
+        return subscriber -> {
+            try (Publisher publisher = new Publisher()) {
+                publisher.subscribe(subscriber);
+                useCase.setRequest(values);
+                useCase.setUseCaseCallback((UseCase.UseCaseFormat<R>) publisher);
+                useCase.run();
+            }
+        };
     }
 
+    /**
+     * Sync executor optional.
+     *
+     * @param <T>     the type parameter
+     * @param <R>     the type parameter
+     * @param useCase the use case
+     * @param values  the values
+     * @return the optional
+     */
     public <T extends UseCase.RequestValues, R extends UseCase.ResponseValues> Optional<R> syncExecutor(
             final UseCase<T, R> useCase, T values) {
 
-        SimpleResponse<R> simpleResponse = new SimpleResponse<>();
+        UseCaseResponse<R> useCaseResponse = new UseCaseResponse<>();
         useCase.setRequest(values);
-        useCase.setUseCaseCallback(simpleResponse);
+        useCase.setUseCaseCallback(useCaseResponse);
         useCase.run();
-        if(simpleResponse.hasError()){
-            throw simpleResponse.exception;
+        if (useCaseResponse.hasError()) {
+            throw useCaseResponse.exception;
         }
-       return Optional.of(simpleResponse.response);
+        return Optional.of(useCaseResponse.response);
+    }
+
+    /**
+     * The interface Function subscriber.
+     */
+    @FunctionalInterface
+    public interface FunctionSubscriber {
+        /**
+         * Subscribe.
+         *
+         * @param subscriber the subscriber
+         */
+        void subscribe(Flow.Subscriber<? super DomainEvent> subscriber);
     }
 }
