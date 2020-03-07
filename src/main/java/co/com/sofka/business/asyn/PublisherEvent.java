@@ -7,18 +7,18 @@ import co.com.sofka.domain.generic.DomainEvent;
 import java.util.concurrent.SubmissionPublisher;
 
 /**
- * The type Publisher.
+ * The type publisher of the event.
  *
  * @author Raul .A Alzate
  * @version 1.0
  * @since 2019 -03-01
  */
-public final class Publisher extends SubmissionPublisher<DomainEvent> implements UseCase.UseCaseFormat<ResponseEvents> {
+public final class PublisherEvent extends SubmissionPublisher<DomainEvent> implements UseCase.UseCaseFormat<ResponseEvents> {
 
     /**
      * Instantiates a new Publisher.
      */
-    public Publisher() {
+    public PublisherEvent() {
         super();
     }
 

@@ -1,6 +1,6 @@
 package co.com.sofka.business;
 
-import co.com.sofka.business.asyn.Subscriber;
+import co.com.sofka.business.asyn.SubscriberEvent;
 import co.com.sofka.business.generic.UseCaseHandler;
 import co.com.sofka.domain.events.UserCreated;
 import co.com.sofka.domain.generic.DomainEvent;
@@ -102,6 +102,6 @@ public class UserCreateUseCaseTest {
 
         UseCaseHandler.getInstance()
                 .asyncExecutor(useCase, request)
-                .subscribe(new Subscriber<>(repository, publisher));
+                .subscribe(new SubscriberEvent<>(repository, publisher));
     }
 }

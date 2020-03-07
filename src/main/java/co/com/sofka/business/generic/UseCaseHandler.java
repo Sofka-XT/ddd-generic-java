@@ -1,7 +1,7 @@
 package co.com.sofka.business.generic;
 
 
-import co.com.sofka.business.asyn.Publisher;
+import co.com.sofka.business.asyn.PublisherEvent;
 import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.domain.generic.DomainEvent;
 
@@ -46,7 +46,7 @@ public class UseCaseHandler {
     public <T extends UseCase.RequestValues, R extends ResponseEvents> FunctionSubscriber asyncExecutor(
             final UseCase<T, R> useCase, T values) {
         return subscriber -> {
-            try (Publisher publisher = new Publisher()) {
+            try (PublisherEvent publisher = new PublisherEvent()) {
                 publisher.subscribe(subscriber);
                 useCase.setRequest(values);
                 useCase.setUseCaseCallback((UseCase.UseCaseFormat<R>) publisher);

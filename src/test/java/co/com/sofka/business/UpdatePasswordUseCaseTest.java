@@ -1,6 +1,6 @@
 package co.com.sofka.business;
 
-import co.com.sofka.business.asyn.Listener;
+import co.com.sofka.business.asyn.ListenerEvent;
 import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.business.generic.UseCase;
 import co.com.sofka.business.generic.UseCaseHandler;
@@ -70,7 +70,7 @@ public class UpdatePasswordUseCaseTest {
 
         UseCaseHandler.getInstance()
               .asyncExecutor(useCase, request)
-              .subscribe(new Listener(useCases){
+              .subscribe(new ListenerEvent(useCases){
                   @Override
                   public void onComplete() {
                       super.onComplete();

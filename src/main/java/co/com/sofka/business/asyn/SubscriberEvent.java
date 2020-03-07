@@ -12,14 +12,14 @@ import java.util.concurrent.Flow;
 
 
 /**
- * The type Subscriber.
+ * The type subscriber of the event.
  *
  * @param <T> the type parameter
  * @author Raul .A Alzate
  * @version 1.0
  * @since 2019 -03-01
  */
-public class Subscriber<T extends AggregateRootId> implements Flow.Subscriber<DomainEvent> {
+public class SubscriberEvent<T extends AggregateRootId> implements Flow.Subscriber<DomainEvent> {
 
     private final EventStoreRepository<T> repository;
     private final EventBus eventBus;
@@ -31,7 +31,7 @@ public class Subscriber<T extends AggregateRootId> implements Flow.Subscriber<Do
      * @param repository the repository
      * @param eventBus   the event bus
      */
-    public Subscriber(EventStoreRepository<T> repository, EventBus eventBus) {
+    public SubscriberEvent(EventStoreRepository<T> repository, EventBus eventBus) {
         this.repository = repository;
         this.eventBus = eventBus;
     }

@@ -21,7 +21,7 @@ import java.util.concurrent.Flow;
  * @version 1.0
  * @since 2019 -03-01
  */
-public abstract class Listener implements Flow.Subscriber<DomainEvent> {
+public abstract class ListenerEvent implements Flow.Subscriber<DomainEvent> {
 
     private Set<UseCase<? extends UseCase.RequestEvent, ? extends ResponseEvents>> useCases;
     private Flow.Subscription subscription;
@@ -31,7 +31,7 @@ public abstract class Listener implements Flow.Subscriber<DomainEvent> {
      *
      * @param useCases the use cases
      */
-    public Listener(Set<UseCase<? extends UseCase.RequestEvent, ? extends ResponseEvents>> useCases) {
+    public ListenerEvent(Set<UseCase<? extends UseCase.RequestEvent, ? extends ResponseEvents>> useCases) {
         this.useCases = useCases;
     }
 
