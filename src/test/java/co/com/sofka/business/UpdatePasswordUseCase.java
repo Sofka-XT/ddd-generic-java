@@ -24,6 +24,7 @@ public class UpdatePasswordUseCase extends UseCase<UpdatePasswordUseCase.Request
             var user = User.from(userId, repository.getEventsBy(userId));
             user.updateUserPassword(request.newPassword);
             emit().onSuccess(new ResponseEvents(user.getUncommittedChanges()));
+            System.out.println("the password is updated");
         } catch (QueryFaultException e) {
             emit().onError(new RuntimeException(e.getCause()));
         }

@@ -74,7 +74,7 @@ public class UseCaseHandler {
         if (useCaseResponse.hasError()) {
             throw useCaseResponse.exception;
         }
-        return Optional.of(useCaseResponse.response);
+        return Optional.ofNullable(useCaseResponse.response);
     }
 
     /**

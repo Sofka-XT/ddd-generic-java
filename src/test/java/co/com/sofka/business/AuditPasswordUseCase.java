@@ -12,7 +12,7 @@ public class AuditPasswordUseCase extends UseCase<TriggeredEvent<UserPasswordUpd
     @Override
     protected void executeUseCase(TriggeredEvent<UserPasswordUpdated> request) {
         AggregateRootId aggregateRootId = request.getDomainEvent().aggregateRootId;
-        System.out.println("the password is updated ==="+request.getDomainEvent());
+        System.out.println("the password audit ==="+request.getDomainEvent());
     }
 
 }

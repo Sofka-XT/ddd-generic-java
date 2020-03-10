@@ -18,10 +18,10 @@ public final class UserBehaviors extends AggregateEvent.EventBehaviors<User> {
         });
 
         add((UserCreated domainEvent) -> { //change status
-            if (entity.userPassword.value().length() < 4) {
+            if (domainEvent.getUserPassword().value().length() < 4) {
                 throw new IllegalArgumentException("The password must be greater than 4 characters");
             }
-            if (entity.userName.value().length() < 5) {
+            if (domainEvent.getUserName().value().length() < 5) {
                 throw new IllegalArgumentException("The username must be greater than 5 characters");
             }
             entity.userName = domainEvent.getUserName();

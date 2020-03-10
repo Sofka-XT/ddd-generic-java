@@ -11,7 +11,7 @@ import co.com.sofka.domain.generic.DomainEvent;
  * @version 1.0
  * @since 2019 -03-01
  */
-public class TriggeredEvent<T extends DomainEvent> implements UseCase.RequestEvent {
+public final class TriggeredEvent<T extends DomainEvent> implements UseCase.RequestEvent {
     private final T event;
 
     /**
