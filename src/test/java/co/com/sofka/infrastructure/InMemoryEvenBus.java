@@ -1,4 +1,4 @@
-package co.com.sofka.bus;
+package co.com.sofka.infrastructure;
 
 import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.bus.ErrorEvent;

@@ -1,12 +1,13 @@
-package co.com.sofka.business;
+package co.com.sofka.test;
 
 import co.com.sofka.business.asyn.SubscriberEvent;
 import co.com.sofka.business.generic.UseCaseHandler;
-import co.com.sofka.domain.events.UserCreated;
+import co.com.sofka.business.UserCreateUseCase;
+import co.com.sofka.domain.user.events.UserCreated;
 import co.com.sofka.domain.generic.DomainEvent;
-import co.com.sofka.domain.values.UserId;
-import co.com.sofka.domain.values.UserName;
-import co.com.sofka.domain.values.UserPassword;
+import co.com.sofka.domain.user.values.UserId;
+import co.com.sofka.domain.user.values.UserName;
+import co.com.sofka.domain.user.values.UserPassword;
 import co.com.sofka.infraestructure.bus.ErrorEvent;
 import co.com.sofka.infraestructure.bus.EventBus;
 import co.com.sofka.infraestructure.repository.EventStoreRepository;
@@ -78,7 +79,7 @@ public class UserCreateUseCaseTest {
             @Override
             public void saveEvent(UserId aggregateRootId, StoredEvent storedEvent) {
                 Assertions.assertTrue(aggregateRootId.value().length() > 10);
-                Assertions.assertEquals("co.com.sofka.domain.events.UserCreated", storedEvent.getTypeName());
+                Assertions.assertEquals("co.com.sofka.domain.user.events.UserCreated", storedEvent.getTypeName());
             }
         };
 

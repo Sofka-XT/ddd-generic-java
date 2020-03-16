@@ -2,10 +2,10 @@ package co.com.sofka.business;
 
 import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.business.generic.UseCase;
-import co.com.sofka.domain.User;
-import co.com.sofka.domain.values.UserId;
-import co.com.sofka.domain.values.UserName;
-import co.com.sofka.domain.values.UserPassword;
+import co.com.sofka.domain.user.UserAggregate;
+import co.com.sofka.domain.user.values.UserId;
+import co.com.sofka.domain.user.values.UserName;
+import co.com.sofka.domain.user.values.UserPassword;
 
 
 public class UserCreateUseCase extends UseCase<UserCreateUseCase.Request, ResponseEvents> {
@@ -14,7 +14,7 @@ public class UserCreateUseCase extends UseCase<UserCreateUseCase.Request, Respon
     @Override
     protected void executeUseCase(Request request) {
         UserId userId = UserId.create();
-        User user = new User(userId, request.userName, request.userPassword);
+        UserAggregate user = new UserAggregate(userId, request.userName, request.userPassword);
         emit().onSuccess(new ResponseEvents(user.getUncommittedChanges()));
     }
 

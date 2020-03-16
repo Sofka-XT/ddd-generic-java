@@ -1,9 +1,9 @@
-package co.com.sofka.domain.events;
+package co.com.sofka.domain.user.events;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import co.com.sofka.domain.values.UserId;
-import co.com.sofka.domain.values.UserName;
-import co.com.sofka.domain.values.UserPassword;
+import co.com.sofka.domain.user.values.UserId;
+import co.com.sofka.domain.user.values.UserName;
+import co.com.sofka.domain.user.values.UserPassword;
 
 public class UserCreated extends DomainEvent {
     final UserName userName;

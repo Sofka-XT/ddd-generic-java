@@ -110,44 +110,4 @@ public abstract class AggregateEvent<T extends AggregateRootId> extends Aggregat
         T apply();
     }
 
-    /**
-     * The type Event behaviors.
-     *
-     * @param <T> the type parameter
-     * @author Raul .A Alzate
-     * @version 1.0
-     * @since 2019 -03-01
-     */
-    public abstract static class EventBehaviors<T> {
-        /**
-         * The Entity.
-         */
-        protected T entity;
-        /**
-         * The Behaviors.
-         */
-        protected Set<Consumer<? super DomainEvent>> behaviors = new HashSet<>();
-
-        /**
-         * Instantiates a new Entity behaviors.
-         *
-         * @param entity the entity
-         */
-        protected EventBehaviors(T entity) {
-            this.entity = entity;
-        }
-
-        /**
-         * Add entity behaviors.
-         *
-         * @param behavior the behavior
-         * @return the entity behaviors
-         */
-        protected EventBehaviors<T> add(Consumer<? extends DomainEvent> behavior) {
-            behaviors.add((Consumer<? super DomainEvent>) behavior);
-            return this;
-        }
-
-    }
-
 }

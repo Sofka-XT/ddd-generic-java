@@ -1,4 +1,4 @@
-package co.com.sofka.domain.values;
+package co.com.sofka.domain.user.values;
 
 import co.com.sofka.domain.generic.AggregateRootId;
 

@@ -1,7 +1,7 @@
-package co.com.sofka.repository;
+package co.com.sofka.infrastructure;
 
 import co.com.sofka.domain.generic.DomainEvent;
-import co.com.sofka.domain.values.UserId;
+import co.com.sofka.domain.user.values.UserId;
 import co.com.sofka.infraestructure.repository.EventStoreRepository;
 import co.com.sofka.infraestructure.repository.QueryFaultException;
 import co.com.sofka.infraestructure.store.StoredEvent;

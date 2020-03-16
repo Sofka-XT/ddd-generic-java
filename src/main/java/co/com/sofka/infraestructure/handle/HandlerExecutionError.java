@@ -7,13 +7,13 @@ package co.com.sofka.infraestructure.handle;
  * @version 1.0
  * @since 2019 -03-01
  */
-public final class CommandHandlerExecutionError extends Exception {
+public final class HandlerExecutionError extends Exception {
     /**
      * Instantiates a new Command handler execution error.
      *
      * @param cause the cause
      */
-    public CommandHandlerExecutionError(Throwable cause) {
+    public HandlerExecutionError(Throwable cause) {
         super(cause);
     }
 }

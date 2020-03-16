@@ -3,9 +3,9 @@ package co.com.sofka.business;
 
 import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.business.generic.UseCase;
-import co.com.sofka.domain.User;
-import co.com.sofka.domain.values.UserId;
-import co.com.sofka.domain.values.UserPassword;
+import co.com.sofka.domain.user.UserAggregate;
+import co.com.sofka.domain.user.values.UserId;
+import co.com.sofka.domain.user.values.UserPassword;
 import co.com.sofka.infraestructure.repository.EventStoreRepository;
 import co.com.sofka.infraestructure.repository.QueryFaultException;
 
@@ -21,7 +21,7 @@ public class UpdatePasswordUseCase extends UseCase<UpdatePasswordUseCase.Request
     protected void executeUseCase(Request request) {
         var userId = request.userId;
         try {
-            var user = User.from(userId, repository.getEventsBy(userId));
+            var user = UserAggregate.from(userId, repository.getEventsBy(userId));
             user.updateUserPassword(request.newPassword);
             emit().onSuccess(new ResponseEvents(user.getUncommittedChanges()));
             System.out.println("the password is updated");

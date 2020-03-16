@@ -1,15 +1,17 @@
-package co.com.sofka.business;
+package co.com.sofka.test;
 
 import co.com.sofka.business.asyn.ListenerEvent;
 import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.business.generic.UseCase;
 import co.com.sofka.business.generic.UseCaseHandler;
-import co.com.sofka.domain.events.UserCreated;
-import co.com.sofka.domain.events.UserPasswordUpdated;
+import co.com.sofka.business.AuditPasswordUseCase;
+import co.com.sofka.business.UpdatePasswordUseCase;
+import co.com.sofka.domain.user.events.UserCreated;
+import co.com.sofka.domain.user.events.UserPasswordUpdated;
 import co.com.sofka.domain.generic.DomainEvent;
-import co.com.sofka.domain.values.UserId;
-import co.com.sofka.domain.values.UserName;
-import co.com.sofka.domain.values.UserPassword;
+import co.com.sofka.domain.user.values.UserId;
+import co.com.sofka.domain.user.values.UserName;
+import co.com.sofka.domain.user.values.UserPassword;
 import co.com.sofka.infraestructure.repository.EventStoreRepository;
 import co.com.sofka.infraestructure.repository.QueryFaultException;
 import co.com.sofka.infraestructure.store.StoredEvent;

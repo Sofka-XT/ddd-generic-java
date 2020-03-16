@@ -1,13 +1,13 @@
-package co.com.sofka.domain;
+package co.com.sofka.domain.user;
 
-import co.com.sofka.domain.events.UserCreated;
-import co.com.sofka.domain.events.UserPasswordUpdated;
-import co.com.sofka.domain.generic.AggregateEvent;
+import co.com.sofka.domain.generic.EventBehaviors;
+import co.com.sofka.domain.user.events.UserCreated;
+import co.com.sofka.domain.user.events.UserPasswordUpdated;
 
 /**
  * User aggregate behaviors for entity valid
  */
-public final class UserBehaviors extends AggregateEvent.EventBehaviors<User> {
+public final class UserBehaviors extends EventBehaviors<UserAggregate> {
 
     {
         add((UserPasswordUpdated event) -> {//change status
@@ -30,7 +30,7 @@ public final class UserBehaviors extends AggregateEvent.EventBehaviors<User> {
 
     }
 
-    protected UserBehaviors(User entity) {
+    protected UserBehaviors(UserAggregate entity) {
         super(entity);
     }
 

@@ -3,7 +3,7 @@ package co.com.sofka.infraestructure.controller;
 
 import co.com.sofka.domain.generic.Command;
 import co.com.sofka.infraestructure.bus.CommandBus;
-import co.com.sofka.infraestructure.handle.CommandHandlerExecutionError;
+import co.com.sofka.infraestructure.handle.HandlerExecutionError;
 
 /**
  * The type Command controller.
@@ -28,9 +28,9 @@ public abstract class CommandController {
      * Dispatch.
      *
      * @param command the command
-     * @throws CommandHandlerExecutionError the command handler execution error
+     * @throws HandlerExecutionError the command handler execution error
      */
-    protected void dispatch(Command command) throws CommandHandlerExecutionError {
+    protected void dispatch(Command command) throws HandlerExecutionError {
         commandBus.dispatch(command);
     }
 }

@@ -1,9 +1,9 @@
-package co.com.sofka.store;
+package co.com.sofka.test;
 
-import co.com.sofka.domain.events.UserCreated;
-import co.com.sofka.domain.values.UserId;
-import co.com.sofka.domain.values.UserName;
-import co.com.sofka.domain.values.UserPassword;
+import co.com.sofka.domain.user.events.UserCreated;
+import co.com.sofka.domain.user.values.UserId;
+import co.com.sofka.domain.user.values.UserName;
+import co.com.sofka.domain.user.values.UserPassword;
 import co.com.sofka.infraestructure.store.StoredEvent;
 import co.com.sofka.infraestructure.store.StoredEventSerializer;
 import org.junit.jupiter.api.Assertions;
