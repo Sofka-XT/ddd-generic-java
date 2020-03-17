@@ -35,7 +35,7 @@ public class AggregateRootId implements ValueObject<String> {
     /**
      * Equals boolean.
      *
-     * @param o the o
+     * @param object the object
      * @return the boolean
      */
     @Override

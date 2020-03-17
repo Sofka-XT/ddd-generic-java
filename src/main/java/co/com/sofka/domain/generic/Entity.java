@@ -38,7 +38,7 @@ public abstract class Entity<I> {
     /**
      * Equals boolean.
      *
-     * @param o the o
+     * @param object the object
      * @return the boolean
      */
     @Override

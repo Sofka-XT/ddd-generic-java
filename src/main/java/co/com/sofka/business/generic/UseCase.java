@@ -121,7 +121,7 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
         /**
          * On error.
          *
-         * @param e the e
+         * @param exception the exception
          */
         void onError(RuntimeException exception);
     }
