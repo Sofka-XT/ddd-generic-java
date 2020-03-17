@@ -1,5 +1,6 @@
 package co.com.sofka.domain.generic;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
@@ -9,7 +10,7 @@ import java.util.UUID;
  * @version 1.0
  * @since 2019 -03-01
  */
-public abstract class Command {
+public abstract class Command implements Serializable {
     /**
      * The Uuid.
      */

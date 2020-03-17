@@ -12,7 +12,7 @@ import java.util.function.Consumer;
  * @version 1.0
  * @since 2019 -03-01
  */
-public abstract  class EventBehaviors<T> {
+public abstract class EventBehaviors<T> {
     /**
      * The Entity.
      */

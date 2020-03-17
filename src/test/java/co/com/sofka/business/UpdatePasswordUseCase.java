@@ -1,8 +1,8 @@
 package co.com.sofka.business;
 
 
-import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.business.generic.UseCase;
+import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.domain.user.UserAggregate;
 import co.com.sofka.domain.user.values.UserId;
 import co.com.sofka.domain.user.values.UserPassword;
@@ -24,7 +24,7 @@ public class UpdatePasswordUseCase extends UseCase<UpdatePasswordUseCase.Request
             var user = UserAggregate.from(userId, repository.getEventsBy(userId));
             user.updateUserPassword(request.newPassword);
             emit().onSuccess(new ResponseEvents(user.getUncommittedChanges()));
-            System.out.println("the password is updated");
+            System.out.println("executeUseCase[AuditPasswordUseCase]");
         } catch (QueryFaultException e) {
             emit().onError(new RuntimeException(e.getCause()));
         }

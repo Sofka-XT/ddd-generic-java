@@ -1,21 +1,43 @@
 package co.com.sofka.infraestructure.handle;
 
-import co.com.sofka.domain.generic.ViewModel;
 import co.com.sofka.domain.generic.Query;
+import co.com.sofka.domain.generic.ViewModel;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
+/**
+ * The type Query executor.
+ *
+ * @author Raul .A Alzate
+ * @version 1.0
+ * @since 2019 -03-01
+ */
 public class QueryExecutor implements QueryHandler<Query> {
-    protected Set<Function<? super Query, ? super ViewModel> > handles = new HashSet<>();
+    /**
+     * The Handles.
+     */
+    protected Set<Function<? super Query, ? super ViewModel>> handles = new HashSet<>();
 
+    /**
+     * Add.
+     *
+     * @param function the function
+     */
     protected void add(Function<? extends Query, ? extends ViewModel> function) {
         handles.add((Function<? super Query, ? super ViewModel>) function);
     }
+
+    /**
+     * Search view model.
+     *
+     * @param query the query
+     * @return the view model
+     */
     @Override
     public ViewModel search(Query query) {
-        for(var consumer :  handles){
+        for (var consumer : handles) {
             try {
                 return (ViewModel) consumer.apply(query);
             } catch (ClassCastException ignored) {

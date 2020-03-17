@@ -42,10 +42,10 @@ public abstract class Entity<I> {
      * @return the boolean
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Entity<?> entity = (Entity<?>) o;
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        Entity<?> entity = (Entity<?>) object;
         return Objects.equals(entityId, entity.entityId);
     }
 

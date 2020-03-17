@@ -3,7 +3,7 @@ package co.com.sofka.infraestructure;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * The type Abstract serializer.
@@ -23,12 +23,13 @@ public abstract class AbstractSerializer {
      */
     protected AbstractSerializer() {
         this.gson = new GsonBuilder()
-                .registerTypeAdapter(Date.class, new AbstractSerializer.DateSerializer())
-                .registerTypeAdapter(Date.class, new AbstractSerializer.DateDeserializer())
-                .serializeNulls().create();
+                .registerTypeAdapter(Instant.class, new AbstractSerializer.DateSerializer())
+                .registerTypeAdapter(Instant.class, new AbstractSerializer.DateDeserializer())
+                .serializeNulls()
+                .create();
     }
 
-    private static class DateSerializer implements JsonSerializer<Date> {
+    private static class DateSerializer implements JsonSerializer<Instant> {
         /**
          * Serialize json element.
          *
@@ -37,12 +38,13 @@ public abstract class AbstractSerializer {
          * @param context      the context
          * @return the json element
          */
-        public JsonElement serialize(Date source, Type typeOfSource, JsonSerializationContext context) {
-            return new JsonPrimitive(Long.toString(source.getTime()));
+        @Override
+        public JsonElement serialize(Instant source, Type typeOfSource, JsonSerializationContext context) {
+            return new JsonPrimitive(Long.toString(source.toEpochMilli()));
         }
     }
 
-    private static class DateDeserializer implements JsonDeserializer<Date> {
+    private static class DateDeserializer implements JsonDeserializer<Instant> {
         /**
          * Deserialize date.
          *
@@ -51,9 +53,10 @@ public abstract class AbstractSerializer {
          * @param context      the context
          * @return the date
          */
-        public Date deserialize(JsonElement json, Type typeOfTarget, JsonDeserializationContext context) {
+        @Override
+        public Instant deserialize(JsonElement json, Type typeOfTarget, JsonDeserializationContext context) {
             long time = Long.parseLong(json.getAsJsonPrimitive().getAsString());
-            return new Date(time);
+            return Instant.ofEpochMilli(time);
         }
     }
 }

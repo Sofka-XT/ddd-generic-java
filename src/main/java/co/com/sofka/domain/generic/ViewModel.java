@@ -1,6 +1,11 @@
 package co.com.sofka.domain.generic;
 
 
-public interface ViewModel {
+import java.io.Serializable;
+
+/**
+ * The interface View model.
+ */
+public interface ViewModel extends Serializable {
 
 }

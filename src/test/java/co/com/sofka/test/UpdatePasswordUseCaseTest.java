@@ -1,63 +1,51 @@
 package co.com.sofka.test;
 
-import co.com.sofka.business.asyn.ListenerEvent;
-import co.com.sofka.business.support.ResponseEvents;
-import co.com.sofka.business.generic.UseCase;
-import co.com.sofka.business.generic.UseCaseHandler;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.read.ListAppender;
+import co.com.sofka.LoggerTestUtil;
 import co.com.sofka.business.AuditPasswordUseCase;
 import co.com.sofka.business.UpdatePasswordUseCase;
-import co.com.sofka.domain.user.events.UserCreated;
-import co.com.sofka.domain.user.events.UserPasswordUpdated;
-import co.com.sofka.domain.generic.DomainEvent;
+import co.com.sofka.business.asyn.ListenerEvent;
+import co.com.sofka.business.asyn.SubscriberEvent;
+import co.com.sofka.business.generic.UseCase;
+import co.com.sofka.business.generic.UseCaseHandler;
+import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.domain.user.values.UserId;
-import co.com.sofka.domain.user.values.UserName;
 import co.com.sofka.domain.user.values.UserPassword;
+import co.com.sofka.infraestructure.bus.EventBus;
 import co.com.sofka.infraestructure.repository.EventStoreRepository;
-import co.com.sofka.infraestructure.repository.QueryFaultException;
-import co.com.sofka.infraestructure.store.StoredEvent;
+import co.com.sofka.infrastructure.InMemoryEvenBus;
+import co.com.sofka.infrastructure.InMemoryUserRepository;
+import org.assertj.core.groups.Tuple;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class UpdatePasswordUseCaseTest {
-    private static final Logger logger = LoggerFactory.getLogger(UpdatePasswordUseCaseTest.class);
-    UpdatePasswordUseCase useCase;
 
-    public UpdatePasswordUseCaseTest() {
-        this.useCase = new UpdatePasswordUseCase(new EventStoreRepository<UserId>() {
-            @Override
-            public List<DomainEvent> getEventsBy(UserId aggregateRootId) throws QueryFaultException {
-                var event1 = new UserCreated(
-                        new UserId("uuuu-iiiii-dddddd"),
-                        new UserName("Raul Alzate"),
-                        new UserPassword("asdasd")
-                );
+    private UpdatePasswordUseCase useCase;
+    private EventStoreRepository<UserId> repository;
+    private EventBus eventBus;
+    private ListAppender<ILoggingEvent> loggingBus;
+    private ListAppender<ILoggingEvent> loggingRepo;
+    private ListAppender<ILoggingEvent> loggingAudit;
 
-                var event2 = new UserPasswordUpdated(
-                        new UserId("uuuu-iiiii-dddddd"),
-                        new UserPassword("ffddasdf")
-                );
-                event2.setVersionType(1L);
-
-                var event3 = new UserPasswordUpdated(
-                        new UserId("uuuu-iiiii-dddddd"),
-                        new UserPassword("asdasdasd asdasd")
-                );
-                event3.setVersionType(2L);
-
-                return List.of(event1, event2, event3);
-            }
-
-            @Override
-            public void saveEvent(UserId aggregateRootId, StoredEvent storedEvent) {
-
-            }
-        });
+    @BeforeEach
+    public void setup() {
+        this.loggingBus = LoggerTestUtil.getListAppenderForClass(InMemoryEvenBus.class);
+        this.loggingRepo = LoggerTestUtil.getListAppenderForClass(InMemoryUserRepository.class);
+        this.loggingAudit = LoggerTestUtil.getListAppenderForClass(AuditPasswordUseCase.class);
+        this.repository = new InMemoryUserRepository();
+        this.eventBus = new InMemoryEvenBus();
+        this.useCase = new UpdatePasswordUseCase(repository);
     }
+
 
     @Test
     public void updatePassword() throws InterruptedException {
@@ -66,25 +54,30 @@ public class UpdatePasswordUseCaseTest {
                 new UserPassword("ddddddd")
         );
 
-
-        Set<UseCase<? extends UseCase.RequestEvent,? extends ResponseEvents>> useCases = new HashSet<>();
+        Set<UseCase<? extends UseCase.RequestEvent, ? extends ResponseEvents>> useCases = new HashSet<>();
         useCases.add(new AuditPasswordUseCase());
 
         UseCaseHandler.getInstance()
-              .asyncExecutor(useCase, request)
-              .subscribe(new ListenerEvent(useCases){
-                  @Override
-                  public void onComplete() {
-                      super.onComplete();
-                  }
-              });
+                .asyncExecutor(useCase, request)
+                .subscribe(new SubscriberEvent<>(repository, eventBus, new ListenerEvent(useCases) {
+                    @Override
+                    public void onComplete() {
+                    }
+                }));
+        LoggerFactory.getLogger(InMemoryEvenBus.class).getName();
+        Thread.sleep(100);
 
-        try {
-            Thread.sleep(60);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        assertThat(loggingBus.list)
+                .extracting(ILoggingEvent::getMessage, ILoggingEvent::getLevel)
+                .contains(Tuple.tuple("publish -> audit.register", Level.INFO));
 
+        assertThat(loggingRepo.list)
+                .extracting(ILoggingEvent::getMessage, ILoggingEvent::getLevel)
+                .contains(Tuple.tuple("save -> uuuu-iiiii-dddddd,co.com.sofka.domain.user.events.UserPasswordUpdated", Level.INFO));
+
+        assertThat(loggingAudit.list)
+                .extracting(ILoggingEvent::getMessage, ILoggingEvent::getLevel)
+                .contains(Tuple.tuple("executeUseCase[AuditPasswordUseCase]uuuu-iiiii-dddddd", Level.INFO));
 
     }
 }

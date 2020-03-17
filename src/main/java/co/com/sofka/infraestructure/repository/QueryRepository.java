@@ -5,23 +5,73 @@ import co.com.sofka.domain.generic.Query;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+/**
+ * The interface Query repository.
+ *
+ * @param <E> the type parameter
+ */
 public interface QueryRepository<E> {
+    /**
+     * The enum Sort.
+     */
     enum Sort {
-        ASC, DESC
+        /**
+         * Asc sort.
+         */
+        ASC,
+        /**
+         * Desc sort.
+         */
+        DESC
     }
-    default Stream<E> findAll(){
+
+    /**
+     * Find all stream.
+     *
+     * @return the stream
+     */
+    default Stream<E> findAll() {
         return Stream.empty();
     }
-    default Stream<E> findAll(Sort sort){
+
+    /**
+     * Find all stream.
+     *
+     * @param sort the sort
+     * @return the stream
+     */
+    default Stream<E> findAll(Sort sort) {
         return Stream.empty();
     }
-    default Stream<E> find(Query query){
+
+    /**
+     * Find stream.
+     *
+     * @param query the query
+     * @return the stream
+     */
+    default Stream<E> find(Query query) {
         return Stream.empty();
     }
-    default Stream<E> find(Query query, Sort sort){
+
+    /**
+     * Find stream.
+     *
+     * @param query the query
+     * @param sort  the sort
+     * @return the stream
+     */
+    default Stream<E> find(Query query, Sort sort) {
         return Stream.empty();
     }
-    default Optional<E> get(Query query){
+
+    /**
+     * Get optional.
+     *
+     * @param query the query
+     * @return the optional
+     */
+    default Optional<E> get(Query query) {
         return Optional.empty();
     }
 }

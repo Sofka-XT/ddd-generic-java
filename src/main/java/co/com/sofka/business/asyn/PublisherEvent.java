@@ -3,6 +3,8 @@ package co.com.sofka.business.asyn;
 import co.com.sofka.business.generic.UseCase;
 import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.domain.generic.DomainEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.SubmissionPublisher;
 
@@ -15,12 +17,7 @@ import java.util.concurrent.SubmissionPublisher;
  */
 public final class PublisherEvent extends SubmissionPublisher<DomainEvent> implements UseCase.UseCaseFormat<ResponseEvents> {
 
-    /**
-     * Instantiates a new Publisher.
-     */
-    public PublisherEvent() {
-        super();
-    }
+    private static final Logger logger = LoggerFactory.getLogger(PublisherEvent.class);
 
     /**
      * On success.
@@ -29,6 +26,7 @@ public final class PublisherEvent extends SubmissionPublisher<DomainEvent> imple
      */
     @Override
     public void onSuccess(ResponseEvents responseEvents) {
+        logger.debug(String.format("onSuccess[%s]", responseEvents.getDomainEvents()));
         responseEvents.getDomainEvents().forEach(this::submit);
         close();
     }
@@ -40,6 +38,7 @@ public final class PublisherEvent extends SubmissionPublisher<DomainEvent> imple
      */
     @Override
     public void onError(RuntimeException exception) {
+        logger.debug(String.format("onError[%s]", exception.getMessage()));
         getSubscribers().forEach(sub -> sub.onError(exception));
         close();
     }

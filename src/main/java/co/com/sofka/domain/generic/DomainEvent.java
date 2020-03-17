@@ -1,5 +1,6 @@
 package co.com.sofka.domain.generic;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -10,7 +11,7 @@ import java.util.UUID;
  * @version 1.0
  * @since 2019 -03-01
  */
-public abstract class DomainEvent {
+public abstract class DomainEvent implements Serializable {
     /**
      * The When.
      */

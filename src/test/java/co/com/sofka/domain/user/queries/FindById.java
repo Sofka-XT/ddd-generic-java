@@ -3,13 +3,13 @@ package co.com.sofka.domain.user.queries;
 import co.com.sofka.domain.generic.Query;
 
 public class FindById implements Query {
-    private String id;
+    private Long id;
 
-    public FindById(String id) {
+    public FindById(Long id) {
         this.id = id;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 }

@@ -1,6 +1,9 @@
 package co.com.sofka.business.generic;
 
 import co.com.sofka.domain.generic.DomainEvent;
+import co.com.sofka.infraestructure.AbstractSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -13,6 +16,8 @@ import co.com.sofka.domain.generic.DomainEvent;
  * @since 2019 -03-01
  */
 public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase.ResponseValues> {
+
+    private static final Logger logger = LoggerFactory.getLogger(UseCase.class);
 
     private Q request;
 
@@ -62,7 +67,10 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
         try {
             executeUseCase(request);
         } catch (RuntimeException e) {
-            useCaseFormat.onError(e);
+            var exception = new UnexpectedException("There is an unexpected problem in the use case", e);
+            exception.setRequest(new SerializeRequest().serialize(request()));
+            logger.error(exception.getMessage(), exception);
+            useCaseFormat.onError(exception);
         }
     }
 
@@ -115,6 +123,18 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
          *
          * @param e the e
          */
-        void onError(RuntimeException e);
+        void onError(RuntimeException exception);
+    }
+
+    private static class SerializeRequest extends AbstractSerializer {
+        /**
+         * Serialize string.
+         *
+         * @param object the object
+         * @return the string
+         */
+        public String serialize(RequestValues object) {
+            return gson.toJson(object);
+        }
     }
 }

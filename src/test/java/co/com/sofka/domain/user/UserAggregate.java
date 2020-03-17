@@ -1,9 +1,9 @@
 package co.com.sofka.domain.user;
 
-import co.com.sofka.domain.user.events.UserCreated;
-import co.com.sofka.domain.user.events.UserPasswordUpdated;
 import co.com.sofka.domain.generic.AggregateEvent;
 import co.com.sofka.domain.generic.DomainEvent;
+import co.com.sofka.domain.user.events.UserCreated;
+import co.com.sofka.domain.user.events.UserPasswordUpdated;
 import co.com.sofka.domain.user.values.UserId;
 import co.com.sofka.domain.user.values.UserName;
 import co.com.sofka.domain.user.values.UserPassword;
