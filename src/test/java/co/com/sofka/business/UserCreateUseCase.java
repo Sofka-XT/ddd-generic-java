@@ -2,7 +2,7 @@ package co.com.sofka.business;
 
 import co.com.sofka.business.generic.UseCase;
 import co.com.sofka.business.support.ResponseEvents;
-import co.com.sofka.domain.user.UserAggregate;
+import co.com.sofka.domain.user.User;
 import co.com.sofka.domain.user.values.UserId;
 import co.com.sofka.domain.user.values.UserName;
 import co.com.sofka.domain.user.values.UserPassword;
@@ -17,9 +17,10 @@ public class UserCreateUseCase extends UseCase<UserCreateUseCase.Request, Respon
     @Override
     protected void executeUseCase(Request request) {
         UserId userId = UserId.create();
-        UserAggregate user = new UserAggregate(userId, request.userName, request.userPassword);
+        User user = new User(userId, request.userName, request.userPassword);
         logger.info("executeUseCase[UserCreateUseCase]");
         emit().onSuccess(new ResponseEvents(user.getUncommittedChanges()));
+        user.markChangesAsCommitted();
     }
 
     public static class Request implements UseCase.RequestValues {

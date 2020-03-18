@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.Objects;
 
 @Aggregate
-public class UserAggregate extends AggregateEvent<UserId> {
+public class User extends AggregateEvent<UserId> {
 
     protected UserName userName;
     protected UserPassword userPassword;
 
 
-    public UserAggregate(UserId userId, UserName aUserName, UserPassword aUserPassword) {
+    public User(UserId userId, UserName aUserName, UserPassword aUserPassword) {
         this(userId);//initialize object base
         var userPassword = Objects.requireNonNull(aUserPassword);
         var userName = Objects.requireNonNull(aUserName);
@@ -27,14 +27,14 @@ public class UserAggregate extends AggregateEvent<UserId> {
     }
 
 
-    private UserAggregate(UserId userId) {
+    private User(UserId userId) {
         super(userId);
         registerEntityBehavior(new UserBehaviors(this));
     }
 
 
-    public static UserAggregate from(UserId userId, List<DomainEvent> eventList) {
-        UserAggregate user = new UserAggregate(userId);
+    public static User from(UserId userId, List<DomainEvent> eventList) {
+        User user = new User(userId);
         eventList.forEach(user::applyEvent);
         return user;
     }

@@ -7,7 +7,7 @@ import co.com.sofka.domain.user.events.UserPasswordUpdated;
 /**
  * User aggregate behaviors for entity valid
  */
-public final class UserBehaviors extends EventBehaviors<UserAggregate> {
+public final class UserBehaviors extends EventBehaviors<User> {
 
     {
         add((UserPasswordUpdated event) -> {//change status
@@ -30,7 +30,7 @@ public final class UserBehaviors extends EventBehaviors<UserAggregate> {
 
     }
 
-    protected UserBehaviors(UserAggregate entity) {
+    protected UserBehaviors(User entity) {
         super(entity);
     }
 
