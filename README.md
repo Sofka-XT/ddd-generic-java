@@ -37,7 +37,7 @@ Generic dependency for ddd Java - [https://mvnrepository.com/artifact/co.com.sof
        <version>0.2.*</version>
      </dependency>
 ```
-> Esta aun están en fase de desarrollo y de validación, trabajar con la versión 0.2 para experimentar y poner en practica los conceptos de DDD, aun no se recomienda llevarlo a producción. 
+> Aun esta en fase de desarrollo y de validación, trabajar con la versión 0.2 para experimentar y poner en practica los conceptos de DDD, aun no se recomienda llevarlo a producción. 
 
 ## Conceptos e implementación 
 
