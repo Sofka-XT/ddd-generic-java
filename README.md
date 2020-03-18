@@ -202,8 +202,9 @@ public class Group extends Entity<GroupId> {
 2. Crea tu rama de características: `git checkout -b feature/my-feat`
 3. Confirma tus cambios: `git commit -am "Agrega alguna característica"`
 4. Empuje a la rama: `git push origin feature/my-feat`
-5. Presentar una Merge Requests
+5. Presentar una Pull Requests
 
+> También pueden colaborar creando issue para dar evolución del proyecto.
 
 ## License
 
