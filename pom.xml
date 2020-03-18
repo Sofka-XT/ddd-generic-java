@@ -8,14 +8,12 @@
   <version>0.2.5</version>
   <name>ddd-generic-java</name>
   <url>https://sofka.com.co</url>
- 
   <licenses>
-  <license>
-   <name>The Apache Software License, Version 2.0</name>
-   <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-  </license>
+    <license>
+     <name>The Apache Software License, Version 2.0</name>
+     <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
  </licenses>
-
   <developers>
     <developer>
       <name>Raul A. Alzate</name>

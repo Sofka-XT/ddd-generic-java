@@ -22,7 +22,7 @@ Desde el punto de vista táctico, se requiere aplicar algunos conceptos fundamen
 - Aggregate
 - Event Sourcing
 
-### Adptar las arquitecturas
+### Adoptar las arquitecturas
 - Por eventos (EDA)
 - Por commands, events y queries (CQRS)
 - Por capas
@@ -195,6 +195,15 @@ public class Group extends Entity<GroupId> {
 ```
 
 > Mas adelante estaríamos realizando un tutorial para aplicarlo en una arquitectura distribuida y con CQRS+ES con una arquitectura EDA. 
+
+## Contribución
+
+1. Realizar el fork
+2. Crea tu rama de características: git checkout -b feature/my-feat
+3. Confirma tus cambios: `git commit -am "Agrega alguna característica"`
+4. Empuje a la rama: git push origin feature/my-feat
+5. Presentar una Merge Requests
+
 
 ## License
 
