@@ -38,7 +38,7 @@ Generic dependency for ddd Java - [https://mvnrepository.com/artifact/co.com.sof
      </dependency>
 ```
 
-Se se require dividir los conceptos se puede usar de forma independeiente de la siguiente manera:
+Si se require dividir los conceptos se puede usar de forma independeiente de la siguiente manera:
 
 ```
     <dependency>
