@@ -34,7 +34,31 @@ Generic dependency for ddd Java - [https://mvnrepository.com/artifact/co.com.sof
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>domain-driven-design</artifactId>
-       <version>0.2.*</version>
+       <version>0.3.*</version>
+     </dependency>
+```
+
+Se se require dividir los conceptos se puede usar de forma independeiente de la siguiente manera:
+
+```
+    <dependency>
+       <groupId>co.com.sofka</groupId>
+       <artifactId>domain</artifactId>
+       <version>0.3.*</version>
+     </dependency>
+```
+```
+    <dependency>
+       <groupId>co.com.sofka</groupId>
+       <artifactId>business</artifactId>
+       <version>0.3.*</version>
+     </dependency>
+```
+```
+    <dependency>
+       <groupId>co.com.sofka</groupId>
+       <artifactId>infrastructure</artifactId>
+       <version>0.3.*</version>
      </dependency>
 ```
 > Aun esta en fase de desarrollo y de validación, trabajar con la versión 0.2 para experimentar y poner en practica los conceptos de DDD, aun no se recomienda llevarlo a producción. 
