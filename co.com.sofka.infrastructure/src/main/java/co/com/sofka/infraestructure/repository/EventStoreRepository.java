@@ -1,6 +1,6 @@
 package co.com.sofka.infraestructure.repository;
 
-import co.com.sofka.domain.generic.AggregateRootId;
+import co.com.sofka.domain.generic.Identity;
 import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.store.StoredEvent;
 
@@ -12,7 +12,7 @@ import java.util.List;
  *
  * @param <T> the type parameter
  */
-public interface EventStoreRepository<T extends AggregateRootId> {
+public interface EventStoreRepository<T extends Identity> {
     /**
      * Gets events by.
      *

@@ -1,17 +1,13 @@
 package co.com.sofka.domain.generic;
 
 import java.util.Objects;
-import java.util.UUID;
 
 /**
  * The type Entity.
  *
  * @param <I> the type parameter
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
-public abstract class Entity<I> {
+public abstract class Entity<I extends Identity> {
     /**
      * The Entity id.
      */
@@ -27,33 +23,22 @@ public abstract class Entity<I> {
     }
 
     /**
-     * Generate identity uuid.
+     * Identity .
      *
-     * @return the uuid
+     * @return the
      */
-    public UUID generateIdentity() {
-        return UUID.randomUUID();
+    public I identity() {
+        return entityId;
     }
 
-    /**
-     * Equals boolean.
-     *
-     * @param object the object
-     * @return the boolean
-     */
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
         Entity<?> entity = (Entity<?>) object;
-        return Objects.equals(entityId, entity.entityId);
+        return entityId.value().equals(entity.entityId.value());
     }
 
-    /**
-     * Hash code int.
-     *
-     * @return the int
-     */
     @Override
     public int hashCode() {
         return Objects.hash(entityId);

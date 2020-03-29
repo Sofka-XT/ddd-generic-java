@@ -5,10 +5,6 @@ import java.util.UUID;
 
 /**
  * The type Command.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public abstract class Command implements Serializable {
     /**

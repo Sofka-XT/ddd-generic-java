@@ -1,32 +1,26 @@
 package co.com.sofka.domain.generic;
 
 
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
+import java.util.List;
 
 /**
- * The type Aggregate Event.
+ * The type Aggregate event.
  *
  * @param <T> the type parameter
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
-public abstract class AggregateEvent<T extends AggregateRootId> extends AggregateRoot<T> {
+public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T> {
 
-    private final List<DomainEvent> changes = new LinkedList<>();
-    private final Map<String, AtomicLong> versions = new ConcurrentHashMap<>();
-    private final Set<Consumer<? super DomainEvent>> handleActions = new HashSet<>();
+
+    private final BehaviorSubscriber behaviorSubscriber;
 
     /**
-     * Instantiates a new Entity.
+     * Instantiates a new Aggregate event.
      *
      * @param entityId the entity id
      */
     public AggregateEvent(T entityId) {
         super(entityId);
+        behaviorSubscriber = new BehaviorSubscriber();
     }
 
 
@@ -36,30 +30,27 @@ public abstract class AggregateEvent<T extends AggregateRootId> extends Aggregat
      * @return the uncommitted changes
      */
     public List<DomainEvent> getUncommittedChanges() {
-        return List.copyOf(changes);
+        return List.copyOf(behaviorSubscriber.getChanges());
     }
 
     /**
-     * Append change function apply.
+     * Append change behavior subscriber . change apply.
      *
      * @param event the event
-     * @return the function apply
+     * @return the behavior subscriber . change apply
      */
-    protected ChangeApply<AggregateEvent<T>> appendChange(DomainEvent event) {
-        changes.add(event);
-        return () -> {
-            applyEvent(event);
-            return this;
-        };
+    protected BehaviorSubscriber.ChangeApply appendChange(DomainEvent event) {
+        event.setAggregateRootId(entityId);
+        return behaviorSubscriber.appendChange(event);
     }
 
     /**
-     * Register entity behavior.
+     * Subscribe.
      *
-     * @param eventBehaviors the entity behaviors
+     * @param eventBehavior the event behavior
      */
-    protected final void registerEntityBehavior(EventBehaviors<?> eventBehaviors) {
-        this.handleActions.addAll(eventBehaviors.behaviors);
+    protected final void subscribe(EventBehavior eventBehavior) {
+        behaviorSubscriber.subscribe(eventBehavior);
     }
 
     /**
@@ -68,46 +59,24 @@ public abstract class AggregateEvent<T extends AggregateRootId> extends Aggregat
      * @param domainEvent the domain event
      */
     protected void applyEvent(DomainEvent domainEvent) {
-        handleActions.forEach(consumer -> {
-            try {
-                consumer.accept(domainEvent);
-                var map = versions.get(domainEvent.type);
-                long version = nextVersion(domainEvent, map);
-                domainEvent.setVersionType(version);
-            } catch (ClassCastException ignored) {
-            }
-        });
+        behaviorSubscriber.applyEvent(domainEvent);
     }
-
-    private long nextVersion(DomainEvent domainEvent, AtomicLong map) {
-        if (map == null) {
-            versions.put(domainEvent.type, new AtomicLong(domainEvent.versionType()));
-            return domainEvent.versionType();
-        }
-        return versions.get(domainEvent.type).incrementAndGet();
-    }
-
 
     /**
      * Mark changes as committed.
      */
     public void markChangesAsCommitted() {
-        changes.clear();
+        behaviorSubscriber.getChanges().clear();
     }
 
-    /**
-     * The interface Change apply.
-     *
-     * @param <T> the type parameter
-     */
-    @FunctionalInterface
-    public interface ChangeApply<T> {
-        /**
-         * Apply t.
-         *
-         * @return the t
-         */
-        T apply();
+
+    @Override
+    public boolean equals(Object object) {
+        return super.equals(object);
     }
 
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

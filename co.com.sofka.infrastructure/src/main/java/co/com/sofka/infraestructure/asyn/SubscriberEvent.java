@@ -2,7 +2,7 @@ package co.com.sofka.infraestructure.asyn;
 
 
 import co.com.sofka.business.asyn.ListenerEvent;
-import co.com.sofka.domain.generic.AggregateRootId;
+import co.com.sofka.domain.generic.Identity;
 import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.bus.ErrorEvent;
 import co.com.sofka.infraestructure.bus.EventBus;
@@ -23,7 +23,7 @@ import java.util.concurrent.Flow;
  * @version 1.0
  * @since 2019 -03-01
  */
-public class SubscriberEvent<T extends AggregateRootId> implements Flow.Subscriber<DomainEvent> {
+public class SubscriberEvent<T extends Identity> implements Flow.Subscriber<DomainEvent> {
 
     private final EventStoreRepository<T> repository;
     private final EventBus eventBus;
@@ -80,8 +80,8 @@ public class SubscriberEvent<T extends AggregateRootId> implements Flow.Subscrib
     public void onSubscribe(Flow.Subscription subscription) {
         this.subscription = subscription;
         subscription.request(1);
-        Optional.ofNullable(listenerEvent).ifPresent(listenerEvent ->
-                listenerEvent.onSubscribe(subscription)
+        Optional.ofNullable(listenerEvent).ifPresent(listener ->
+                listener.onSubscribe(subscription)
         );
     }
 
@@ -95,11 +95,11 @@ public class SubscriberEvent<T extends AggregateRootId> implements Flow.Subscrib
         Optional.ofNullable(eventBus).ifPresent(bus -> bus.publish(event));
         Optional.ofNullable(repository).ifPresent(repo -> {
             StoredEvent storedEvent = StoredEvent.wrapEvent(event);
-            repo.saveEvent((T) event.aggregateRootId, storedEvent);
+            repo.saveEvent((T) event.aggregateRootId(), storedEvent);
         });
-        Optional.ofNullable(listenerEvent).ifPresent(listenerEvent -> {
-            listenerEvent.setSubscriber(this);
-            listenerEvent.onNext(event);
+        Optional.ofNullable(listenerEvent).ifPresent(listener -> {
+            listener.setSubscriber(this);
+            listener.onNext(event);
         });
         subscription.request(1);
     }
@@ -119,8 +119,8 @@ public class SubscriberEvent<T extends AggregateRootId> implements Flow.Subscrib
                 504, cause,
                 throwable.getMessage())
         ));
-        Optional.ofNullable(listenerEvent).ifPresent(listenerEvent ->
-                listenerEvent.onError(throwable)
+        Optional.ofNullable(listenerEvent).ifPresent(listener ->
+                listener.onError(throwable)
         );
         subscription.cancel();
     }
