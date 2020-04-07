@@ -1,12 +1,12 @@
-package co.com.sofka.infraestructure.annotation;
+package co.com.sofka.domain.annotation;
 
 import java.lang.annotation.*;
 
 /**
- * The interface Service.
+ * The interface Aggregate.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Inherited
-public @interface DomainService {
+public @interface Aggregate {
 }

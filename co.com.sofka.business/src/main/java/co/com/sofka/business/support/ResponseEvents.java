@@ -7,10 +7,6 @@ import java.util.List;
 
 /**
  * The type Response events.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public final class ResponseEvents implements UseCase.ResponseValues {
 

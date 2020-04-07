@@ -8,9 +8,6 @@ import co.com.sofka.domain.generic.DomainEvent;
  *
  * @param <Q> the type parameter
  * @param <P> the type parameter
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase.ResponseValues> {
 

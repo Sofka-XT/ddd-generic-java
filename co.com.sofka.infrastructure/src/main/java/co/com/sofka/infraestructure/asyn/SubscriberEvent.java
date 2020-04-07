@@ -16,12 +16,9 @@ import java.util.concurrent.Flow;
 
 
 /**
- * The type subscriber of the event.
+ * The type Subscriber event.
  *
  * @param <T> the type parameter
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public class SubscriberEvent<T extends Identity> implements Flow.Subscriber<DomainEvent> {
 
@@ -45,7 +42,7 @@ public class SubscriberEvent<T extends Identity> implements Flow.Subscriber<Doma
 
 
     /**
-     * Instantiates a new Subscriber.
+     * Instantiates a new Subscriber event.
      *
      * @param repository the repository
      * @param eventBus   the event bus
@@ -71,11 +68,6 @@ public class SubscriberEvent<T extends Identity> implements Flow.Subscriber<Doma
         this(null, null, null);
     }
 
-    /**
-     * On subscribe.
-     *
-     * @param subscription the subscription
-     */
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
         this.subscription = subscription;
@@ -85,11 +77,6 @@ public class SubscriberEvent<T extends Identity> implements Flow.Subscriber<Doma
         );
     }
 
-    /**
-     * On next.
-     *
-     * @param event the event
-     */
     @Override
     public final void onNext(DomainEvent event) {
         Optional.ofNullable(eventBus).ifPresent(bus -> bus.publish(event));
@@ -104,11 +91,6 @@ public class SubscriberEvent<T extends Identity> implements Flow.Subscriber<Doma
         subscription.request(1);
     }
 
-    /**
-     * On error.
-     *
-     * @param throwable the throwable
-     */
     @Override
     public void onError(Throwable throwable) {
         var cause = Optional.ofNullable(throwable.getCause())
@@ -125,9 +107,6 @@ public class SubscriberEvent<T extends Identity> implements Flow.Subscriber<Doma
         subscription.cancel();
     }
 
-    /**
-     * On complete.
-     */
     @Override
     public void onComplete() {
         Optional.ofNullable(listenerEvent).ifPresent(ListenerEvent::onComplete);

@@ -10,10 +10,6 @@ import java.util.function.Consumer;
 
 /**
  * The type Command executor.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public abstract class CommandExecutor implements CommandHandler<Command> {
 
@@ -31,11 +27,6 @@ public abstract class CommandExecutor implements CommandHandler<Command> {
         handles.add((Consumer<? super Command>) consumer);
     }
 
-    /**
-     * Execute.
-     *
-     * @param command the command
-     */
     @Override
     public final void execute(Command command) {
         for (var consumer : handles) {

@@ -12,7 +12,7 @@ public interface CommandBus {
      * Dispatch.
      *
      * @param command the command
-     * @throws HandlerExecutionError the command handler execution error
+     * @throws HandlerExecutionError the handler execution error
      */
     void dispatch(Command command) throws HandlerExecutionError;
 }

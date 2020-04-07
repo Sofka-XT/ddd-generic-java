@@ -16,13 +16,35 @@ public abstract class Command implements Serializable {
      */
     public final String type;
 
+
+    private transient Identity aggregateRootId;
+
     /**
      * Instantiates a new Command.
      *
      * @param type the type
      */
-    protected Command(final String type) {
+    public Command(final String type) {
         this.type = type;
         this.uuid = UUID.randomUUID();
     }
+
+    /**
+     * Gets aggregate root id.
+     *
+     * @return the aggregate root id
+     */
+    public Identity getAggregateRootId() {
+        return aggregateRootId;
+    }
+
+    /**
+     * Sets aggregate root id.
+     *
+     * @param aggregateRootId the aggregate root id
+     */
+    public void setAggregateRootId(Identity aggregateRootId) {
+        this.aggregateRootId = aggregateRootId;
+    }
+
 }

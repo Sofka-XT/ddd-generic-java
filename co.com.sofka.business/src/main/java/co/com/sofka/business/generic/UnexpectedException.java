@@ -2,10 +2,6 @@ package co.com.sofka.business.generic;
 
 /**
  * The type Unexpected exception.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public class UnexpectedException extends RuntimeException {
     private String request;

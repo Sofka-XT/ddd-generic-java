@@ -1,4 +1,4 @@
-package co.com.sofka.infraestructure.annotation;
+package co.com.sofka.domain.annotation;
 
 import java.lang.annotation.*;
 

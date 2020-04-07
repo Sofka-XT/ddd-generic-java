@@ -20,7 +20,7 @@ public abstract class DomainEvent implements Serializable {
      * The Type.
      */
     public final String type;
-    private Identity identity;
+    private transient Identity identity;
     private Long versionType;
 
     /**
@@ -34,7 +34,7 @@ public abstract class DomainEvent implements Serializable {
         this.identity = identity;
         this.when = Instant.now();
         this.uuid = UUID.randomUUID();
-        this.versionType = 0L;
+        this.versionType = 1L;
     }
 
     /**
@@ -74,7 +74,7 @@ public abstract class DomainEvent implements Serializable {
     }
 
     /**
-     * Set aggregate root id.
+     * Sets aggregate root id.
      *
      * @param identity the identity
      */

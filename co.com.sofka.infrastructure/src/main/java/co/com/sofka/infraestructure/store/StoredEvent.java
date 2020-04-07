@@ -7,10 +7,6 @@ import java.util.Date;
 
 /**
  * The type Stored event.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public final class StoredEvent {
 
@@ -119,11 +115,6 @@ public final class StoredEvent {
         }
     }
 
-    /**
-     * To string string.
-     *
-     * @return the string
-     */
     @Override
     public String toString() {
         return StoredEventSerializer.instance().serialize(this);

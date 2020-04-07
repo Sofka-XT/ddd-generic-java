@@ -17,11 +17,7 @@ import java.util.concurrent.Flow;
 
 
 /**
- * The type Listener.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
+ * The type Listener event.
  */
 public abstract class ListenerEvent implements Flow.Subscriber<DomainEvent> {
 
@@ -30,7 +26,7 @@ public abstract class ListenerEvent implements Flow.Subscriber<DomainEvent> {
     private Flow.Subscriber<DomainEvent> subscriber;
 
     /**
-     * Instantiates a new Listener.
+     * Instantiates a new Listener event.
      *
      * @param useCases the use cases
      */
@@ -57,22 +53,12 @@ public abstract class ListenerEvent implements Flow.Subscriber<DomainEvent> {
         this.subscriber = subscriber;
     }
 
-    /**
-     * On subscribe.
-     *
-     * @param subscription the subscription
-     */
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
         this.subscription = subscription;
         this.subscription.request(1);
     }
 
-    /**
-     * On next.
-     *
-     * @param domainEvent the domain event
-     */
     @Override
     public final void onNext(DomainEvent domainEvent) {
         var event = Objects.requireNonNull(domainEvent);
@@ -116,19 +102,11 @@ public abstract class ListenerEvent implements Flow.Subscriber<DomainEvent> {
         return matchWithAEvent;
     }
 
-    /**
-     * On error.
-     *
-     * @param throwable the throwable
-     */
     @Override
     public void onError(Throwable throwable) {
 
     }
 
-    /**
-     * On complete.
-     */
     @Override
     public void onComplete() {
 

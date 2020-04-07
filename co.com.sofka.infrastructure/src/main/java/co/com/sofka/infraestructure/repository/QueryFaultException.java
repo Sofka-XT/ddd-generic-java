@@ -2,10 +2,6 @@ package co.com.sofka.infraestructure.repository;
 
 /**
  * The type Query fault exception.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public class QueryFaultException extends Exception {
     /**
