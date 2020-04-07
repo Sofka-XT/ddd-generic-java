@@ -1,0 +1,4 @@
+f7647b3 (HEAD -> fixed_domain) fixed of the domain and usecase, helper for executer use case
+3283b59 (origin/fixed_domain) best way for create behaviors and domain events
+5c3a7d6 (origin/features/divide_for_modules, features/divide_for_modules) best documentation according with the segregation concepts
+fbb5f6f best documentation according with the segregation concepts
