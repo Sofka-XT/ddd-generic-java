@@ -5,10 +5,6 @@ import java.util.UUID;
 
 /**
  * The type Error event.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public class ErrorEvent {
     /**

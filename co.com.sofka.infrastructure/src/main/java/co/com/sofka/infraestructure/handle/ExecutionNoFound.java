@@ -5,10 +5,6 @@ import co.com.sofka.domain.generic.Query;
 
 /**
  * The type Execution no found.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public class ExecutionNoFound extends RuntimeException {
     /**

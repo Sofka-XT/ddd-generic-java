@@ -10,10 +10,6 @@ import java.util.concurrent.Flow;
 
 /**
  * The type Use case handler.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public class UseCaseHandler {
 
@@ -27,7 +23,7 @@ public class UseCaseHandler {
      *
      * @return the instance
      */
-    public static UseCaseHandler getInstance() {
+    public static synchronized UseCaseHandler getInstance() {
         if (instance == null) {
             instance = new UseCaseHandler();
         }

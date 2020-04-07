@@ -6,10 +6,6 @@ import java.util.UUID;
 
 /**
  * The type Domain event.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public abstract class DomainEvent implements Serializable {
     /**
@@ -24,24 +20,30 @@ public abstract class DomainEvent implements Serializable {
      * The Type.
      */
     public final String type;
-    /**
-     * The Aggregate root id.
-     */
-    public final AggregateRootId aggregateRootId;
+    private transient Identity identity;
     private Long versionType;
 
     /**
      * Instantiates a new Domain event.
      *
-     * @param type            the type
-     * @param aggregateRootId the aggregate root id
+     * @param type     the type
+     * @param identity the identity
      */
-    protected DomainEvent(final String type, AggregateRootId aggregateRootId) {
+    public DomainEvent(final String type, Identity identity) {
         this.type = type;
-        this.aggregateRootId = aggregateRootId;
+        this.identity = identity;
         this.when = Instant.now();
         this.uuid = UUID.randomUUID();
-        this.versionType = 0L;
+        this.versionType = 1L;
+    }
+
+    /**
+     * Instantiates a new Domain event.
+     *
+     * @param type the type
+     */
+    public DomainEvent(final String type) {
+        this(type, null);
     }
 
     /**
@@ -63,11 +65,20 @@ public abstract class DomainEvent implements Serializable {
     }
 
     /**
-     * Aggregate root id aggregate root id.
+     * Aggregate root id identity.
      *
-     * @return the aggregate root id
+     * @return the identity
      */
-    public AggregateRootId aggregateRootId() {
-        return aggregateRootId;
+    public Identity aggregateRootId() {
+        return identity;
+    }
+
+    /**
+     * Sets aggregate root id.
+     *
+     * @param identity the identity
+     */
+    public void setAggregateRootId(Identity identity) {
+        this.identity = identity;
     }
 }

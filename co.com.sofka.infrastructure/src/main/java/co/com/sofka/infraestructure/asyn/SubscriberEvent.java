@@ -2,7 +2,7 @@ package co.com.sofka.infraestructure.asyn;
 
 
 import co.com.sofka.business.asyn.ListenerEvent;
-import co.com.sofka.domain.generic.AggregateRootId;
+import co.com.sofka.domain.generic.Identity;
 import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.bus.ErrorEvent;
 import co.com.sofka.infraestructure.bus.EventBus;
@@ -16,14 +16,11 @@ import java.util.concurrent.Flow;
 
 
 /**
- * The type subscriber of the event.
+ * The type Subscriber event.
  *
  * @param <T> the type parameter
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
-public class SubscriberEvent<T extends AggregateRootId> implements Flow.Subscriber<DomainEvent> {
+public class SubscriberEvent<T extends Identity> implements Flow.Subscriber<DomainEvent> {
 
     private final EventStoreRepository<T> repository;
     private final EventBus eventBus;
@@ -45,7 +42,7 @@ public class SubscriberEvent<T extends AggregateRootId> implements Flow.Subscrib
 
 
     /**
-     * Instantiates a new Subscriber.
+     * Instantiates a new Subscriber event.
      *
      * @param repository the repository
      * @param eventBus   the event bus
@@ -71,44 +68,29 @@ public class SubscriberEvent<T extends AggregateRootId> implements Flow.Subscrib
         this(null, null, null);
     }
 
-    /**
-     * On subscribe.
-     *
-     * @param subscription the subscription
-     */
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
         this.subscription = subscription;
         subscription.request(1);
-        Optional.ofNullable(listenerEvent).ifPresent(listenerEvent ->
-                listenerEvent.onSubscribe(subscription)
+        Optional.ofNullable(listenerEvent).ifPresent(listener ->
+                listener.onSubscribe(subscription)
         );
     }
 
-    /**
-     * On next.
-     *
-     * @param event the event
-     */
     @Override
     public final void onNext(DomainEvent event) {
         Optional.ofNullable(eventBus).ifPresent(bus -> bus.publish(event));
         Optional.ofNullable(repository).ifPresent(repo -> {
             StoredEvent storedEvent = StoredEvent.wrapEvent(event);
-            repo.saveEvent((T) event.aggregateRootId, storedEvent);
+            repo.saveEvent((T) event.aggregateRootId(), storedEvent);
         });
-        Optional.ofNullable(listenerEvent).ifPresent(listenerEvent -> {
-            listenerEvent.setSubscriber(this);
-            listenerEvent.onNext(event);
+        Optional.ofNullable(listenerEvent).ifPresent(listener -> {
+            listener.setSubscriber(this);
+            listener.onNext(event);
         });
         subscription.request(1);
     }
 
-    /**
-     * On error.
-     *
-     * @param throwable the throwable
-     */
     @Override
     public void onError(Throwable throwable) {
         var cause = Optional.ofNullable(throwable.getCause())
@@ -119,15 +101,12 @@ public class SubscriberEvent<T extends AggregateRootId> implements Flow.Subscrib
                 504, cause,
                 throwable.getMessage())
         ));
-        Optional.ofNullable(listenerEvent).ifPresent(listenerEvent ->
-                listenerEvent.onError(throwable)
+        Optional.ofNullable(listenerEvent).ifPresent(listener ->
+                listener.onError(throwable)
         );
         subscription.cancel();
     }
 
-    /**
-     * On complete.
-     */
     @Override
     public void onComplete() {
         Optional.ofNullable(listenerEvent).ifPresent(ListenerEvent::onComplete);

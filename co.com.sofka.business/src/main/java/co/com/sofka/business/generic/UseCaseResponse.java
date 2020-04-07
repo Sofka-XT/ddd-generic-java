@@ -4,9 +4,6 @@ package co.com.sofka.business.generic;
  * The type Use case response.
  *
  * @param <R> the type parameter
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public final class UseCaseResponse<R extends UseCase.ResponseValues> implements UseCase.UseCaseFormat<R> {
     /**
@@ -18,21 +15,11 @@ public final class UseCaseResponse<R extends UseCase.ResponseValues> implements 
      */
     protected RuntimeException exception;
 
-    /**
-     * On success.
-     *
-     * @param response the response
-     */
     @Override
     public void onSuccess(R response) {
         this.response = response;
     }
 
-    /**
-     * On error.
-     *
-     * @param exception the exception
-     */
     @Override
     public void onError(RuntimeException exception) {
         this.exception = exception;

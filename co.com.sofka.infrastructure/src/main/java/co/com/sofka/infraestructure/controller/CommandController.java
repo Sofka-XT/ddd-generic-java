@@ -7,10 +7,6 @@ import co.com.sofka.infraestructure.handle.HandlerExecutionError;
 
 /**
  * The type Command controller.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public abstract class CommandController {
     private final CommandBus commandBus;
@@ -28,7 +24,7 @@ public abstract class CommandController {
      * Dispatch.
      *
      * @param command the command
-     * @throws HandlerExecutionError the command handler execution error
+     * @throws HandlerExecutionError the handler execution error
      */
     protected void dispatch(Command command) throws HandlerExecutionError {
         commandBus.dispatch(command);

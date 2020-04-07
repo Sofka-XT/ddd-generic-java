@@ -5,7 +5,7 @@
     <parent>
         <artifactId>domain-driven-design</artifactId>
         <groupId>co.com.sofka</groupId>
-        <version>0.3.0</version>
+        <version>0.4.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -16,13 +16,13 @@
         <dependency>
             <groupId>co.com.sofka</groupId>
             <artifactId>domain</artifactId>
-            <version>0.3.0</version>
+            <version>0.4.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>co.com.sofka</groupId>
             <artifactId>business</artifactId>
-            <version>0.3.0</version>
+            <version>0.4.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

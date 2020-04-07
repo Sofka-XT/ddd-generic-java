@@ -34,7 +34,8 @@ Generic dependency for ddd Java - [https://mvnrepository.com/artifact/co.com.sof
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>domain-driven-design</artifactId>
-       <version>0.3.*</version>
+       <version>0.3.5</version>
+       <type>pom</type>
      </dependency>
 ```
 
@@ -44,21 +45,21 @@ Si se require dividir los conceptos se puede usar de forma independeiente de la 
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>domain</artifactId>
-       <version>0.3.*</version>
+       <version>0.4.0</version>
      </dependency>
 ```
 ```
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>business</artifactId>
-       <version>0.3.*</version>
+       <version>0.4.0</version>
      </dependency>
 ```
 ```
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>infrastructure</artifactId>
-       <version>0.3.*</version>
+       <version>0.4.0</version>
      </dependency>
 ```
 > Aun esta en fase de desarrollo y de validación, trabajar con la versión 0.2 para experimentar y poner en practica los conceptos de DDD, aun no se recomienda llevarlo a producción. 
@@ -109,43 +110,40 @@ public class User extends AggregateEvent<UserId> {
     }  
     private User(UserId userId) {  
         super(userId);  
-        registerEntityBehavior(new UserBehaviors(this));  
+        subscribe(new UserBehaviors(this));  
     }  
     public static User from(UserId userId, List<DomainEvent> eventList) {  
         User user = new User(userId);  
         eventList.forEach(user::applyEvent);  
-     return user;  
+        return user;  
     }  
     public void updateUserPassword(UserPassword aUserPassword) {  
         var userPassword = Objects.requireNonNull(aUserPassword);  
-        appendChange(new UserPasswordUpdated(this.entityId, userPassword)).apply();  
+        appendChange(new UserPasswordUpdated(identity(), userPassword)).apply();  
      }  
 } 
 ```
 ### Comportamientos orientado a Eventos
 ```java
-public final class UserBehaviors extends EventBehaviors<User> {  
-    {  
-        add((UserPasswordUpdated event) -> {//change status  
-           if (entity.userPassword.equals(event.userPassword)) {  
+public final class UserBehaviors extends EventBehavior {  
+    protected UserBehaviors(User entity) {  
+        give((UserPasswordUpdated event) -> {//change status  
+            if (entity.userPassword.equals(event.userPassword)) {  
                 throw new IllegalArgumentException("The password are equal");  
             }  
             entity.userPassword = event.getUserPassword();  
-         });  
-  
-       add((UserCreated domainEvent) -> { //change status  
-         if (domainEvent.getUserPassword().value().length() < 4) {  
+        });  
+          
+        give((UserCreated domainEvent) -> { //change status  
+            if (domainEvent.getUserPassword().value().length() < 4) {  
                 throw new IllegalArgumentException("The password must be greater than 4 characters");  
-         }  
-         if (domainEvent.getUserName().value().length() < 5) {  
+            }  
+            if (domainEvent.getUserName().value().length() < 5) {  
                 throw new IllegalArgumentException("The username must be greater than 5 characters");  
-         }  
-         entity.userName = domainEvent.getUserName();  
-         entity.userPassword = domainEvent.getUserPassword();  
-     });  
-   }  
-    protected UserBehaviors(User entity) {  
-        super(entity);  
+            }  
+            entity.userName = domainEvent.getUserName();  
+            entity.userPassword = domainEvent.getUserPassword();  
+       }); 
     }  
 }
 ```
@@ -189,11 +187,12 @@ public class UserCreated extends DomainEvent {
 ### Aplicar el agregado
 Cuando se crear nuevo objeto se instancia el agregado y se le asigna el identificado que relaciona la entidad. Además de los argumentos de creación. Un agregado puede tener múltiples constructores que permiten crear el agregado.  
 ```java
-UserId userId = UserId.create();  
+UserId userId = new UserId();  
 User user = new User(userId, request.userName, request.userPassword);  
 ```
 Ya para el caso de Actualizar un agregado se reconstruye el agregado según los eventos persistidos, si se tiene un agregado no orientado a eventos se reconstruye con los valores necesarios. Cuando se reconstruya se aplica el comportamiento de la entidad.
 ```java
+var userId = UserId.of("xxx-xxx-xxx");  
 var user = User.from(userId, repository.getEventsBy(userId));  
 user.updateUserPassword(request.newPassword);  
 emit().onSuccess(new ResponseEvents(user.getUncommittedChanges()));

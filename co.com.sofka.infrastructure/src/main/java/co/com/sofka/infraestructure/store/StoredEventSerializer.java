@@ -5,10 +5,6 @@ import co.com.sofka.infraestructure.AbstractSerializer;
 
 /**
  * The type Stored event serializer.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public final class StoredEventSerializer extends AbstractSerializer {
 

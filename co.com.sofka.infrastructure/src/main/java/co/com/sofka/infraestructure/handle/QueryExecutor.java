@@ -9,10 +9,6 @@ import java.util.function.Function;
 
 /**
  * The type Query executor.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public class QueryExecutor implements QueryHandler<Query> {
     /**
@@ -29,12 +25,6 @@ public class QueryExecutor implements QueryHandler<Query> {
         handles.add((Function<? super Query, ? super ViewModel>) function);
     }
 
-    /**
-     * Search view model.
-     *
-     * @param query the query
-     * @return the view model
-     */
     @Override
     public ViewModel search(Query query) {
         for (var consumer : handles) {

@@ -1,9 +1,9 @@
-package co.com.sofka.infraestructure.annotation;
+package co.com.sofka.business.annotation;
 
 import java.lang.annotation.*;
 
 /**
- * The interface Business Logic.
+ * The interface Business login.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)

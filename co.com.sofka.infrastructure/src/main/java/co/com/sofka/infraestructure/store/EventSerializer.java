@@ -8,10 +8,6 @@ import java.lang.reflect.Type;
 
 /**
  * The type Event serializer.
- *
- * @author Raul .A Alzate
- * @version 1.0
- * @since 2019 -03-01
  */
 public final class EventSerializer extends AbstractSerializer {
 
