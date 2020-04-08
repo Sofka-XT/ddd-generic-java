@@ -6,16 +6,16 @@ import co.com.sofka.domain.generic.Command;
 /**
  * The type Request command.
  */
-public final class RequestCommand implements UseCase.RequestValues {
+public final class RequestCommand<T extends Command> implements UseCase.RequestValues {
 
-    private final Command command;
+    private final T command;
 
     /**
      * Instantiates a new Request command.
      *
      * @param command the command
      */
-    public RequestCommand(Command command) {
+    public RequestCommand(T command) {
         this.command = command;
     }
 
@@ -24,7 +24,7 @@ public final class RequestCommand implements UseCase.RequestValues {
      *
      * @return the command
      */
-    public Command getCommand() {
+    public T getCommand() {
         return command;
     }
 }
