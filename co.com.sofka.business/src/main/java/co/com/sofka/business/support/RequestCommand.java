@@ -5,6 +5,8 @@ import co.com.sofka.domain.generic.Command;
 
 /**
  * The type Request command.
+ *
+ * @param <T> the type parameter
  */
 public final class RequestCommand<T extends Command> implements UseCase.RequestValues {
 
