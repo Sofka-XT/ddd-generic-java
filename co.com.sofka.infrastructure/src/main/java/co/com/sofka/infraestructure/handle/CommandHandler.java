@@ -8,11 +8,11 @@ import co.com.sofka.domain.generic.Command;
  * @param <T> the type parameter
  */
 @FunctionalInterface
-public interface CommandHandler<T extends Command> {
+public interface CommandHandler<T> {
     /**
      * Execute.
      *
      * @param command the command
      */
-    void execute(T command);
+    void execute(T args);
 }

@@ -2,7 +2,6 @@ package co.com.sofka.infraestructure.asyn;
 
 
 import co.com.sofka.business.asyn.ListenerEvent;
-import co.com.sofka.domain.generic.Identity;
 import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.bus.ErrorEvent;
 import co.com.sofka.infraestructure.bus.EventBus;
@@ -13,16 +12,17 @@ import co.com.sofka.infraestructure.store.StoredEvent;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.Flow;
+import java.util.logging.Logger;
 
 
 /**
  * The type Subscriber event.
- *
- * @param <T> the type parameter
  */
-public class SubscriberEvent<T extends Identity> implements Flow.Subscriber<DomainEvent> {
+public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
 
-    private final EventStoreRepository<T> repository;
+    private static Logger logger = Logger.getLogger(SubscriberEvent.class.getName());
+
+    private final EventStoreRepository repository;
     private final EventBus eventBus;
     private final ListenerEvent listenerEvent;
     private Flow.Subscription subscription;
@@ -34,7 +34,7 @@ public class SubscriberEvent<T extends Identity> implements Flow.Subscriber<Doma
      * @param eventBus      the event bus
      * @param listenerEvent the listener event
      */
-    public SubscriberEvent(EventStoreRepository<T> repository, EventBus eventBus, ListenerEvent listenerEvent) {
+    public SubscriberEvent(EventStoreRepository repository, EventBus eventBus, ListenerEvent listenerEvent) {
         this.repository = repository;
         this.eventBus = eventBus;
         this.listenerEvent = listenerEvent;
@@ -47,7 +47,7 @@ public class SubscriberEvent<T extends Identity> implements Flow.Subscriber<Doma
      * @param repository the repository
      * @param eventBus   the event bus
      */
-    public SubscriberEvent(EventStoreRepository<T> repository, EventBus eventBus) {
+    public SubscriberEvent(EventStoreRepository repository, EventBus eventBus) {
         this(repository, eventBus, null);
     }
 
@@ -57,7 +57,7 @@ public class SubscriberEvent<T extends Identity> implements Flow.Subscriber<Doma
      *
      * @param repository the repository
      */
-    public SubscriberEvent(EventStoreRepository<T> repository) {
+    public SubscriberEvent(EventStoreRepository repository) {
         this(repository, null, null);
     }
 
@@ -79,13 +79,22 @@ public class SubscriberEvent<T extends Identity> implements Flow.Subscriber<Doma
 
     @Override
     public final void onNext(DomainEvent event) {
-        Optional.ofNullable(eventBus).ifPresent(bus -> bus.publish(event));
+        logger.info("###### Process event -> "+event.type);
+        Optional.ofNullable(eventBus).ifPresent(bus -> {
+            bus.publish(event);
+            logger.info("Event published OK");
+        });
         Optional.ofNullable(repository).ifPresent(repo -> {
+            logger.info("Saving event for aggregate root ["+event.aggregateRootId()+"]");
             StoredEvent storedEvent = StoredEvent.wrapEvent(event);
-            repo.saveEvent((T) event.aggregateRootId(), storedEvent);
+            Optional.ofNullable(event.aggregateRootId()).ifPresent(aggregateId -> {
+                repo.saveEvent(aggregateId, storedEvent);
+                logger.info("Event saved OK");
+            });
         });
         Optional.ofNullable(listenerEvent).ifPresent(listener -> {
             listener.setSubscriber(this);
+            logger.info("Notify other case");
             listener.onNext(event);
         });
         subscription.request(1);
@@ -94,9 +103,11 @@ public class SubscriberEvent<T extends Identity> implements Flow.Subscriber<Doma
     @Override
     public void onError(Throwable throwable) {
         var cause = Optional.ofNullable(throwable.getCause())
-                .map(c -> Arrays.toString(c.getStackTrace())
-                        .substring(0, 250))
+                .map(c -> Arrays.toString(c.getStackTrace()).substring(0, 250))
                 .orElse("");
+
+        logger.info("Error on event ====> "+cause);
+
         Optional.ofNullable(eventBus).ifPresent(bus -> bus.publishError(new ErrorEvent(
                 504, cause,
                 throwable.getMessage())

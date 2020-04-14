@@ -53,4 +53,9 @@ public class Identity implements ValueObject<String> {
     public String value() {
         return uuid;
     }
+
+    @Override
+    public String toString() {
+        return uuid;
+    }
 }

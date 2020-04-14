@@ -2,6 +2,7 @@ package co.com.sofka.domain.generic;
 
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * The type Aggregate event.
@@ -40,7 +41,9 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
      * @return the behavior subscriber . change apply
      */
     protected BehaviorSubscriber.ChangeApply appendChange(DomainEvent event) {
-        event.setAggregateRootId(entityId);
+        Optional.ofNullable(entityId).ifPresent(value -> {
+            event.setAggregateRootId(value.value());
+        });
         return behaviorSubscriber.appendChange(event);
     }
 

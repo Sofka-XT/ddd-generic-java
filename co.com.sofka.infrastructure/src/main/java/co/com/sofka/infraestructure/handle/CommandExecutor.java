@@ -1,41 +1,48 @@
 package co.com.sofka.infraestructure.handle;
 
-import co.com.sofka.domain.generic.Command;
+import co.com.sofka.business.asyn.UseCaseExecutor;
 
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 
 /**
  * The type Command executor.
  */
-public abstract class CommandExecutor implements CommandHandler<Command> {
+public abstract class CommandExecutor implements CommandHandler<Map<String, String>> {
 
+    private static Logger logger = Logger.getLogger(CommandExecutor.class.getName());
     /**
      * The Handles.
      */
-    protected Set<Consumer<? super Command>> handles = new HashSet<>();
+    protected Map<String, Consumer<Map<String, String>>> handles = new ConcurrentHashMap<>();
 
     /**
-     * Add.
+     * Put.
      *
      * @param consumer the consumer
      */
-    protected void add(Consumer<? extends Command> consumer) {
-        handles.add((Consumer<? super Command>) consumer);
+    protected void put(String type, Consumer<Map<String, String>> consumer) {
+        handles.put(type, consumer);
     }
 
     @Override
-    public final void execute(Command command) {
-        for (var consumer : handles) {
-            try {
-                consumer.accept(command);
-                return;
-            } catch (ClassCastException ignored) {
-            }
+    public final void execute(Map<String, String> args) {
+        logger.info("####### Executor Command #######");
+        var type = args.getOrDefault("type", null);
+        if(!handles.containsKey(type)){
+            throw new ExecutionNoFound(type);
         }
-        throw new ExecutionNoFound(command);
+        var consumer = handles.get(type);
+        if(args.containsKey("aggregateId")){
+            ((UseCaseExecutor)consumer).withAggregateId(args.get("aggregateId"));
+        }
+        if(args.containsKey("aggregateRootId")){
+            ((UseCaseExecutor)consumer).withAggregateId(args.get("aggregateRootId"));
+        }
+        consumer.accept(args);
     }
 }

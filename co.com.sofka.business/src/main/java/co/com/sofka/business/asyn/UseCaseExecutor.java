@@ -3,10 +3,10 @@ package co.com.sofka.business.asyn;
 import co.com.sofka.business.repository.DomainEventRepository;
 import co.com.sofka.domain.generic.Command;
 import co.com.sofka.domain.generic.DomainEvent;
-import co.com.sofka.domain.generic.Identity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
@@ -14,13 +14,12 @@ import java.util.function.Consumer;
 /**
  * The type Use case executor.
  *
- * @param <T> the type parameter
  */
-public abstract class UseCaseExecutor<T extends Command> implements Consumer<T> {
+public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     private Flow.Subscriber<? super DomainEvent> subscriberEvent;
     private List<DomainEvent> domainEvents;
-    private Optional<DomainEventRepository> repository;
-    private Optional<Identity> aggregateId;
+    private DomainEventRepository repository;
+    private String aggregateId;
 
     /**
      * With subscriber event use case executor.
@@ -28,7 +27,7 @@ public abstract class UseCaseExecutor<T extends Command> implements Consumer<T> 
      * @param subscriberEvent the subscriber event
      * @return the use case executor
      */
-    public UseCaseExecutor<T> withSubscriberEvent(Flow.Subscriber<? super DomainEvent> subscriberEvent) {
+    public UseCaseExecutor withSubscriberEvent(Flow.Subscriber<? super DomainEvent> subscriberEvent) {
         this.subscriberEvent = subscriberEvent;
         return this;
     }
@@ -39,7 +38,7 @@ public abstract class UseCaseExecutor<T extends Command> implements Consumer<T> 
      * @param domainEvents the domain events
      * @return the use case executor
      */
-    public UseCaseExecutor<T> withDomainEvents(List<DomainEvent> domainEvents) {
+    public UseCaseExecutor withDomainEvents(List<DomainEvent> domainEvents) {
         this.domainEvents = domainEvents;
         return this;
     }
@@ -50,8 +49,8 @@ public abstract class UseCaseExecutor<T extends Command> implements Consumer<T> 
      * @param repository the repository
      * @return the use case executor
      */
-    public UseCaseExecutor<T> withDomainEventRepo(DomainEventRepository repository) {
-        this.repository = Optional.of(repository);
+    public UseCaseExecutor withDomainEventRepo(DomainEventRepository repository) {
+        this.repository = repository;
         return this;
     }
 
@@ -61,8 +60,8 @@ public abstract class UseCaseExecutor<T extends Command> implements Consumer<T> 
      * @param aggregateId the aggregate id
      * @return the use case executor
      */
-    public UseCaseExecutor<T> withAggregateId(Identity aggregateId) {
-        this.aggregateId = Optional.of(aggregateId);
+    public UseCaseExecutor withAggregateId(String aggregateId) {
+        this.aggregateId = aggregateId;
         return this;
     }
 
@@ -80,9 +79,9 @@ public abstract class UseCaseExecutor<T extends Command> implements Consumer<T> 
      *
      * @return the list
      */
-    public List<DomainEvent> domainEvents() {
-        return  Optional.ofNullable(domainEvents)
-                .orElse(repository.orElseGet(() -> aggregateRootId -> new ArrayList<>())
-                        .getEventsBy(aggregateId.orElse(null)));
+    public List<DomainEvent> getDomainEvents() {
+        var repo = Optional.ofNullable(repository).orElseGet(() -> aggregateRootId -> new ArrayList<>());
+        var id = Optional.ofNullable(aggregateId).orElse(null);
+        return  Optional.ofNullable(domainEvents).orElse(repo.getEventsBy(id));
     }
 }

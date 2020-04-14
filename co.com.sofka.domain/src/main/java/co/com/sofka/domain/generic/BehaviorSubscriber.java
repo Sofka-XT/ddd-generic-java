@@ -51,9 +51,11 @@ public class BehaviorSubscriber {
         observables.forEach(consumer -> {
             try {
                 consumer.accept(domainEvent);
-                var map = versions.get(domainEvent.type);
-                long version = nextVersion(domainEvent, map);
-                domainEvent.setVersionType(version);
+                if(domainEvent instanceof Incremental){
+                    var map = versions.get(domainEvent.type);
+                    long version = nextVersion(domainEvent, map);
+                    domainEvent.setVersionType(version);
+                }
             } catch (ClassCastException ignored) {
             }
         });
