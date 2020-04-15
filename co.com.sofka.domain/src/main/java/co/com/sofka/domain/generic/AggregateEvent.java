@@ -41,9 +41,10 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
      * @return the behavior subscriber . change apply
      */
     protected BehaviorSubscriber.ChangeApply appendChange(DomainEvent event) {
-        Optional.ofNullable(entityId).ifPresent(value -> {
-            event.setAggregateRootId(value.value());
-        });
+        var nameClass = entityId.getClass().getSimpleName().toLowerCase();
+        var aggregate = nameClass.replaceAll("(identity|id)","");
+        event.setAggregateName(aggregate);
+        event.setAggregateRootId(entityId.value());
         return behaviorSubscriber.appendChange(event);
     }
 

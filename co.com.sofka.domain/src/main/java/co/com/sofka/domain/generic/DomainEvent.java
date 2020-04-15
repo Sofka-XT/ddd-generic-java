@@ -23,6 +23,7 @@ public abstract class DomainEvent implements Serializable {
      */
     public final String type;
     private String identity;
+    private String aggregate;
     private Long versionType;
 
     /**
@@ -34,6 +35,7 @@ public abstract class DomainEvent implements Serializable {
     public DomainEvent(final String type, String identity) {
         this.type = type;
         this.identity = identity;
+        this.aggregate = "default";
         this.when = Instant.now();
         this.uuid = UUID.randomUUID();
         this.versionType = 1L;
@@ -81,7 +83,24 @@ public abstract class DomainEvent implements Serializable {
      * @param identity the identity
      */
     public void setAggregateRootId(String identity) {
-        Objects.requireNonNull(identity, "The identity cannot be a value null");
-        this.identity = identity;
+        this.identity = Objects.requireNonNull(identity, "The identity cannot be a value null");
+    }
+
+    /**
+     * set aggregate name
+     *
+     * @param aggregate the aggregate
+     */
+    public void setAggregateName(String aggregate){
+        this.aggregate = aggregate;
+    }
+
+    /**
+     * get aggregate name
+     *
+     * @return the aggregate name
+     */
+    public String getAggregate(){
+        return aggregate;
     }
 }

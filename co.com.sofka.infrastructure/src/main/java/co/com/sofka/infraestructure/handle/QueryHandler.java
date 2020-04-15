@@ -11,7 +11,7 @@ import java.util.List;
  *
  * @param <Q> the type parameter
  */
-public interface QueryHandler<Q extends Query> {
+public interface QueryHandler<Q> {
     /**
      * Search view model.
      *

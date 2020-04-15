@@ -12,6 +12,7 @@ import co.com.sofka.infraestructure.store.StoredEvent;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.Flow;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -80,18 +81,22 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
     @Override
     public final void onNext(DomainEvent event) {
         logger.info("###### Process event -> "+event.type);
+
         Optional.ofNullable(eventBus).ifPresent(bus -> {
-            bus.publish(event);
+            var exchange = event.type.substring(0, event.type.lastIndexOf("."));
+            bus.publish(exchange, event);
             logger.info("Event published OK");
         });
+
         Optional.ofNullable(repository).ifPresent(repo -> {
             logger.info("Saving event for aggregate root ["+event.aggregateRootId()+"]");
             StoredEvent storedEvent = StoredEvent.wrapEvent(event);
             Optional.ofNullable(event.aggregateRootId()).ifPresent(aggregateId -> {
-                repo.saveEvent(aggregateId, storedEvent);
-                logger.info("Event saved OK");
+                repo.saveEvent(event.getAggregate(), aggregateId, storedEvent);
+                logger.info("Event saved with store specification of --> "+event.getAggregate());
             });
         });
+
         Optional.ofNullable(listenerEvent).ifPresent(listener -> {
             listener.setSubscriber(this);
             logger.info("Notify other case");
@@ -106,7 +111,7 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
                 .map(c -> Arrays.toString(c.getStackTrace()).substring(0, 250))
                 .orElse("");
 
-        logger.info("Error on event ====> "+cause);
+        logger.log(Level.SEVERE,"Error on event ====> "+cause);
 
         Optional.ofNullable(eventBus).ifPresent(bus -> bus.publishError(new ErrorEvent(
                 504, cause,

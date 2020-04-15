@@ -14,22 +14,19 @@ public interface EventStoreRepository {
      * Gets events by.
      *
      * @param aggregateRootId the aggregate root id
+     * @param aggregateName the aggregate name
+     *
      * @return the events by
      */
-    List<DomainEvent> getEventsBy(String aggregateRootId);
+    List<DomainEvent> getEventsBy(String aggregateName, String aggregateRootId);
 
     /**
      * Save event.
      *
+     * @param aggregateName the aggregate name
      * @param aggregateRootId the aggregate root id
      * @param storedEvent     the stored event
      */
-    void saveEvent(String aggregateRootId, StoredEvent storedEvent);
+    void saveEvent(String aggregateName, String aggregateRootId, StoredEvent storedEvent);
 
-    /**
-     * Select aggregate
-     *
-     * @param aggregate
-     */
-    void selectAggregate(String aggregate);
 }

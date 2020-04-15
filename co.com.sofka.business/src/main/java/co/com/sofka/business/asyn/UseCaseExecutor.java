@@ -1,7 +1,6 @@
 package co.com.sofka.business.asyn;
 
 import co.com.sofka.business.repository.DomainEventRepository;
-import co.com.sofka.domain.generic.Command;
 import co.com.sofka.domain.generic.DomainEvent;
 
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     private List<DomainEvent> domainEvents;
     private DomainEventRepository repository;
     private String aggregateId;
+    private String aggregateName;
 
     /**
      * With subscriber event use case executor.
@@ -66,6 +66,18 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     }
 
     /**
+     * With aggregate id use case executor.
+     *
+     * @param aggregateName the aggregate name
+     * @return the use case executor
+     */
+    public UseCaseExecutor withAggregateName(String aggregateName) {
+        this.aggregateName = aggregateName;
+        return this;
+    }
+
+
+    /**
      * Subscriber event flow . subscriber.
      *
      * @return the flow . subscriber
@@ -80,8 +92,9 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
      * @return the list
      */
     public List<DomainEvent> getDomainEvents() {
-        var repo = Optional.ofNullable(repository).orElseGet(() -> aggregateRootId -> new ArrayList<>());
+        var repo = Optional.ofNullable(repository).orElseGet(() -> (aggregateName, aggregateRootId) -> new ArrayList<>());
         var id = Optional.ofNullable(aggregateId).orElse(null);
-        return  Optional.ofNullable(domainEvents).orElse(repo.getEventsBy(id));
+        var name = Optional.ofNullable(aggregateName).orElse(null);
+        return  Optional.ofNullable(domainEvents).orElse(repo.getEventsBy(name, id));
     }
 }

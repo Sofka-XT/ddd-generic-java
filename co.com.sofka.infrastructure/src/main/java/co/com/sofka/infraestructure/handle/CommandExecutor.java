@@ -31,18 +31,28 @@ public abstract class CommandExecutor implements CommandHandler<Map<String, Stri
 
     @Override
     public final void execute(Map<String, String> args) {
-        logger.info("####### Executor Command #######");
-        var type = args.getOrDefault("type", null);
+
+        if(!args.containsKey("eventType")){
+            throw new IllegalArgumentException("The eventType of the aggregate must be specified");
+        }
+        var type = args.get("eventType");
+
         if(!handles.containsKey(type)){
             throw new ExecutionNoFound(type);
         }
+
+        executeCommand(args, type);
+    }
+
+    private void executeCommand(Map<String, String> args, String type) {
+        logger.info("####### Executor Command #######");
         var consumer = handles.get(type);
+        var useCaseExecutor = (UseCaseExecutor)consumer;
+
         if(args.containsKey("aggregateId")){
-            ((UseCaseExecutor)consumer).withAggregateId(args.get("aggregateId"));
+            useCaseExecutor.withAggregateId(args.get("aggregateId"));
         }
-        if(args.containsKey("aggregateRootId")){
-            ((UseCaseExecutor)consumer).withAggregateId(args.get("aggregateRootId"));
-        }
+
         consumer.accept(args);
     }
 }
