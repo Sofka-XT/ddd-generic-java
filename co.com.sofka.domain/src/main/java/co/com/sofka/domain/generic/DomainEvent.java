@@ -2,6 +2,8 @@ package co.com.sofka.domain.generic;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -20,7 +22,8 @@ public abstract class DomainEvent implements Serializable {
      * The Type.
      */
     public final String type;
-    private transient Identity identity;
+    private String identity;
+    private String aggregate;
     private Long versionType;
 
     /**
@@ -29,9 +32,10 @@ public abstract class DomainEvent implements Serializable {
      * @param type     the type
      * @param identity the identity
      */
-    public DomainEvent(final String type, Identity identity) {
+    public DomainEvent(final String type, String identity) {
         this.type = type;
         this.identity = identity;
+        this.aggregate = "default";
         this.when = Instant.now();
         this.uuid = UUID.randomUUID();
         this.versionType = 1L;
@@ -69,7 +73,7 @@ public abstract class DomainEvent implements Serializable {
      *
      * @return the identity
      */
-    public Identity aggregateRootId() {
+    public String aggregateRootId() {
         return identity;
     }
 
@@ -78,7 +82,25 @@ public abstract class DomainEvent implements Serializable {
      *
      * @param identity the identity
      */
-    public void setAggregateRootId(Identity identity) {
-        this.identity = identity;
+    public void setAggregateRootId(String identity) {
+        this.identity = Objects.requireNonNull(identity, "The identity cannot be a value null");
+    }
+
+    /**
+     * set aggregate name
+     *
+     * @param aggregate the aggregate
+     */
+    public void setAggregateName(String aggregate){
+        this.aggregate = aggregate;
+    }
+
+    /**
+     * get aggregate name
+     *
+     * @return the aggregate name
+     */
+    public String getAggregate(){
+        return aggregate;
     }
 }

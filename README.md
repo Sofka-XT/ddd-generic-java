@@ -34,7 +34,7 @@ Generic dependency for ddd Java - [https://mvnrepository.com/artifact/co.com.sof
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>domain-driven-design</artifactId>
-       <version>0.3.5</version>
+       <version>0.4.0</version>
        <type>pom</type>
      </dependency>
 ```

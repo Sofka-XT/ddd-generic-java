@@ -1,41 +1,58 @@
 package co.com.sofka.infraestructure.handle;
 
-import co.com.sofka.domain.generic.Command;
+import co.com.sofka.business.asyn.UseCaseExecutor;
 
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 
 /**
  * The type Command executor.
  */
-public abstract class CommandExecutor implements CommandHandler<Command> {
+public abstract class CommandExecutor implements CommandHandler<Map<String, String>> {
 
+    private static Logger logger = Logger.getLogger(CommandExecutor.class.getName());
     /**
      * The Handles.
      */
-    protected Set<Consumer<? super Command>> handles = new HashSet<>();
+    protected Map<String, Consumer<Map<String, String>>> handles = new ConcurrentHashMap<>();
 
     /**
-     * Add.
+     * Put.
      *
      * @param consumer the consumer
      */
-    protected void add(Consumer<? extends Command> consumer) {
-        handles.add((Consumer<? super Command>) consumer);
+    protected void put(String type, Consumer<Map<String, String>> consumer) {
+        handles.put(type, consumer);
     }
 
     @Override
-    public final void execute(Command command) {
-        for (var consumer : handles) {
-            try {
-                consumer.accept(command);
-                return;
-            } catch (ClassCastException ignored) {
-            }
+    public final void execute(Map<String, String> args) {
+
+        if(!args.containsKey("eventType")){
+            throw new IllegalArgumentException("The eventType of the aggregate must be specified");
         }
-        throw new ExecutionNoFound(command);
+        var type = args.get("eventType");
+
+        if(!handles.containsKey(type)){
+            throw new ExecutionNoFound(type);
+        }
+
+        executeCommand(args, type);
+    }
+
+    private void executeCommand(Map<String, String> args, String type) {
+        logger.info("####### Executor Command #######");
+        var consumer = handles.get(type);
+        var useCaseExecutor = (UseCaseExecutor)consumer;
+
+        if(args.containsKey("aggregateId")){
+            useCaseExecutor.withAggregateId(args.get("aggregateId"));
+        }
+
+        consumer.accept(args);
     }
 }

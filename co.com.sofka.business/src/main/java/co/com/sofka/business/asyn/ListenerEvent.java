@@ -19,7 +19,7 @@ import java.util.concurrent.Flow;
 /**
  * The type Listener event.
  */
-public abstract class ListenerEvent implements Flow.Subscriber<DomainEvent> {
+public class ListenerEvent implements Flow.Subscriber<DomainEvent> {
 
     private final Set<UseCase<? extends UseCase.RequestEvent, ? extends ResponseEvents>> useCases;
     private Flow.Subscription subscription;
@@ -83,13 +83,14 @@ public abstract class ListenerEvent implements Flow.Subscriber<DomainEvent> {
             Method m = useCase.getClass().getDeclaredMethods()[0];
             if (target.equals(m.getName())) {
                 Class<?>[] params = m.getParameterTypes();
-                matchWithAEvent = isMatchWithAEvent(domainEvent, matchWithAEvent, m, params);
+                matchWithAEvent = isMatchWithAEvent(domainEvent, m, params);
             }
             return matchWithAEvent;
         };
     }
 
-    private boolean isMatchWithAEvent(DomainEvent domainEvent, boolean matchWithAEvent, Method m, Class<?>[] params) {
+    private boolean isMatchWithAEvent(DomainEvent domainEvent, Method m, Class<?>[] params) {
+        boolean matchWithAEvent = false;
         if (params[0].getCanonicalName().equals(TriggeredEvent.class.getCanonicalName())) {
             Type returnType = m.getGenericParameterTypes()[0];
             if (returnType instanceof ParameterizedType) {

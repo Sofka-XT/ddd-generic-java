@@ -1,4 +1,4 @@
-package co.com.sofka.infraestructure.repository;
+package co.com.sofka.business.repository;
 
 import co.com.sofka.domain.generic.Query;
 
@@ -8,9 +8,8 @@ import java.util.stream.Stream;
 /**
  * The interface Query repository.
  *
- * @param <E> the type parameter
  */
-public interface QueryRepository<E> {
+public interface QueryRepository {
     /**
      * The enum Sort.
      */
@@ -30,7 +29,7 @@ public interface QueryRepository<E> {
      *
      * @return the stream
      */
-    default Stream<E> findAll() {
+    default Stream findAll() {
         return Stream.empty();
     }
 
@@ -40,7 +39,7 @@ public interface QueryRepository<E> {
      * @param sort the sort
      * @return the stream
      */
-    default Stream<E> findAll(Sort sort) {
+    default Stream findAll(Sort sort) {
         return Stream.empty();
     }
 
@@ -50,7 +49,7 @@ public interface QueryRepository<E> {
      * @param query the query
      * @return the stream
      */
-    default Stream<E> find(Query query) {
+    default Stream find(Query query) {
         return Stream.empty();
     }
 
@@ -61,7 +60,7 @@ public interface QueryRepository<E> {
      * @param sort  the sort
      * @return the stream
      */
-    default Stream<E> find(Query query, Sort sort) {
+    default Stream find(Query query, Sort sort) {
         return Stream.empty();
     }
 
@@ -71,7 +70,7 @@ public interface QueryRepository<E> {
      * @param query the query
      * @return the optional
      */
-    default Optional<E> get(Query query) {
+    default Optional get(Query query) {
         return Optional.empty();
     }
 }

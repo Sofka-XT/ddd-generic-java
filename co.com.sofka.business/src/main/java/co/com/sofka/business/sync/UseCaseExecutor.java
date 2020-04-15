@@ -13,7 +13,7 @@ import java.util.function.Function;
  * @param <T> the type parameter
  * @param <R> the type parameter
  */
-public abstract class UseCaseExecutor<T extends Command, R extends UseCase.ResponseValues> implements Function<T, R> {
+public abstract class UseCaseExecutor<T, R extends UseCase.ResponseValues> implements Function<T, R> {
     private List<DomainEvent> domainEvents;
 
     /**

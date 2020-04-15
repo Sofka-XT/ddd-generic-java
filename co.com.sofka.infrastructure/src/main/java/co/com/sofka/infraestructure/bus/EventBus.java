@@ -9,14 +9,15 @@ public interface EventBus {
     /**
      * Publish.
      *
+     * @param exchange the exchange name
      * @param event the event
      */
-    void publish(final DomainEvent event);
+    void publish(String exchange, DomainEvent event);
 
     /**
      * Publish error.
      *
      * @param errorEvent the error event
      */
-    void publishError(final ErrorEvent errorEvent);
+    void publishError(ErrorEvent errorEvent);
 }
