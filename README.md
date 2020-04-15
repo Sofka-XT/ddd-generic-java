@@ -62,7 +62,7 @@ Si se require dividir los conceptos se puede usar de forma independeiente de la 
        <version>0.5.0</version>
      </dependency>
 ```
-> Aun esta en fase de desarrollo y de validación, trabajar con la versión 0.2 para experimentar y poner en practica los conceptos de DDD, aun no se recomienda llevarlo a producción. 
+> Aun esta en fase de desarrollo y de validación, trabajar con la versión 0.5 para experimentar y poner en practica los conceptos de DDD, aun no se recomienda llevarlo a producción. 
 
 ## Conceptos e implementación 
 
