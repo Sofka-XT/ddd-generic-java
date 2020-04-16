@@ -2,7 +2,6 @@ package co.com.sofka.business.sync;
 
 import co.com.sofka.business.repository.QueryMapperRepository;
 import co.com.sofka.business.repository.QueryRepository;
-import co.com.sofka.domain.generic.Query;
 
 import java.util.Map;
 import java.util.function.Function;

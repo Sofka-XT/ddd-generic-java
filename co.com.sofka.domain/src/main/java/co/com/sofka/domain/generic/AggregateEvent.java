@@ -2,7 +2,6 @@ package co.com.sofka.domain.generic;
 
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * The type Aggregate event.
