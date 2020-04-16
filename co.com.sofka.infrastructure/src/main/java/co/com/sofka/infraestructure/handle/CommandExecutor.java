@@ -32,10 +32,10 @@ public abstract class CommandExecutor implements CommandHandler<Map<String, Stri
     @Override
     public final void execute(Map<String, String> args) {
 
-        if(!args.containsKey("eventType")){
-            throw new IllegalArgumentException("The eventType of the aggregate must be specified");
+        if(!args.containsKey("commandType")){
+            throw new IllegalArgumentException("The commandType of the aggregate must be specified");
         }
-        var type = args.get("eventType");
+        var type = args.get("commandType");
 
         if(!handles.containsKey(type)){
             throw new ExecutionNoFound(type);
