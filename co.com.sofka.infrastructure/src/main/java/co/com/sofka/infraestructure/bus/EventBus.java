@@ -1,6 +1,7 @@
 package co.com.sofka.infraestructure.bus;
 
 import co.com.sofka.domain.generic.DomainEvent;
+import co.com.sofka.infraestructure.event.ErrorEvent;
 
 /**
  * The interface Event bus.

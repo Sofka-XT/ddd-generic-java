@@ -23,6 +23,7 @@ public abstract class CommandExecutor implements CommandHandler<Map<String, Stri
     /**
      * Put.
      *
+     * @param type the type of the command
      * @param consumer the consumer
      */
     protected void put(String type, Consumer<Map<String, String>> consumer) {
@@ -53,6 +54,7 @@ public abstract class CommandExecutor implements CommandHandler<Map<String, Stri
             useCaseExecutor.withAggregateId(args.get("aggregateId"));
         }
 
-        consumer.accept(args);
+        useCaseExecutor.accept(args);
+        useCaseExecutor.run();
     }
 }

@@ -1,7 +1,7 @@
-package co.com.sofka.infraestructure.store;
+package co.com.sofka.infraestructure.event;
 
+import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.AbstractSerializer;
-import co.com.sofka.infraestructure.bus.ErrorEvent;
 
 import java.lang.reflect.Type;
 
@@ -9,11 +9,11 @@ import java.lang.reflect.Type;
 /**
  * The type Event serializer.
  */
-public final class EventErrorSerializer extends AbstractSerializer {
+public final class EventSerializer extends AbstractSerializer {
 
-    private static EventErrorSerializer eventSerializer;
+    private static EventSerializer eventSerializer;
 
-    private EventErrorSerializer() {
+    private EventSerializer() {
         super();
     }
 
@@ -22,11 +22,11 @@ public final class EventErrorSerializer extends AbstractSerializer {
      *
      * @return the event serializer
      */
-    public static synchronized EventErrorSerializer instance() {
-        if (EventErrorSerializer.eventSerializer == null) {
-            EventErrorSerializer.eventSerializer = new EventErrorSerializer();
+    public static synchronized EventSerializer instance() {
+        if (EventSerializer.eventSerializer == null) {
+            EventSerializer.eventSerializer = new EventSerializer();
         }
-        return EventErrorSerializer.eventSerializer;
+        return EventSerializer.eventSerializer;
     }
 
 
@@ -38,7 +38,7 @@ public final class EventErrorSerializer extends AbstractSerializer {
      * @param aType          the a type
      * @return the t
      */
-    public <T extends ErrorEvent> T deserialize(String aSerialization, final Class<?> aType) {
+    public <T extends DomainEvent> T deserialize(String aSerialization, final Class<?> aType) {
         return gson.fromJson(aSerialization, (Type) aType);
     }
 
@@ -48,7 +48,7 @@ public final class EventErrorSerializer extends AbstractSerializer {
      * @param object the object
      * @return the string
      */
-    public String serialize(ErrorEvent object) {
+    public String serialize(DomainEvent object) {
         return gson.toJson(object);
     }
 

@@ -5,7 +5,7 @@
   <artifactId>domain-driven-design</artifactId>
   <description>Style project DDD as Sofka Make it</description>
   <packaging>pom</packaging>
-  <version>0.6.0</version>
+  <version>0.6.5</version>
   <name>ddd-generic-java</name>
   <url>https://sofka.com.co</url>
   <licenses>
@@ -18,18 +18,6 @@
     <developer>
       <name>Raul A. Alzate</name>
       <email>raul.alzate@sofka.com.co</email>
-      <organization>Sofka</organization>
-      <organizationUrl>https://www.sofka.com.co</organizationUrl>
-    </developer>
-    <developer>
-      <name>Juan Pablo Mariaca</name>
-      <email>juan.mariaca@sofka.com.co</email>
-      <organization>Sofka</organization>
-      <organizationUrl>https://www.sofka.com.co</organizationUrl>
-    </developer>
-    <developer>
-      <name>Lisbey Urrea</name>
-      <email>lisbey.urrea@sofka.com.co</email>
       <organization>Sofka</organization>
       <organizationUrl>https://www.sofka.com.co</organizationUrl>
     </developer>
@@ -56,6 +44,7 @@
     <module>co.com.sofka.domain</module>
     <module>co.com.sofka.business</module>
     <module>co.com.sofka.infrastructure</module>
+    <module>co.com.sofka.application</module>
   </modules>
 
   <properties>

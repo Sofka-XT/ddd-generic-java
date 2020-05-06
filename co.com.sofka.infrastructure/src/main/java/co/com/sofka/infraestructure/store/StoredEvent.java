@@ -2,6 +2,7 @@ package co.com.sofka.infraestructure.store;
 
 import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.DeserializeEventException;
+import co.com.sofka.infraestructure.event.EventSerializer;
 
 import java.util.Date;
 

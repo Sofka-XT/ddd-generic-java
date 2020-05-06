@@ -12,7 +12,7 @@ public interface CommandHandler<T> {
     /**
      * Execute.
      *
-     * @param command the command
+     * @param args the command
      */
     void execute(T args);
 }

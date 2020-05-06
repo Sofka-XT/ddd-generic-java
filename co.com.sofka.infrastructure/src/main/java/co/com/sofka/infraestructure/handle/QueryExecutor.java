@@ -22,6 +22,7 @@ public class QueryExecutor implements QueryHandler<Map<String, String>> {
     /**
      * Add.
      *
+     * @param queryPath the path of the query route
      * @param function the function
      */
     protected void put(String queryPath, Function<Map<String, String>, ?> function) {

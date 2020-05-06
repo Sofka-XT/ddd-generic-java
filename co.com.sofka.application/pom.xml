@@ -8,17 +8,18 @@
         <version>0.6.5</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>business</artifactId>
+    <artifactId>application</artifactId>
     <packaging>jar</packaging>
-
     <dependencies>
+    <dependency>
+        <groupId>co.com.sofka</groupId>
+        <artifactId>infrastructure</artifactId>
+        <version>0.6.5</version>
+    </dependency>
         <dependency>
-            <groupId>co.com.sofka</groupId>
-            <artifactId>domain</artifactId>
-            <version>0.6.5</version>
-            <scope>compile</scope>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.8.28</version>
         </dependency>
     </dependencies>
-
-
 </project>

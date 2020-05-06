@@ -15,7 +15,9 @@ public interface QueryHandler<Q> {
     /**
      * Search view model.
      *
-     * @param query the query
+     * @param path the query
+     * @param query object
+     *
      * @return the view model
      */
     ViewModel get(String path, Q query);
@@ -23,7 +25,8 @@ public interface QueryHandler<Q> {
     /**
      * List view model
      *
-     * @param query the query
+     * @param path the query
+     * @param query object
      * @return the list view model
      */
     List<ViewModel> find(String path, Q query);

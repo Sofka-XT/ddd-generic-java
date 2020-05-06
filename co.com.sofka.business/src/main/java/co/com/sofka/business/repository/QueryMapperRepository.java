@@ -6,10 +6,10 @@ import co.com.sofka.domain.generic.ViewModel;
 
 import java.util.List;
 
-public interface QueryMapperRepository<T> {
-    ApplyQuery<T>  getDataMapped(String collection, Class<?> classViewModel);
-    interface ApplyQuery<T>{
-        <Q extends Query> T applyAsList(Q query);
-        <Q extends Query> T applyAsElement(Q query);
+public interface QueryMapperRepository {
+    ApplyQuery  getDataMapped(String collection, Class<?> classViewModel);
+    interface ApplyQuery{
+        <Q extends Query> List<ViewModel> applyAsList(Q query);
+        <Q extends Query> ViewModel applyAsElement(Q query);
     }
 }

@@ -9,20 +9,19 @@ import java.util.function.Function;
 /**
  * Query executor
  *
- * @param <Q>
  * @param <T>
  */
 public abstract class ViewModelExecutor<T> implements Function<Map<String, String>, T> {
 
-    private QueryMapperRepository<T> queryMapperRepository;
-    private QueryRepository queryRepository;
+    private QueryMapperRepository queryMapperRepository;
+    private QueryRepository<T> queryRepository;
 
     /**
      * Witch query mapper repository
      *
-     * @param queryMapperRepository
+     * @param queryMapperRepository the query mapper repository
      */
-    public ViewModelExecutor<T> witchQueryMapperRepository(QueryMapperRepository<T> queryMapperRepository){
+    public ViewModelExecutor<T> witchQueryMapperRepository(QueryMapperRepository queryMapperRepository){
         this.queryMapperRepository = queryMapperRepository;
         return this;
     }
@@ -30,9 +29,9 @@ public abstract class ViewModelExecutor<T> implements Function<Map<String, Strin
     /**
      * Witch query repository
      *
-     * @param queryRepository
+     * @param queryRepository the query repository
      */
-    public ViewModelExecutor<T> witchQueryRepository(QueryRepository queryRepository){
+    public ViewModelExecutor<T> witchQueryRepository(QueryRepository<T> queryRepository){
         this.queryRepository = queryRepository;
         return this;
     }
@@ -40,18 +39,18 @@ public abstract class ViewModelExecutor<T> implements Function<Map<String, Strin
     /**
      * query mapper repository
      *
-     * @return
+     * @return the query mapper repository
      */
-    public QueryMapperRepository<T> queryMapperRepository() {
+    public QueryMapperRepository queryMapperRepository() {
         return queryMapperRepository;
     }
 
     /**
      * Query repository
      *
-     * @return
+     * @return the query repository
      */
-    public QueryRepository queryRepository() {
+    public QueryRepository<T> queryRepository() {
         return queryRepository;
     }
 

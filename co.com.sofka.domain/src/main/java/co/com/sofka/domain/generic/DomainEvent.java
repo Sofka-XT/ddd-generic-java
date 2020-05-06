@@ -99,7 +99,7 @@ public abstract class DomainEvent implements Serializable {
      *
      * @return the aggregate name
      */
-    public String getAggregate(){
+    public String getAggregateName(){
         return aggregate;
     }
 }

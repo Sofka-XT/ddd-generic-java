@@ -1,6 +1,5 @@
-package co.com.sofka.infraestructure.store;
+package co.com.sofka.infraestructure.event;
 
-import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.AbstractSerializer;
 
 import java.lang.reflect.Type;
@@ -9,11 +8,11 @@ import java.lang.reflect.Type;
 /**
  * The type Event serializer.
  */
-public final class EventSerializer extends AbstractSerializer {
+public final class ErrorEventSerializer extends AbstractSerializer {
 
-    private static EventSerializer eventSerializer;
+    private static ErrorEventSerializer eventSerializer;
 
-    private EventSerializer() {
+    private ErrorEventSerializer() {
         super();
     }
 
@@ -22,11 +21,11 @@ public final class EventSerializer extends AbstractSerializer {
      *
      * @return the event serializer
      */
-    public static synchronized EventSerializer instance() {
-        if (EventSerializer.eventSerializer == null) {
-            EventSerializer.eventSerializer = new EventSerializer();
+    public static synchronized ErrorEventSerializer instance() {
+        if (ErrorEventSerializer.eventSerializer == null) {
+            ErrorEventSerializer.eventSerializer = new ErrorEventSerializer();
         }
-        return EventSerializer.eventSerializer;
+        return ErrorEventSerializer.eventSerializer;
     }
 
 
@@ -38,7 +37,7 @@ public final class EventSerializer extends AbstractSerializer {
      * @param aType          the a type
      * @return the t
      */
-    public <T extends DomainEvent> T deserialize(String aSerialization, final Class<?> aType) {
+    public <T extends ErrorEvent> T deserialize(String aSerialization, final Class<?> aType) {
         return gson.fromJson(aSerialization, (Type) aType);
     }
 
@@ -48,7 +47,7 @@ public final class EventSerializer extends AbstractSerializer {
      * @param object the object
      * @return the string
      */
-    public String serialize(DomainEvent object) {
+    public String serialize(ErrorEvent object) {
         return gson.toJson(object);
     }
 
