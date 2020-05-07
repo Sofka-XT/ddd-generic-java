@@ -8,6 +8,7 @@ import co.com.sofka.infraestructure.asyn.SubscriberEvent;
 import co.com.sofka.infraestructure.handle.CommandExecutor;
 import co.com.sofka.infraestructure.repository.EventStoreRepository;
 import io.github.classgraph.*;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -16,21 +17,25 @@ import java.util.logging.Logger;
 
 /**
  * Application command executor
+ * <p>
+ * This class is implemented to execute the commands from a controller.
+ * <p>
+ * Use this class within your Rest Controller or your service to execute a use case.
  */
 public class ApplicationCommandExecutor extends CommandExecutor {
-    private static final  Logger logger = Logger.getLogger(ApplicationCommandExecutor.class.getName());
+    private static final Logger logger = Logger.getLogger(ApplicationCommandExecutor.class.getName());
     private final SubscriberEvent subscriberEvent;
     private final EventStoreRepository repository;
 
-    private final  String packageUseCase;
+    private final String packageUseCase;
 
 
     /**
      * Construct to new application command
      *
-     * @param packageUseCase the path package of the use cases
-     * @param subscriberEvent the subscriber
-     * @param repository the repository
+     * @param packageUseCase  the path package of the use cases
+     * @param subscriberEvent the subscriber to async process
+     * @param repository      the repository to store event
      */
     public ApplicationCommandExecutor(
             String packageUseCase,
@@ -87,7 +92,7 @@ public class ApplicationCommandExecutor extends CommandExecutor {
             var message = String.format("@@@@ %s Registered handle command with type --> %s", aggregate, type);
             logger.info(message);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            logger.log(Level.SEVERE, "There is a error inside register command type -->"+type);
+            logger.log(Level.SEVERE, "There is a error inside register command type -->" + type);
         }
     }
 

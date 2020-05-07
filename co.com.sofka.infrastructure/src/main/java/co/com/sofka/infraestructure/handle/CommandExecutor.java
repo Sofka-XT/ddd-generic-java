@@ -2,7 +2,6 @@ package co.com.sofka.infraestructure.handle;
 
 import co.com.sofka.business.asyn.UseCaseExecutor;
 
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -23,7 +22,7 @@ public abstract class CommandExecutor implements CommandHandler<Map<String, Stri
     /**
      * Put.
      *
-     * @param type the type of the command
+     * @param type     the type of the command
      * @param consumer the consumer
      */
     protected void put(String type, Consumer<Map<String, String>> consumer) {
@@ -33,12 +32,12 @@ public abstract class CommandExecutor implements CommandHandler<Map<String, Stri
     @Override
     public final void execute(Map<String, String> args) {
 
-        if(!args.containsKey("commandType")){
+        if (!args.containsKey("commandType")) {
             throw new IllegalArgumentException("The commandType of the aggregate must be specified");
         }
         var type = args.get("commandType");
 
-        if(!handles.containsKey(type)){
+        if (!handles.containsKey(type)) {
             throw new ExecutionNoFound(type);
         }
 
@@ -48,9 +47,9 @@ public abstract class CommandExecutor implements CommandHandler<Map<String, Stri
     private void executeCommand(Map<String, String> args, String type) {
         logger.info("####### Executor Command #######");
         var consumer = handles.get(type);
-        var useCaseExecutor = (UseCaseExecutor)consumer;
+        var useCaseExecutor = (UseCaseExecutor) consumer;
 
-        if(args.containsKey("aggregateId")){
+        if (args.containsKey("aggregateId")) {
             useCaseExecutor.withAggregateId(args.get("aggregateId"));
         }
 

@@ -14,21 +14,25 @@ import java.util.logging.Logger;
 
 /**
  * Application query Executor
+ * <p>
+ * This class is implemented to execute the queries from a controller.
+ * <p>
+ * Use this class within your Rest Controller or your service to execute a query.
  */
 public class ApplicationQueryExecutor extends QueryExecutor {
-    private static final  Logger logger = Logger.getLogger(ApplicationQueryExecutor.class.getName());
+    private static final Logger logger = Logger.getLogger(ApplicationQueryExecutor.class.getName());
     private final QueryMapperRepository queryMapperRepo;
-    private  final  String packageQueries;
+    private final String packageQueries;
 
     /**
      * Construct new application query
      *
-     * @param packageQueries the path package for queries
-     * @param queryMapperRepo the repository
+     * @param packageQueries  the path package for queries
+     * @param queryMapperRepo the repository mapper
      */
     public ApplicationQueryExecutor(
             String packageQueries,
-            QueryMapperRepository queryMapperRepo){
+            QueryMapperRepository queryMapperRepo) {
         this.queryMapperRepo = queryMapperRepo;
         this.packageQueries = packageQueries;
         initialize();

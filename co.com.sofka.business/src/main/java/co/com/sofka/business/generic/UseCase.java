@@ -58,7 +58,7 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
     protected void run() {
         try {
             executeUseCase(request);
-        } catch (BusinessException e){
+        } catch (BusinessException e) {
             useCaseFormat.onError(e);
         } catch (RuntimeException e) {
             var exception = new UnexpectedException("There is an unexpected problem in the use case", e);

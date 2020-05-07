@@ -22,7 +22,6 @@ public class ErrorEvent {
 
     /**
      * Instantiates a new Error event.
-     *
      */
     public ErrorEvent(Throwable throwable) {
         this.error = throwable;

@@ -10,7 +10,7 @@ import java.util.Date;
 public class SuccessNotification extends Notification {
 
     private SuccessNotification(String origin, String typeName, Date occurredOn, String body) {
-       super(origin, typeName, occurredOn, body);
+        super(origin, typeName, occurredOn, body);
     }
 
     public static SuccessNotification wrapEvent(String origin, DomainEvent domainEvent) {
@@ -31,6 +31,6 @@ public class SuccessNotification extends Notification {
     }
 
     public String toJson() {
-       return SuccessNotificationSerializer.instance().serialize(this);
+        return SuccessNotificationSerializer.instance().serialize(this);
     }
 }

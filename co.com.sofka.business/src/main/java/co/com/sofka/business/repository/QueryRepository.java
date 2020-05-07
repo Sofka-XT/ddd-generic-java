@@ -7,23 +7,8 @@ import java.util.stream.Stream;
 
 /**
  * The interface Query repository.
- *
  */
 public interface QueryRepository<T> {
-    /**
-     * The enum Sort.
-     */
-    enum Sort {
-        /**
-         * Asc sort.
-         */
-        ASC,
-        /**
-         * Desc sort.
-         */
-        DESC
-    }
-
     /**
      * Find all stream.
      *
@@ -60,7 +45,7 @@ public interface QueryRepository<T> {
      * @param sort  the sort
      * @return the stream
      */
-    default Stream<T>find(Query query, Sort sort) {
+    default Stream<T> find(Query query, Sort sort) {
         return Stream.empty();
     }
 
@@ -72,5 +57,19 @@ public interface QueryRepository<T> {
      */
     default Optional<T> get(Query query) {
         return Optional.empty();
+    }
+
+    /**
+     * The enum Sort.
+     */
+    enum Sort {
+        /**
+         * Asc sort.
+         */
+        ASC,
+        /**
+         * Desc sort.
+         */
+        DESC
     }
 }

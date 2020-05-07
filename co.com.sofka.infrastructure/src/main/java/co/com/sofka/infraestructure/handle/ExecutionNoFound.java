@@ -1,7 +1,6 @@
 package co.com.sofka.infraestructure.handle;
 
 
-
 /**
  * The type Execution no found.
  */

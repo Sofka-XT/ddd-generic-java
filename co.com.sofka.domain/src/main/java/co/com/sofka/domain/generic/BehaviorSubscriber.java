@@ -51,7 +51,7 @@ public class BehaviorSubscriber {
         observables.forEach(consumer -> {
             try {
                 consumer.accept(domainEvent);
-                if(domainEvent instanceof Incremental){
+                if (domainEvent instanceof Incremental) {
                     var map = versions.get(domainEvent.type);
                     long version = nextVersion(domainEvent, map);
                     domainEvent.setVersionType(version);

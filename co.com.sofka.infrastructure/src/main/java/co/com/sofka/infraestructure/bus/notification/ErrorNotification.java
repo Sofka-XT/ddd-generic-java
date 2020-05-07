@@ -10,7 +10,7 @@ import java.util.Date;
 public class ErrorNotification extends Notification {
 
     private ErrorNotification(String origin, String typeName, Date occurredOn, String body) {
-       super(origin, typeName, occurredOn, body);
+        super(origin, typeName, occurredOn, body);
     }
 
     public static ErrorNotification wrapEvent(String origin, ErrorEvent errorEvent) {

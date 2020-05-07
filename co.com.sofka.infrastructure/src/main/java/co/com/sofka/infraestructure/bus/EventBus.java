@@ -11,7 +11,7 @@ public interface EventBus {
      * Publish.
      *
      * @param exchange the exchange name
-     * @param event the event
+     * @param event    the event
      */
     void publish(String exchange, DomainEvent event);
 

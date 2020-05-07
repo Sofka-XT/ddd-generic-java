@@ -1,17 +1,16 @@
 package co.com.sofka.infraestructure.bus.notification;
 
 
-import co.com.sofka.infraestructure.bus.serialize.ErrorNotificationSerializer;
-
 import java.util.Date;
 
 public class Notification {
-    private  String origin;
-    private  String body;
-    private  Date occurredOn;
-    private  String typeName;
+    private String origin;
+    private String body;
+    private Date occurredOn;
+    private String typeName;
 
-    public Notification(){}
+    public Notification() {
+    }
 
     public Notification(String origin, String typeName, Date occurredOn, String body) {
         this.origin = origin;

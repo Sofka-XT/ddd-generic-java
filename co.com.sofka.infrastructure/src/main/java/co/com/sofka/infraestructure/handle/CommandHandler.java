@@ -1,7 +1,5 @@
 package co.com.sofka.infraestructure.handle;
 
-import co.com.sofka.domain.generic.Command;
-
 /**
  * The interface Command handler.
  *

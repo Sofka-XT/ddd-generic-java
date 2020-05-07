@@ -3,17 +3,16 @@ package co.com.sofka.business.asyn;
 import co.com.sofka.business.generic.UseCase;
 import co.com.sofka.business.generic.UseCaseHandler;
 import co.com.sofka.business.repository.DomainEventRepository;
-
 import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.domain.generic.DomainEvent;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 
 /**
  * The type Use case executor.
- *
  */
 public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     private Flow.Subscriber<? super DomainEvent> subscriberEvent;
@@ -24,11 +23,12 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     public abstract void run();
 
     /**
-     * Subscriber event flow . subscriber.
+     * Subscriber event flow subscriber.
      *
-     * @return the flow . subscriber
+     * @return the flow subscriber
      */
     public Flow.Subscriber<? super DomainEvent> subscriberEvent() {
+        Objects.requireNonNull(subscriberEvent, "If the subscriber is not identified, consider using the withSubscriberEvent method");
         return subscriberEvent;
     }
 
@@ -38,7 +38,8 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
      *
      * @return useCaseHandler
      */
-    public UseCaseHandler useCaseHandler(){
+    public UseCaseHandler useCaseHandler() {
+        Objects.requireNonNull(useCaseHandler, "There is no handle for this execution, consider using the withUseCaseHandler method");
         return useCaseHandler;
     }
 
@@ -48,6 +49,7 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
      * @return the repository
      */
     public DomainEventRepository repository() {
+        Objects.requireNonNull(repository, "No repository identified, consider using the withDomainEventRepo method");
         return repository;
     }
 
@@ -57,6 +59,7 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
      * @return the aggregate id
      */
     public String aggregateId() {
+        Objects.requireNonNull(aggregateId, "Aggregate identifier not available, consider using withAggregateId method");
         return aggregateId;
     }
 
@@ -69,7 +72,6 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
      */
     public UseCaseExecutor withSubscriberEvent(Flow.Subscriber<? super DomainEvent> subscriberEvent) {
         this.subscriberEvent = Objects.requireNonNull(subscriberEvent, "subscriber event is required");
-
         return this;
     }
 
@@ -113,7 +115,7 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
      * @param useCase the use case
      * @param request the request for use case
      */
-    public <T extends UseCase.RequestValues, R extends ResponseEvents> void runUseCase(UseCase<T, R> useCase, T request){
-        useCaseHandler.asyncExecutor(useCase, request).subscribe(subscriberEvent());
+    public <T extends UseCase.RequestValues, R extends ResponseEvents> void runUseCase(UseCase<T, R> useCase, T request) {
+        useCaseHandler().asyncExecutor(useCase, request).subscribe(subscriberEvent());
     }
 }

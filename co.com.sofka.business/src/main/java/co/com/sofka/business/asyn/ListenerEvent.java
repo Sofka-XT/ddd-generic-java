@@ -6,7 +6,6 @@ import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.business.support.TriggeredEvent;
 import co.com.sofka.domain.generic.DomainEvent;
 
-
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -18,6 +17,8 @@ import java.util.concurrent.Flow;
 
 /**
  * The type Listener event.
+ * <p>
+ * This subscriber listener helps you to be aware of events thrown by some use cases.
  */
 public class ListenerEvent implements Flow.Subscriber<DomainEvent> {
 
