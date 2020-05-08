@@ -22,7 +22,8 @@ public class QueryExecutor implements QueryHandler<Map<String, String>> {
     /**
      * Add.
      *
-     * @param function the function
+     * @param queryPath the path of the query route
+     * @param function  the function
      */
     protected void put(String queryPath, Function<Map<String, String>, ?> function) {
         handles.put(queryPath, function);
@@ -31,22 +32,22 @@ public class QueryExecutor implements QueryHandler<Map<String, String>> {
     @Override
     public ViewModel get(String path, Map<String, String> params) {
 
-        if(!handles.containsKey(path)){
+        if (!handles.containsKey(path)) {
             throw new ExecutionNoFound(path);
         }
         var result = handles.get(path).apply(params);
-        logger.info("View model applied OK --> "+params);
+        logger.info("View model applied OK --> " + params);
 
         return (ViewModel) result;
     }
 
     @Override
     public List<ViewModel> find(String path, Map<String, String> params) {
-        if(!handles.containsKey(path)){
+        if (!handles.containsKey(path)) {
             throw new ExecutionNoFound(path);
         }
         var result = handles.get(path).apply(params);
-        logger.info("View model list applied OK --> "+params);
+        logger.info("View model list applied OK --> " + params);
 
         return (List<ViewModel>) result;
     }

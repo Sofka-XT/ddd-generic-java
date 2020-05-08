@@ -9,9 +9,9 @@ import java.io.Serializable;
  */
 public interface ValueObject<T> extends Serializable {
     /**
-     * Value t.
+     * Value object.
      *
-     * @return the t
+     * @return the object resulted
      */
     T value();
 }

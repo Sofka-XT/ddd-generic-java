@@ -1,7 +1,5 @@
 package co.com.sofka.infraestructure.handle;
 
-import co.com.sofka.domain.generic.Command;
-
 /**
  * The interface Command handler.
  *
@@ -12,7 +10,7 @@ public interface CommandHandler<T> {
     /**
      * Execute.
      *
-     * @param command the command
+     * @param args the command
      */
     void execute(T args);
 }

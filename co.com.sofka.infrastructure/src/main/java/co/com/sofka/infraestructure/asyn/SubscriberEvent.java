@@ -3,13 +3,11 @@ package co.com.sofka.infraestructure.asyn;
 
 import co.com.sofka.business.asyn.ListenerEvent;
 import co.com.sofka.domain.generic.DomainEvent;
-import co.com.sofka.infraestructure.bus.ErrorEvent;
 import co.com.sofka.infraestructure.bus.EventBus;
+import co.com.sofka.infraestructure.event.ErrorEvent;
 import co.com.sofka.infraestructure.repository.EventStoreRepository;
 import co.com.sofka.infraestructure.store.StoredEvent;
 
-
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.Flow;
 import java.util.logging.Level;
@@ -80,7 +78,7 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
 
     @Override
     public final void onNext(DomainEvent event) {
-        logger.info("###### Process event -> "+event.type);
+        logger.info("###### Process event -> " + event.type);
 
         Optional.ofNullable(eventBus).ifPresent(bus -> {
             var exchange = event.type.substring(0, event.type.lastIndexOf("."));
@@ -89,11 +87,11 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
         });
 
         Optional.ofNullable(repository).ifPresent(repo -> {
-            logger.info("Saving event for aggregate root ["+event.aggregateRootId()+"]");
+            logger.info("Saving event for aggregate root [" + event.aggregateRootId() + "]");
             StoredEvent storedEvent = StoredEvent.wrapEvent(event);
             Optional.ofNullable(event.aggregateRootId()).ifPresent(aggregateId -> {
-                repo.saveEvent(event.getAggregate(), aggregateId, storedEvent);
-                logger.info("Event saved with store specification of --> "+event.getAggregate());
+                repo.saveEvent(event.getAggregateName(), aggregateId, storedEvent);
+                logger.info("Event saved with store specification of --> " + event.getAggregateName());
             });
         });
 
@@ -107,16 +105,14 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
 
     @Override
     public void onError(Throwable throwable) {
-        var cause = Optional.ofNullable(throwable.getCause())
-                .map(c -> Arrays.toString(c.getStackTrace()).substring(0, 250))
-                .orElse("");
 
-        logger.log(Level.SEVERE,"Error on event ====> "+cause);
 
-        Optional.ofNullable(eventBus).ifPresent(bus -> bus.publishError(new ErrorEvent(
-                504, cause,
-                throwable.getMessage())
-        ));
+        logger.log(Level.SEVERE, "Error on event", throwable.getCause());
+
+        Optional.ofNullable(eventBus).ifPresent(bus -> {
+            var event = new ErrorEvent(throwable);
+            bus.publishError(event);
+        });
         Optional.ofNullable(listenerEvent).ifPresent(listener ->
                 listener.onError(throwable)
         );

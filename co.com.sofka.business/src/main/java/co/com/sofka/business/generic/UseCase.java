@@ -29,7 +29,7 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
      *
      * @param request the request
      */
-    protected void setRequest(Q request) {
+    public void setRequest(Q request) {
         this.request = request;
     }
 
@@ -38,7 +38,7 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
      *
      * @return the use case format
      */
-    protected UseCaseFormat<P> emit() {
+    public UseCaseFormat<P> emit() {
         return useCaseFormat;
     }
 
@@ -47,7 +47,7 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
      *
      * @param useCaseFormat the use case format
      */
-    protected void setUseCaseCallback(UseCaseFormat<P> useCaseFormat) {
+    public void setUseCaseCallback(UseCaseFormat<P> useCaseFormat) {
         this.useCaseFormat = useCaseFormat;
     }
 
@@ -58,7 +58,7 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
     protected void run() {
         try {
             executeUseCase(request);
-        } catch (BusinessException e){
+        } catch (BusinessException e) {
             useCaseFormat.onError(e);
         } catch (RuntimeException e) {
             var exception = new UnexpectedException("There is an unexpected problem in the use case", e);

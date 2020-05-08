@@ -1,25 +1,68 @@
 package co.com.sofka.business.asyn;
 
+import co.com.sofka.business.generic.UseCase;
+import co.com.sofka.business.generic.UseCaseHandler;
 import co.com.sofka.business.repository.DomainEventRepository;
+import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.domain.generic.DomainEvent;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 
 /**
  * The type Use case executor.
- *
  */
 public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     private Flow.Subscriber<? super DomainEvent> subscriberEvent;
-    private List<DomainEvent> domainEvents;
     private DomainEventRepository repository;
     private String aggregateId;
-    private String aggregateName;
+    private UseCaseHandler useCaseHandler;
+
+    public abstract void run();
+
+    /**
+     * Subscriber event flow subscriber.
+     *
+     * @return the flow subscriber
+     */
+    public Flow.Subscriber<? super DomainEvent> subscriberEvent() {
+        Objects.requireNonNull(subscriberEvent, "If the subscriber is not identified, consider using the withSubscriberEvent method");
+        return subscriberEvent;
+    }
+
+
+    /**
+     * Use case handler
+     *
+     * @return useCaseHandler
+     */
+    public UseCaseHandler useCaseHandler() {
+        Objects.requireNonNull(useCaseHandler, "There is no handle for this execution, consider using the withUseCaseHandler method");
+        return useCaseHandler;
+    }
+
+    /**
+     * Domain event repository
+     *
+     * @return the repository
+     */
+    public DomainEventRepository repository() {
+        Objects.requireNonNull(repository, "No repository identified, consider using the withDomainEventRepo method");
+        return repository;
+    }
+
+    /**
+     * String the aggregate root id
+     *
+     * @return the aggregate id
+     */
+    public String aggregateId() {
+        Objects.requireNonNull(aggregateId, "Aggregate identifier not available, consider using withAggregateId method");
+        return aggregateId;
+    }
+
 
     /**
      * With subscriber event use case executor.
@@ -28,20 +71,10 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
      * @return the use case executor
      */
     public UseCaseExecutor withSubscriberEvent(Flow.Subscriber<? super DomainEvent> subscriberEvent) {
-        this.subscriberEvent = subscriberEvent;
+        this.subscriberEvent = Objects.requireNonNull(subscriberEvent, "subscriber event is required");
         return this;
     }
 
-    /**
-     * With domain events use case executor.
-     *
-     * @param domainEvents the domain events
-     * @return the use case executor
-     */
-    public UseCaseExecutor withDomainEvents(List<DomainEvent> domainEvents) {
-        this.domainEvents = domainEvents;
-        return this;
-    }
 
     /**
      * With domain event repo use case executor.
@@ -50,7 +83,7 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
      * @return the use case executor
      */
     public UseCaseExecutor withDomainEventRepo(DomainEventRepository repository) {
-        this.repository = repository;
+        this.repository = Objects.requireNonNull(repository, "domain event repository is required");
         return this;
     }
 
@@ -61,40 +94,28 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
      * @return the use case executor
      */
     public UseCaseExecutor withAggregateId(String aggregateId) {
-        this.aggregateId = aggregateId;
+        this.aggregateId = Objects.requireNonNull(aggregateId, "aggregate id required");
         return this;
     }
 
     /**
-     * With aggregate id use case executor.
+     * With use case handler use case executor.
      *
-     * @param aggregateName the aggregate name
+     * @param useCaseHandler the use case handler
      * @return the use case executor
      */
-    public UseCaseExecutor withAggregateName(String aggregateName) {
-        this.aggregateName = aggregateName;
+    public UseCaseExecutor withUseCaseHandler(UseCaseHandler useCaseHandler) {
+        this.useCaseHandler = Objects.requireNonNull(useCaseHandler, "handle for the executor use case is required");
         return this;
     }
 
-
     /**
-     * Subscriber event flow . subscriber.
+     * Executor use case
      *
-     * @return the flow . subscriber
+     * @param useCase the use case
+     * @param request the request for use case
      */
-    public Flow.Subscriber<? super DomainEvent> subscriberEvent() {
-        return subscriberEvent;
-    }
-
-    /**
-     * Domain events list.
-     *
-     * @return the list
-     */
-    public List<DomainEvent> getDomainEvents() {
-        var repo = Optional.ofNullable(repository).orElseGet(() -> (aggregateName, aggregateRootId) -> new ArrayList<>());
-        var id = Optional.ofNullable(aggregateId).orElse(null);
-        var name = Optional.ofNullable(aggregateName).orElse(null);
-        return  Optional.ofNullable(domainEvents).orElse(repo.getEventsBy(name, id));
+    public <T extends UseCase.RequestValues, R extends ResponseEvents> void runUseCase(UseCase<T, R> useCase, T request) {
+        useCaseHandler().asyncExecutor(useCase, request).subscribe(subscriberEvent());
     }
 }

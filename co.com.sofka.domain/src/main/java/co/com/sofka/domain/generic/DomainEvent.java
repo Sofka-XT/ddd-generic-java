@@ -28,7 +28,7 @@ public abstract class DomainEvent implements Serializable {
     /**
      * Instantiates a new Domain event.
      *
-     * @param type     the type
+     * @param type            the type
      * @param aggregateRootId the identity
      */
     public DomainEvent(final String type, String aggregateRootId) {
@@ -86,20 +86,20 @@ public abstract class DomainEvent implements Serializable {
     }
 
     /**
-     * set aggregate name
-     *
-     * @param aggregate the aggregate
-     */
-    public void setAggregateName(String aggregate){
-        this.aggregate = aggregate;
-    }
-
-    /**
      * get aggregate name
      *
      * @return the aggregate name
      */
-    public String getAggregate(){
+    public String getAggregateName() {
         return aggregate;
+    }
+
+    /**
+     * set aggregate name
+     *
+     * @param aggregate the aggregate
+     */
+    public void setAggregateName(String aggregate) {
+        this.aggregate = aggregate;
     }
 }

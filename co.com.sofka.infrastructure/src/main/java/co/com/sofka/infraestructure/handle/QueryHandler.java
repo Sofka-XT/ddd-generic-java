@@ -1,6 +1,5 @@
 package co.com.sofka.infraestructure.handle;
 
-import co.com.sofka.domain.generic.Query;
 import co.com.sofka.domain.generic.ViewModel;
 
 import java.util.List;
@@ -15,7 +14,8 @@ public interface QueryHandler<Q> {
     /**
      * Search view model.
      *
-     * @param query the query
+     * @param path  the query
+     * @param query object
      * @return the view model
      */
     ViewModel get(String path, Q query);
@@ -23,7 +23,8 @@ public interface QueryHandler<Q> {
     /**
      * List view model
      *
-     * @param query the query
+     * @param path  the query
+     * @param query object
      * @return the list view model
      */
     List<ViewModel> find(String path, Q query);

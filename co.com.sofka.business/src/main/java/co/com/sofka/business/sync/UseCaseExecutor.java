@@ -1,7 +1,6 @@
 package co.com.sofka.business.sync;
 
 import co.com.sofka.business.generic.UseCase;
-import co.com.sofka.domain.generic.Command;
 import co.com.sofka.domain.generic.DomainEvent;
 
 import java.util.List;

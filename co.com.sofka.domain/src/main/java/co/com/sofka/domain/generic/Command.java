@@ -6,4 +6,5 @@ import java.io.Serializable;
 /**
  * The type Command.
  */
-public interface  Command extends Serializable { }
+public interface Command extends Serializable {
+}
