@@ -34,7 +34,7 @@ Generic dependency for ddd Java - [https://mvnrepository.com/artifact/co.com.sof
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>domain-driven-design</artifactId>
-       <version>0.6.0</version>
+       <version>0.6.5</version>
        <type>pom</type>
      </dependency>
 ```
@@ -45,180 +45,392 @@ Si se require dividir los conceptos se puede usar de forma independeiente de la 
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>domain</artifactId>
-       <version>0.6.0</version>
+       <version>0.6.5</version>
      </dependency>
 ```
 ```
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>business</artifactId>
-       <version>0.6.0</version>
+       <version>0.6.5</version>
      </dependency>
 ```
 ```
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>infrastructure</artifactId>
-       <version>0.6.0</version>
+       <version>0.6.5</version>
+     </dependency>
+```
+```
+    <dependency>
+       <groupId>co.com.sofka</groupId>
+       <artifactId>application</artifactId>
+       <version>0.6.5</version>
      </dependency>
 ```
 > Aun esta en fase de desarrollo y de validación, trabajar con la versión 0.6 para experimentar y poner en practica los conceptos de DDD, aun no se recomienda llevarlo a producción. 
 
 ## Conceptos e implementación 
 
-### Agregado
-El agregado role trabaja con la entidad de usuarios, el comportamiento del rol sería asignar usuarios a un rol. Cuando se crea el objeto Role se crear con el nombre y el Id del rol, la lista de usuario se crea de forma vacía. 
+### Entidades
+Una entidad tiene comportamientos, pero no lanza eventos como son los agregados, si tenemos una entidad suelta sin relación con el agregado entonces solo se aplica para cambiar los estados de la misma. Toda entidad depende de una ID, tal cual como el Agregado Root.
 ```java
-public class Role extends AggregateRoot<RoleId> {  
-    private RoleName roleName;  
-    private Set<User> users;  
-    
-    public Role(RoleId entityId, RoleName roleName) {  
-        super(entityId);  
-        this.roleName = roleName;  
-        this.users = new HashSet<>();  
-    }  
-    public void assignUser(User user){  
-        users().add(user);  
-    }  
-    private RoleName roleName(){  
-        return roleName;  
-    }  
-    public Set<User> users(){  
-        return users;  
-    }  
-    public static Role from(RoleId entityId, RoleName roleName, Set<User> users){  
-        var role = new Role(entityId, roleName);  
-        role.users = users;  
-        role.roleName = roleName;  
-        return role;  
-  }  
+public class Student extends Entity<StudentIdentity> {
+
+    protected Name name;
+    protected Gender gender;
+    protected DateOfBirth dateOfBirth;
+    protected Score score;
+
+    protected Student(StudentIdentity studentIdentity, Name name, Gender gender, DateOfBirth dateOfBirth) {
+        super(studentIdentity);
+        this.name = name;
+        this.gender =gender;
+        this.dateOfBirth = dateOfBirth;
+        this.score = new Score(0);
+    }
+
+    private Student(StudentIdentity studentIdentity){
+        super(studentIdentity);
+    }
+
+    public static Student form(StudentIdentity studentIdentity, Name name, Gender gender, DateOfBirth dateOfBirth){
+        var student = new Student(studentIdentity);
+        student.name = name;
+        student.gender = gender;
+        student.dateOfBirth = dateOfBirth;
+        return student;
+    }
+
+    public String name() {
+        return name.value();
+    }
+
+    public String gender() {
+        return gender.value();
+    }
+
+    public String dateOfBirth() {
+        return dateOfBirth.value();
+    }
+
+    public Score.Values score() {
+        return score.value();
+    }
+
+    public void updateScore(Score score){
+        this.score = score;
+    }
+
+    public void updateName(Name name){
+        this.name = name;
+    }
+
+    public void updateDateOfBirth(DateOfBirth dateOfBirth){
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void updateGender(Gender gender){
+        this.gender = gender;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+       return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }
 ```
-Vamos a implementar un Agregado usando eventos de Dominio orientados a comportamientos.
+
+> Mas adelante estaríamos realizando un tutorial para aplicarlo en una arquitectura distribuida y con CQRS+ES con una arquitectura EDA. 
+
 ### Agregado orientado a Eventos
 ```java
-public class User extends AggregateEvent<UserId> {  
-    protected UserName userName;  
-    protected UserPassword userPassword;  
-    
-    public User(UserId userId, UserName aUserName, UserPassword aUserPassword) {  
-        this(userId);//initialize object base  
-        var userPassword = Objects.requireNonNull(aUserPassword);  
-        var userName = Objects.requireNonNull(aUserName);  
-        appendChange(new UserCreated(userId, userName, userPassword)).apply();  
-    }  
-    private User(UserId userId) {  
-        super(userId);  
-        subscribe(new UserBehaviors(this));  
-    }  
-    public static User from(UserId userId, List<DomainEvent> eventList) {  
-        User user = new User(userId);  
-        eventList.forEach(user::applyEvent);  
-        return user;  
-    }  
-    public void updateUserPassword(UserPassword aUserPassword) {  
-        var userPassword = Objects.requireNonNull(aUserPassword);  
-        appendChange(new UserPasswordUpdated(identity(), userPassword)).apply();  
-     }  
-} 
+public class Team extends AggregateEvent<TeamIdentity> {
+    protected Name name;
+    protected Set<Student> students;
+    public Team(TeamIdentity identity, Name name) {
+        this(identity);
+        appendChange(new CreatedTeam(name)).apply();
+    }
+
+    private Team(TeamIdentity identity) {
+        super(identity);
+        subscribe(new TeamBehavior(this));
+    }
+
+    public static Team from(TeamIdentity aggregateId, List<DomainEvent> list) {
+        Team team = new Team(aggregateId);
+        list.forEach(team::applyEvent);
+        return team;
+    }
+
+
+    public void addNewStudent(Name name, Gender gender, DateOfBirth dateOfBirth) {
+        StudentIdentity studentIdentity = new StudentIdentity();
+        appendChange(new AddedStudent(studentIdentity, name, gender, dateOfBirth)).apply();
+    }
+
+    public void removeStudent(StudentIdentity studentIdentity) {
+        appendChange(new RemovedStudent(studentIdentity)).apply();
+    }
+
+    public void updateName(Name newName) {
+        appendChange(new UpdatedName(newName)).apply();
+    }
+
+    public void updateStudentName(StudentIdentity studentIdentity, Name name) {
+        appendChange(new UpdatedStudent(studentIdentity, name)).apply();
+    }
+
+    public void applyScoreToStudent(StudentIdentity studentIdentity, Score score) {
+        appendChange(new UpdateScoreOfStudent(studentIdentity, score)).apply();
+    }
+
+    public Set<Student> students() {
+        return students;
+    }
+
+    public String name() {
+        return name.value();
+    }
+}
 ```
 ### Comportamientos orientado a Eventos
 ```java
-public final class UserBehaviors extends EventBehavior {  
-    protected UserBehaviors(User entity) {  
-        give((UserPasswordUpdated event) -> {//change status  
-            if (entity.userPassword.equals(event.userPassword)) {  
-                throw new IllegalArgumentException("The password are equal");  
-            }  
-            entity.userPassword = event.getUserPassword();  
-        });  
-          
-        give((UserCreated domainEvent) -> { //change status  
-            if (domainEvent.getUserPassword().value().length() < 4) {  
-                throw new IllegalArgumentException("The password must be greater than 4 characters");  
-            }  
-            if (domainEvent.getUserName().value().length() < 5) {  
-                throw new IllegalArgumentException("The username must be greater than 5 characters");  
-            }  
-            entity.userName = domainEvent.getUserName();  
-            entity.userPassword = domainEvent.getUserPassword();  
-       }); 
-    }  
-}
+ public class TeamBehavior extends EventBehavior {
+        protected TeamBehavior(Team entity) {
+            give((CreatedTeam event) -> {
+                entity.students = new HashSet<>();
+                entity.name = event.getName();
+            });
+
+            give((AddedStudent event) -> {
+                var student = new Student(
+                        event.getStudentIdentity(),
+                        event.getName(),
+                        event.getGender(),
+                        event.getDateOfBirth()
+                );
+                entity.students.add(student);
+            });
+
+            give((RemovedStudent event) -> entity.students
+                    .removeIf(e -> e.identity().equals(event.getIdentity())));
+
+            give((UpdatedName event) -> entity.name = event.getNewName());
+
+            give((UpdatedStudent event) -> {
+                var studentUpdate = getStudentByIdentity(entity, event.getStudentIdentity());
+                studentUpdate.updateName(event.getName());
+            });
+
+            give((UpdateScoreOfStudent event) -> {
+                var studentUpdate = getStudentByIdentity(entity, event.getStudentIdentity());
+                studentUpdate.updateScore(event.getScore());
+            });
+        }
+
+        private Student getStudentByIdentity(Team entity, Identity identity) {
+            return entity.students.stream()
+                    .filter(e -> e.identity().equals(identity))
+                    .findFirst()
+                    .orElseThrow();
+        }
+   }
 ```
 
 ### Objetos de valor
 Un objeto de valor es un objeto inmutable que representa un valor de la entidad. A diferencia de la entidad es que el VO (Value Object) no tiene un identidad que la represente. 
 ```java
-public class RoleName implements ValueObject<String> {  
-    private final String name;  
-    public RoleName(String name) {  
-        this.name = Objects.requireNonNull(name);  
-     }  
-     @Override  
-     public String value() {  
-        return name;  
-     }  
+public class DateOfBirth  implements ValueObject<String> {
+    private final LocalDate date;
+    private final String format;
+
+    public DateOfBirth(int day, int month, int year) {
+        try {
+            date = LocalDate.of(year, month, day);
+            if(date.isAfter(LocalDate.now())){
+                throw new IllegalArgumentException("No valid the date of birth");
+            }
+        } catch (DateTimeException e){
+            throw new IllegalArgumentException(e.getMessage());
+        }
+        format = generateFormat();
+    }
+
+    private String generateFormat(){
+        return date.format(DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+    }
+
+    @Override
+    public String value() {
+        return format;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DateOfBirth that = (DateOfBirth) o;
+        return Objects.equals(format, that.format);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(format);
+    }
 }
 ```
 
 ### Evento de Dominio
 Un evento de dominio esta relacionado con un Agregado Id (que es un VO), este evento es la consecuencia de un comando que ejecuta un comportamiento de un Agregado un Entidad. 
 ```java
-public class UserCreated extends DomainEvent {  
-    final UserName userName;  
-    final UserPassword userPassword;  
-  
-    public UserCreated(UserId userId, UserName userName,UserPassword userPassword) {  
-        super("user.created", userId);  
-        this.userName = userName;  
-        this.userPassword = userPassword;  
-    }  
-    public UserName getUserName() {  
-        return userName;  
-    }  
-    public UserPassword getUserPassword() {  
-        return userPassword;  
-    }  
+public class AddedStudent extends DomainEvent  {
+
+    private final StudentIdentity studentIdentity;
+    private final Name name;
+    private final Gender gender;
+    private final DateOfBirth dateOfBirth;
+
+    public AddedStudent(StudentIdentity studentIdentity, Name name, Gender gender, DateOfBirth dateOfBirth) {
+        super("training.team.addedstudent");
+        this.studentIdentity = studentIdentity;
+        this.name = name;
+        this.gender = gender;
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Name getName() {
+        return name;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public DateOfBirth getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public StudentIdentity getStudentIdentity() {
+        return studentIdentity;
+    }
+
+}
+```
+
+### Comandos
+```java
+public class CreateTeam implements Command {
+    private final Name name;
+
+    public CreateTeam(Name name) {
+        this.name = name;
+    }
+
+    public Name getName() {
+        return name;
+    }
+
 }
 ```
 
 ### Aplicar el agregado
 Cuando se crear nuevo objeto se instancia el agregado y se le asigna el identificado que relaciona la entidad. Además de los argumentos de creación. Un agregado puede tener múltiples constructores que permiten crear el agregado.  
 ```java
-UserId userId = new UserId();  
-User user = new User(userId, request.userName, request.userPassword);  
+@CommandHandles
+@CommandType(name = "training.team.create",  aggregate = "team")
+public class CreateTeamHandle extends UseCaseExecutor {
+    private static Logger logger = Logger.getLogger(CreateTeamHandle.class.getName());
+
+    private RequestCommand<CreateTeam> request;
+
+    @Override
+    public void accept(Map<String, String> args) {
+        logger.info(" ----- Executor CreateTeamHandle ------");
+        request = new RequestCommand<>(
+                new CreateTeam(new Name(args.get("name")))
+        );
+    }
+
+    @Override
+    public void run() {
+        runUseCase(new UseCase<UseCase.RequestValues, ResponseEvents>() {
+            @Override
+            public void executeUseCase(RequestValues objectInput) {
+                var id = new TeamIdentity();
+                var command = request.getCommand();
+                var team = new Team(id, command.getName());
+                emit().onSuccess(new ResponseEvents(team.getUncommittedChanges()));
+            }
+        }, request);
+    }
+}
 ```
 Ya para el caso de Actualizar un agregado se reconstruye el agregado según los eventos persistidos, si se tiene un agregado no orientado a eventos se reconstruye con los valores necesarios. Cuando se reconstruya se aplica el comportamiento de la entidad.
 ```java
-var userId = UserId.of("xxx-xxx-xxx");  
-var user = User.from(userId, repository.getEventsBy(userId));  
-user.updateUserPassword(request.newPassword);  
-emit().onSuccess(new ResponseEvents(user.getUncommittedChanges()));
-user.markChangesAsCommitted();
+@BusinessLogin
+public class CreateStudentUseCase extends UseCase<RequestCommand<AddNewStudent>, ResponseEvents> {
+    private final DomainEventRepository repository;
+    
+    public CreateStudentUseCase(DomainEventRepository repository) {
+        this.repository = repository;
+    }
+    @Override
+    protected void executeUseCase(RequestCommand<AddNewStudent> request) {
+        Team team = reclaimTeam();
+
+        var students = Optional.ofNullable(team.students())
+                .orElseThrow(() -> new NecessaryDependency("the students is need for this use case"));
+
+        if(students.size() > 5){
+            emit().onError(new NoMoreStudentAllowed());
+        } else {
+            emit().onSuccess(aNewStudentAddedFor(team));
+        }
+    }
+
+    private Team reclaimTeam() {
+        var aggregateId = request().getCommand().aggregateRootId();
+        var events = repository.getEventsBy(aggregateId);
+        return Team.from(TeamIdentity.of(aggregateId), events);
+    }
+
+    private ResponseEvents aNewStudentAddedFor(Team team) {
+        var command = request().getCommand();
+        team.addNewStudent(
+                command.getName(),
+                command.getGender(),
+                command.getDateOfBirth()
+        );
+       return new ResponseEvents(team.getUncommittedChanges());
+    }
+}
 ```
 Al final de ejecutar el comportamiento se determina si existe cambios dentro del agregado para emitir los eventos a una capa superior. Después se marca los cambios como confirmados. 
 
 > Se puede aplicar aquí casos de uso, comandos y eventos para aplicar el agregado. 
 
-### Entidades
-Una entidad tiene comportamientos, pero no lanza eventos como son los agregados, si tenemos una entidad suelta sin relación con el agregado entonces solo se aplica para cambiar los estados de la misma. Toda entidad depende de una ID, tal cual como el Agregado Root.
+### Queries
 ```java
-public class Group extends Entity<GroupId> {  
-  
-    public Group(GroupId entityId) {  
-        super(entityId);  
-    }  
-  
-    public void changeName(GroupName groupName){  
-        //....  
-     }  
+@QueryHandles
+public class StudentsByTeam extends ViewModelExecutor<ViewModel> {
+    @Override
+    public ViewModel apply(Map<String, String> params) {
+        var query = new ByStudentIdentity();
+        query.setAggregateRootId(params.get("teamId"));
+
+        return getDataMapped("teams", StudentViewModel.class)
+                .applyAsElement(query);
+    }
 }
 ```
-
-> Mas adelante estaríamos realizando un tutorial para aplicarlo en una arquitectura distribuida y con CQRS+ES con una arquitectura EDA. 
-
 ## Contribución
 
 1. Realizar el fork
