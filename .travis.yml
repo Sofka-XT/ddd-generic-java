@@ -1,6 +1,6 @@
 dist: trusty
 language: java
 jdk:
-  - oraclejdk11
+  - openjdk11
 install:
   - mvn install -DskipTests=true -Dgpg.skip=true
