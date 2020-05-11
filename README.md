@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/Sofka-XT/ddd-generic-java.svg?branch=master)](https://travis-ci.com/Sofka-XT/ddd-generic-java)
+
 ## Sofka Domain-Driven Design 
 Sofka introduce una librería a la comunidad open source para diseñar aplicaciones orientadas al dominio. Esta librería proporciona abstracciones que permiten adoptar el concepto de forma correcta, el estilo que se propone es totalmente discutible para ser mejorado, se espera que al momento de aplicar esta librería se tenga claro los conceptos tácticos de DDD. 
 
