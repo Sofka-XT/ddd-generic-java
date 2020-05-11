@@ -1,3 +1,4 @@
+dist: trusty
 language: java
-sudo: false
-script: mvn install -DskipTests=true -Dgpg.skip=true
+install:
+  - mvn install -DskipTests=true -Dgpg.skip=true
