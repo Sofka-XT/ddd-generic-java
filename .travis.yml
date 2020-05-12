@@ -3,4 +3,4 @@ language: java
 jdk:
   - openjdk11
 install:
-  - mvn install -DskipTests=true -Dgpg.skip=true
+  - mvn install -DskipTests=true -Dgpg.skip=true -Dmaven.javadoc.skip=true -B -V
