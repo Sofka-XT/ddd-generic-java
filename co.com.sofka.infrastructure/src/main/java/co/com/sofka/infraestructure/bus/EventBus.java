@@ -10,10 +10,9 @@ public interface EventBus {
     /**
      * Publish.
      *
-     * @param exchange the exchange name
      * @param event    the event
      */
-    void publish(String exchange, DomainEvent event);
+    void publish(DomainEvent event);
 
     /**
      * Publish error.

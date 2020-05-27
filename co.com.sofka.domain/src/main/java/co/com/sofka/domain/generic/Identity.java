@@ -17,6 +17,9 @@ public class Identity implements ValueObject<String> {
      */
     public Identity(String uuid) {
         this.uuid = Objects.requireNonNull(uuid, "Identity can´t be null");
+        if(this.uuid.isBlank()){
+            throw new IllegalArgumentException("Identity can´t be blank");
+        }
     }
 
     /**

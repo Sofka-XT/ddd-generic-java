@@ -1,7 +1,7 @@
 package co.com.sofka.infraestructure.asyn;
 
 
-import co.com.sofka.business.asyn.ListenerEvent;
+import co.com.sofka.business.generic.UnexpectedException;
 import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.bus.EventBus;
 import co.com.sofka.infraestructure.event.ErrorEvent;
@@ -19,11 +19,10 @@ import java.util.logging.Logger;
  */
 public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
 
-    private static Logger logger = Logger.getLogger(SubscriberEvent.class.getName());
+    private static final Logger logger = Logger.getLogger(SubscriberEvent.class.getName());
 
     private final EventStoreRepository repository;
     private final EventBus eventBus;
-    private final ListenerEvent listenerEvent;
     private Flow.Subscription subscription;
 
     /**
@@ -31,25 +30,11 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
      *
      * @param repository    the repository
      * @param eventBus      the event bus
-     * @param listenerEvent the listener event
-     */
-    public SubscriberEvent(EventStoreRepository repository, EventBus eventBus, ListenerEvent listenerEvent) {
-        this.repository = repository;
-        this.eventBus = eventBus;
-        this.listenerEvent = listenerEvent;
-    }
-
-
-    /**
-     * Instantiates a new Subscriber event.
-     *
-     * @param repository the repository
-     * @param eventBus   the event bus
      */
     public SubscriberEvent(EventStoreRepository repository, EventBus eventBus) {
-        this(repository, eventBus, null);
+        this.repository = repository;
+        this.eventBus = eventBus;
     }
-
 
     /**
      * Instantiates a new Subscriber event.
@@ -57,23 +42,20 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
      * @param repository the repository
      */
     public SubscriberEvent(EventStoreRepository repository) {
-        this(repository, null, null);
+        this(repository, null);
     }
 
     /**
      * Instantiates a new Subscriber event.
      */
     public SubscriberEvent() {
-        this(null, null, null);
+        this(null, null);
     }
 
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
         this.subscription = subscription;
         subscription.request(1);
-        Optional.ofNullable(listenerEvent).ifPresent(listener ->
-                listener.onSubscribe(subscription)
-        );
     }
 
     @Override
@@ -81,8 +63,7 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
         logger.info("###### Process event -> " + event.type);
 
         Optional.ofNullable(eventBus).ifPresent(bus -> {
-            var exchange = event.type.substring(0, event.type.lastIndexOf("."));
-            bus.publish(exchange, event);
+            bus.publish(event);
             logger.info("Event published OK");
         });
 
@@ -94,33 +75,22 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
                 logger.info("Event saved with store specification of --> " + event.getAggregateName());
             });
         });
-
-        Optional.ofNullable(listenerEvent).ifPresent(listener -> {
-            listener.setSubscriber(this);
-            logger.info("Notify other case");
-            listener.onNext(event);
-        });
         subscription.request(1);
     }
 
     @Override
     public void onError(Throwable throwable) {
-
-
         logger.log(Level.SEVERE, "Error on event", throwable.getCause());
-
         Optional.ofNullable(eventBus).ifPresent(bus -> {
-            var event = new ErrorEvent(throwable);
+            var identify = ((UnexpectedException)throwable).getIdentify();
+            var event = new ErrorEvent(identify, throwable);
             bus.publishError(event);
         });
-        Optional.ofNullable(listenerEvent).ifPresent(listener ->
-                listener.onError(throwable)
-        );
         subscription.cancel();
     }
 
     @Override
     public void onComplete() {
-        Optional.ofNullable(listenerEvent).ifPresent(ListenerEvent::onComplete);
+        logger.log(Level.INFO, "-- Completed");
     }
 }

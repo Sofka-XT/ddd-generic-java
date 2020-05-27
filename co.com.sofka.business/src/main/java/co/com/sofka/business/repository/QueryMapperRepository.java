@@ -20,21 +20,21 @@ public interface QueryMapperRepository {
      * @param classViewModel class to mapper
      * @return ApplyQuery mode list and object
      */
-    ApplyQuery getDataMapped(String category, Class<?> classViewModel);
+    <T extends ViewModel>  ApplyQuery<T> getDataMapped(String category, Class<T> classViewModel);
 
     /**
      * The interface linked to Query mapper repository.
      * <p>
      * Query models of one view and multiple views.
      */
-    interface ApplyQuery {
+    interface ApplyQuery<T extends ViewModel> {
         /**
          * Apply as a list
          *
          * @param query the object query
          * @return the list view model
          */
-        <Q extends Query> List<ViewModel> applyAsList(Q query);
+        <Q extends Query> List<T> applyAsList(Q query);
 
         /**
          * Apply as a object
@@ -42,6 +42,6 @@ public interface QueryMapperRepository {
          * @param query the object query
          * @return the object view model
          */
-        <Q extends Query> ViewModel applyAsElement(Q query);
+        <Q extends Query> T applyAsElement(Q query);
     }
 }

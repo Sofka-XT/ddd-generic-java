@@ -7,39 +7,42 @@ import co.com.sofka.domain.generic.Command;
  * <p>
  * Business exceptions thrown by the use case
  */
-public class BusinessException extends RuntimeException {
+public class BusinessException extends UnexpectedException {
 
     private final Command command;
 
     /**
      * Instantiates a new Business exception.
      *
+     * @param identify the identify
      * @param message   the message
      * @param throwable the throwable and cause of the problem
      * @param command   the command executed
      */
-    public BusinessException(String message, Throwable throwable, Command command) {
-        super(message, throwable);
+    public BusinessException(String identify, String message, Throwable throwable, Command command) {
+        super(identify, message, throwable);
         this.command = command;
     }
 
     /**
      * Instantiates a new Business exception.
      *
+     * @param identify the identify
      * @param message   the message
      * @param throwable the throwable and cause of the problem
      */
-    public BusinessException(String message, Throwable throwable) {
-        this(message, throwable, null);
+    public BusinessException(String identify,String message, Throwable throwable) {
+        this(identify,message, throwable, null);
     }
 
     /**
      * Instantiates a new Business exception.
      *
+     * @param identify the identify
      * @param message the message
      */
-    public BusinessException(String message) {
-        this(message, null, null);
+    public BusinessException(String identify,String message) {
+        this(identify, message, null, null);
     }
 
     /**

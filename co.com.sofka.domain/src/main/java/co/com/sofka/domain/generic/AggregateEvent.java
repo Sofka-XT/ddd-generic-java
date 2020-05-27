@@ -1,7 +1,10 @@
 package co.com.sofka.domain.generic;
 
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * The type Aggregate event.
@@ -11,7 +14,8 @@ import java.util.List;
 public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T> {
 
 
-    private final BehaviorSubscriber behaviorSubscriber;
+    private final ChangeEventSubscriber changeEventSubscriber;
+    private final List<DomainEvent> events = new LinkedList<>();
 
     /**
      * Instantiates a new Aggregate event.
@@ -20,7 +24,7 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
      */
     public AggregateEvent(T entityId) {
         super(entityId);
-        behaviorSubscriber = new BehaviorSubscriber();
+        changeEventSubscriber = new ChangeEventSubscriber();
     }
 
 
@@ -30,7 +34,7 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
      * @return the uncommitted changes
      */
     public List<DomainEvent> getUncommittedChanges() {
-        return List.copyOf(behaviorSubscriber.getChanges());
+        return List.copyOf(changeEventSubscriber.getChanges());
     }
 
     /**
@@ -39,21 +43,22 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
      * @param event the event
      * @return the behavior subscriber . change apply
      */
-    protected BehaviorSubscriber.ChangeApply appendChange(DomainEvent event) {
+    protected ChangeEventSubscriber.ChangeApply appendChange(DomainEvent event) {
         var nameClass = entityId.getClass().getSimpleName();
         var aggregate = nameClass.replaceAll("(Identity|Id)", "").toLowerCase();
         event.setAggregateName(aggregate);
         event.setAggregateRootId(entityId.value());
-        return behaviorSubscriber.appendChange(event);
+        events.add(event);
+        return changeEventSubscriber.appendChange(event);
     }
 
     /**
      * Subscribe.
      *
-     * @param eventBehavior the event behavior
+     * @param eventChange the event behavior
      */
-    protected final void subscribe(EventBehavior eventBehavior) {
-        behaviorSubscriber.subscribe(eventBehavior);
+    protected final void subscribe(EventChange eventChange) {
+        changeEventSubscriber.subscribe(eventChange);
     }
 
     /**
@@ -62,16 +67,70 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
      * @param domainEvent the domain event
      */
     protected void applyEvent(DomainEvent domainEvent) {
-        behaviorSubscriber.applyEvent(domainEvent);
+        changeEventSubscriber.applyEvent(domainEvent);
+        events.add(domainEvent);
     }
 
     /**
      * Mark changes as committed.
      */
     public void markChangesAsCommitted() {
-        behaviorSubscriber.getChanges().clear();
+        changeEventSubscriber.getChanges().clear();
     }
 
+    /**
+     * Clear all events
+     */
+    public void refundEvent() {
+        changeEventSubscriber.getChanges().clear();
+        events.clear();
+    }
+
+    /**
+     * Find event
+     *
+     * @param event the event class
+     * @return optional event
+     */
+    public <E extends DomainEvent> Optional<E> findEvent(Class<E> event){
+       return events.stream()
+                .filter(event::isInstance).map(e -> (E)e)
+               .findFirst();
+    }
+
+    /**
+     * Find event uncommitted
+     *
+     * @param event the event class
+     * @return optional event
+     */
+    public <E extends DomainEvent> Optional<E> findEventUncommitted(Class<E> event){
+        return changeEventSubscriber.getChanges().stream()
+                .filter(event::isInstance).map(e -> (E)e)
+                .findFirst();
+    }
+
+    /**
+     * Find all events uncommitted
+     *
+     * @param event the event class
+     * @return stream of the events
+     */
+    public <E extends DomainEvent> Stream<E> findAllEventUncommitted(Class<E> event){
+        return changeEventSubscriber.getChanges().stream()
+                .filter(event::isInstance).map(e -> (E)e);
+    }
+
+    /**
+     * Find all events
+     *
+     * @param event the event class
+     * @return stream of the events
+     */
+    public <E extends DomainEvent> Stream<E> findAllEvents(Class<E> event){
+        return events.stream()
+                .filter(event::isInstance).map(e -> (E)e);
+    }
 
     @Override
     public boolean equals(Object object) {

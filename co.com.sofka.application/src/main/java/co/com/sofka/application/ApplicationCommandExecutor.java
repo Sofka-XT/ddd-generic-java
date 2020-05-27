@@ -2,7 +2,9 @@ package co.com.sofka.application;
 
 import co.com.sofka.business.annotation.CommandHandles;
 import co.com.sofka.business.annotation.CommandType;
+import co.com.sofka.business.annotation.ExtensionService;
 import co.com.sofka.business.asyn.UseCaseExecutor;
+import co.com.sofka.business.generic.ServiceBuilder;
 import co.com.sofka.business.generic.UseCaseHandler;
 import co.com.sofka.infraestructure.asyn.SubscriberEvent;
 import co.com.sofka.infraestructure.handle.CommandExecutor;
@@ -13,13 +15,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 
 /**
  * Application command executor
- * <p>
+ *
  * This class is implemented to execute the commands from a controller.
- * <p>
  * Use this class within your Rest Controller or your service to execute a use case.
  */
 public class ApplicationCommandExecutor extends CommandExecutor {
@@ -81,6 +83,25 @@ public class ApplicationCommandExecutor extends CommandExecutor {
         }).orElse("default");
     }
 
+    private ServiceBuilder getServiceBuilder(ClassInfo handleClassInfo) {
+        AnnotationInfo annotationInfo = handleClassInfo.getAnnotationInfo(ExtensionService.class.getName());
+        ServiceBuilder serviceBuilder = new ServiceBuilder();
+        return Optional.ofNullable(annotationInfo).map(annotation -> {
+            AnnotationParameterValueList paramVals = annotation.getParameterValues();
+            var list = (Object[]) paramVals.getValue("value");
+            for (Object o : list) {
+                try {
+                    var ref = (AnnotationClassRef) o;
+                    serviceBuilder.addService(ref.loadClass().getDeclaredConstructor().newInstance());
+                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                    logger.log(Level.SEVERE, "ERROR over service builder", e);
+                    throw new ServiceBuildException(e);
+                }
+            }
+            return serviceBuilder;
+        }).orElse(serviceBuilder);
+    }
+
     private void addHandle(ClassInfo handleClassInfo, String aggregate, String type) {
         UseCaseExecutor handle;
         try {
@@ -88,11 +109,12 @@ public class ApplicationCommandExecutor extends CommandExecutor {
             put(type, handle
                     .withSubscriberEvent(subscriberEvent)
                     .withUseCaseHandler(UseCaseHandler.getInstance())
+                    .withServiceBuilder(getServiceBuilder(handleClassInfo))
                     .withDomainEventRepo(aggregateRootId -> repository.getEventsBy(aggregate, aggregateRootId)));
             var message = String.format("@@@@ %s Registered handle command with type --> %s", aggregate, type);
             logger.info(message);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            logger.log(Level.SEVERE, "There is a error inside register command type -->" + type);
+            logger.log(Level.SEVERE, String.format("There is a error inside register command type -->%s", type), e);
         }
     }
 

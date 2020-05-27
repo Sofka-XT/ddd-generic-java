@@ -1,5 +1,6 @@
 package co.com.sofka.business.asyn;
 
+import co.com.sofka.business.generic.ServiceBuilder;
 import co.com.sofka.business.generic.UseCase;
 import co.com.sofka.business.generic.UseCaseHandler;
 import co.com.sofka.business.repository.DomainEventRepository;
@@ -19,6 +20,8 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     private DomainEventRepository repository;
     private String aggregateId;
     private UseCaseHandler useCaseHandler;
+    private ServiceBuilder serviceBuilder;
+    private UseCase.RequestValues request;
 
     public abstract void run();
 
@@ -61,6 +64,16 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     public String aggregateId() {
         Objects.requireNonNull(aggregateId, "Aggregate identifier not available, consider using withAggregateId method");
         return aggregateId;
+    }
+
+
+    /**
+     * Get useCase request value
+     *
+     * @return request value
+     */
+    public UseCase.RequestValues request() {
+        return request;
     }
 
 
@@ -110,12 +123,32 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     }
 
     /**
+     * With service builder.
+     *
+     * @param serviceBuilder the service builder constructor
+     * @return the use case executor
+     */
+    public UseCaseExecutor withServiceBuilder(ServiceBuilder serviceBuilder){
+        this.serviceBuilder = Objects.requireNonNull(serviceBuilder);
+        return this;
+    }
+
+    /**
      * Executor use case
      *
      * @param useCase the use case
      * @param request the request for use case
      */
     public <T extends UseCase.RequestValues, R extends ResponseEvents> void runUseCase(UseCase<T, R> useCase, T request) {
-        useCaseHandler().asyncExecutor(useCase, request).subscribe(subscriberEvent());
+        this.request = request;
+        useCase.addRepository(repository);
+        useCaseHandler()
+                .setIdentifyExecutor(aggregateId())
+                .asyncExecutor(useCase, request)
+                .subscribe(subscriberEvent());
+    }
+
+    public ServiceBuilder serviceBuilder() {
+        return serviceBuilder;
     }
 }

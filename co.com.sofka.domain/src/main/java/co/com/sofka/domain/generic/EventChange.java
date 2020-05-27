@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 /**
  * The type Event behavior.
  */
-public abstract class EventBehavior {
+public abstract class EventChange {
 
     /**
      * The Behaviors.
@@ -17,9 +17,9 @@ public abstract class EventBehavior {
     /**
      * Give.
      *
-     * @param behavior the behavior
+     * @param changeEvent the behavior
      */
-    protected void give(Consumer<? extends DomainEvent> behavior) {
-        behaviors.add((Consumer<? super DomainEvent>) behavior);
+    protected void apply(Consumer<? extends DomainEvent> changeEvent) {
+        behaviors.add((Consumer<? super DomainEvent>) changeEvent);
     }
 }

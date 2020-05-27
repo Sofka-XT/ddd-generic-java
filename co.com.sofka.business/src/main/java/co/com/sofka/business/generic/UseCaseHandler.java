@@ -14,6 +14,7 @@ import java.util.concurrent.Flow;
 public class UseCaseHandler {
 
     private static UseCaseHandler instance;
+    private String identifyExecutor = null;
 
     private UseCaseHandler() {
     }
@@ -45,6 +46,7 @@ public class UseCaseHandler {
             try (PublisherEvent publisher = new PublisherEvent()) {
                 publisher.subscribe(subscriber);
                 useCase.setRequest(values);
+                useCase.setIdentify(identifyExecutor());
                 useCase.setUseCaseCallback((UseCase.UseCaseFormat<R>) publisher);
                 useCase.run();
             }
@@ -65,12 +67,22 @@ public class UseCaseHandler {
 
         UseCaseResponse<R> useCaseResponse = new UseCaseResponse<>();
         useCase.setRequest(values);
+        useCase.setIdentify(identifyExecutor());
         useCase.setUseCaseCallback(useCaseResponse);
         useCase.run();
         if (useCaseResponse.hasError()) {
             throw useCaseResponse.exception;
         }
         return Optional.ofNullable(useCaseResponse.response);
+    }
+
+    public String identifyExecutor() {
+        return identifyExecutor;
+    }
+
+    public UseCaseHandler setIdentifyExecutor(String identifyExecutor) {
+        this.identifyExecutor = identifyExecutor;
+        return this;
     }
 
     /**

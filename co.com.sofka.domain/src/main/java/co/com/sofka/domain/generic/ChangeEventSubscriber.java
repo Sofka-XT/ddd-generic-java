@@ -8,7 +8,7 @@ import java.util.function.Consumer;
 /**
  * The type Behavior subscriber.
  */
-public class BehaviorSubscriber {
+public class ChangeEventSubscriber {
     private final List<DomainEvent> changes = new LinkedList<>();
     private final Map<String, AtomicLong> versions = new ConcurrentHashMap<>();
     private final Set<Consumer<? super DomainEvent>> observables = new HashSet<>();
@@ -36,10 +36,10 @@ public class BehaviorSubscriber {
     /**
      * Subscribe.
      *
-     * @param eventBehavior the event behavior
+     * @param eventChange the event behavior
      */
-    public final void subscribe(EventBehavior eventBehavior) {
-        this.observables.addAll(eventBehavior.behaviors);
+    public final void subscribe(EventChange eventChange) {
+        this.observables.addAll(eventChange.behaviors);
     }
 
     /**

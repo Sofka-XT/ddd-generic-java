@@ -1,6 +1,10 @@
 package co.com.sofka.business.generic;
 
+import co.com.sofka.business.asyn.UseCaseExecutor;
+import co.com.sofka.business.repository.DomainEventRepository;
 import co.com.sofka.domain.generic.DomainEvent;
+
+import java.util.Objects;
 
 
 /**
@@ -12,8 +16,12 @@ import co.com.sofka.domain.generic.DomainEvent;
 public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase.ResponseValues> {
 
     private Q request;
+    private  String identify;
 
     private UseCaseFormat<P> useCaseFormat;
+    private ServiceBuilder serviceBuilder;
+    private DomainEventRepository repository;
+
 
     /**
      * Request q.
@@ -61,9 +69,22 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
         } catch (BusinessException e) {
             useCaseFormat.onError(e);
         } catch (RuntimeException e) {
-            var exception = new UnexpectedException("There is an unexpected problem in the use case", e);
+            var exception = new UnexpectedException(identify, "There is an unexpected problem in the use case", e);
             useCaseFormat.onError(exception);
         }
+    }
+
+    /**
+     * With service builder.
+     *
+     * @param serviceBuilder the service builder constructor
+     */
+    public void addServiceBuilder(ServiceBuilder serviceBuilder){
+        this.serviceBuilder = Objects.requireNonNull(serviceBuilder);
+    }
+
+    public ServiceBuilder serviceBuilder() {
+        return serviceBuilder;
     }
 
     /**
@@ -71,7 +92,19 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
      *
      * @param objectInput the object input
      */
-    protected abstract void executeUseCase(Q objectInput);
+    public abstract void executeUseCase(Q objectInput);
+
+    public void setIdentify(String identify) {
+        this.identify = identify;
+    }
+
+    public void addRepository(DomainEventRepository repository) {
+        this.repository = repository;
+    }
+
+    public DomainEventRepository repository() {
+        return repository;
+    }
 
     /**
      * The interface Request event.

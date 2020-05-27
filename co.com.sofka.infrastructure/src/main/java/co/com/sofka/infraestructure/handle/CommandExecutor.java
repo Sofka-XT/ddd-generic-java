@@ -1,6 +1,7 @@
 package co.com.sofka.infraestructure.handle;
 
 import co.com.sofka.business.asyn.UseCaseExecutor;
+import co.com.sofka.business.generic.UseCase;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,11 +14,17 @@ import java.util.logging.Logger;
  */
 public abstract class CommandExecutor implements CommandHandler<Map<String, String>> {
 
-    private static Logger logger = Logger.getLogger(CommandExecutor.class.getName());
+    private static final Logger logger = Logger.getLogger(CommandExecutor.class.getName());
     /**
      * The Handles.
      */
     protected Map<String, Consumer<Map<String, String>>> handles = new ConcurrentHashMap<>();
+
+    /**
+     * Object Returned command
+     */
+    private UseCase.RequestValues request;
+
 
     /**
      * Put.
@@ -55,5 +62,15 @@ public abstract class CommandExecutor implements CommandHandler<Map<String, Stri
 
         useCaseExecutor.accept(args);
         useCaseExecutor.run();
+        request = useCaseExecutor.request();
+    }
+
+    /**
+     * Use case request values
+     *
+     * @return request requerid for use case
+     */
+    public UseCase.RequestValues request() {
+        return request;
     }
 }

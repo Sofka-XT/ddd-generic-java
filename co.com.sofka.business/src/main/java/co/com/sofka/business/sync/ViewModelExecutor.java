@@ -2,6 +2,7 @@ package co.com.sofka.business.sync;
 
 import co.com.sofka.business.repository.QueryMapperRepository;
 import co.com.sofka.business.repository.QueryRepository;
+import co.com.sofka.domain.generic.ViewModel;
 
 import java.util.Map;
 import java.util.Objects;
@@ -66,7 +67,7 @@ public abstract class ViewModelExecutor<T> implements Function<Map<String, Strin
      * @param classViewModel class to mapper
      * @return ApplyQuery to list or model object
      */
-    public QueryMapperRepository.ApplyQuery getDataMapped(String category, Class<?> classViewModel) {
+    public <M extends ViewModel> QueryMapperRepository.ApplyQuery<M> getDataMapped(String category, Class<M> classViewModel) {
         return queryMapperRepository()
                 .getDataMapped(category, classViewModel);
     }

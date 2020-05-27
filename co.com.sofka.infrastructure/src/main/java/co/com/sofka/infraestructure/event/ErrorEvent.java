@@ -8,22 +8,16 @@ import java.util.UUID;
  */
 public class ErrorEvent {
 
-    /**
-     * The When.
-     */
     public final Instant when;
-    /**
-     * The Uuid.
-     */
     public final UUID uuid;
-
+    public final String identify;
     public final Throwable error;
-
 
     /**
      * Instantiates a new Error event.
      */
-    public ErrorEvent(Throwable throwable) {
+    public ErrorEvent(String identify, Throwable throwable) {
+        this.identify = identify;
         this.error = throwable;
         this.when = Instant.now();
         this.uuid = UUID.randomUUID();

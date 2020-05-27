@@ -4,6 +4,7 @@ package co.com.sofka.business.generic;
  * The type Unexpected exception.
  */
 public class UnexpectedException extends RuntimeException {
+    private final String identify;
     private String request;
 
     /**
@@ -12,8 +13,9 @@ public class UnexpectedException extends RuntimeException {
      * @param message the message
      * @param cause   the cause
      */
-    public UnexpectedException(String message, Throwable cause) {
+    public UnexpectedException(String identify, String message, Throwable cause) {
         super(message, cause);
+        this.identify = identify;
     }
 
     /**
@@ -32,5 +34,9 @@ public class UnexpectedException extends RuntimeException {
      */
     public void setRequest(String request) {
         this.request = request;
+    }
+
+    public String getIdentify() {
+        return identify;
     }
 }
