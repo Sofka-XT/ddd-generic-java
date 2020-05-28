@@ -15,7 +15,6 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
 
 
     private final ChangeEventSubscriber changeEventSubscriber;
-    private final List<DomainEvent> events = new LinkedList<>();
 
     /**
      * Instantiates a new Aggregate event.
@@ -48,7 +47,6 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
         var aggregate = nameClass.replaceAll("(Identity|Id)", "").toLowerCase();
         event.setAggregateName(aggregate);
         event.setAggregateRootId(entityId.value());
-        events.add(event);
         return changeEventSubscriber.appendChange(event);
     }
 
@@ -68,7 +66,6 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
      */
     protected void applyEvent(DomainEvent domainEvent) {
         changeEventSubscriber.applyEvent(domainEvent);
-        events.add(domainEvent);
     }
 
     /**
@@ -83,20 +80,8 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
      */
     public void refundEvent() {
         changeEventSubscriber.getChanges().clear();
-        events.clear();
     }
 
-    /**
-     * Find event
-     *
-     * @param event the event class
-     * @return optional event
-     */
-    public <E extends DomainEvent> Optional<E> findEvent(Class<E> event){
-       return events.stream()
-                .filter(event::isInstance).map(e -> (E)e)
-               .findFirst();
-    }
 
     /**
      * Find event uncommitted
@@ -118,17 +103,6 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
      */
     public <E extends DomainEvent> Stream<E> findAllEventUncommitted(Class<E> event){
         return changeEventSubscriber.getChanges().stream()
-                .filter(event::isInstance).map(e -> (E)e);
-    }
-
-    /**
-     * Find all events
-     *
-     * @param event the event class
-     * @return stream of the events
-     */
-    public <E extends DomainEvent> Stream<E> findAllEvents(Class<E> event){
-        return events.stream()
                 .filter(event::isInstance).map(e -> (E)e);
     }
 
