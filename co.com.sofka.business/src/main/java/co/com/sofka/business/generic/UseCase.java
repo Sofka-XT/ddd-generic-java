@@ -1,10 +1,10 @@
 package co.com.sofka.business.generic;
 
-import co.com.sofka.business.asyn.UseCaseExecutor;
 import co.com.sofka.business.repository.DomainEventRepository;
 import co.com.sofka.domain.generic.DomainEvent;
 
 import java.util.Objects;
+import java.util.Optional;
 
 
 /**
@@ -16,7 +16,7 @@ import java.util.Objects;
 public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase.ResponseValues> {
 
     private Q request;
-    private  String identify;
+    private String identify;
 
     private UseCaseFormat<P> useCaseFormat;
     private ServiceBuilder serviceBuilder;
@@ -79,12 +79,13 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
      *
      * @param serviceBuilder the service builder constructor
      */
-    public void addServiceBuilder(ServiceBuilder serviceBuilder){
+    public void addServiceBuilder(ServiceBuilder serviceBuilder) {
         this.serviceBuilder = Objects.requireNonNull(serviceBuilder);
     }
 
-    public ServiceBuilder serviceBuilder() {
-        return serviceBuilder;
+    public <T> Optional<T> getService(Class<T> clasz) {
+        Objects.requireNonNull(serviceBuilder, "the service build cannot be null, you allow use the annotation ExtensionService");
+        return serviceBuilder.getService(clasz);
     }
 
     /**

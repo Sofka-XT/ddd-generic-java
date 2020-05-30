@@ -10,7 +10,7 @@ public interface EventBus {
     /**
      * Publish.
      *
-     * @param event    the event
+     * @param event the event
      */
     void publish(DomainEvent event);
 

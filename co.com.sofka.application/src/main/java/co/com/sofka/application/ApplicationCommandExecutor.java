@@ -15,12 +15,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 
 /**
  * Application command executor
- *
+ * <p>
  * This class is implemented to execute the commands from a controller.
  * Use this class within your Rest Controller or your service to execute a use case.
  */

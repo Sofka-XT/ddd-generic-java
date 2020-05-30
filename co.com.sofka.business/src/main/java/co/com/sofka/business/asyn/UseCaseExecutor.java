@@ -9,6 +9,7 @@ import co.com.sofka.domain.generic.DomainEvent;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 
@@ -128,7 +129,7 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
      * @param serviceBuilder the service builder constructor
      * @return the use case executor
      */
-    public UseCaseExecutor withServiceBuilder(ServiceBuilder serviceBuilder){
+    public UseCaseExecutor withServiceBuilder(ServiceBuilder serviceBuilder) {
         this.serviceBuilder = Objects.requireNonNull(serviceBuilder);
         return this;
     }
@@ -148,7 +149,9 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
                 .subscribe(subscriberEvent());
     }
 
-    public ServiceBuilder serviceBuilder() {
-        return serviceBuilder;
+    public <T> Optional<T> getService(Class<T> clasz) {
+        Objects.requireNonNull(serviceBuilder, "the service build cannot be null, you allow use the annotation ExtensionService");
+        return serviceBuilder.getService(clasz);
     }
+
 }

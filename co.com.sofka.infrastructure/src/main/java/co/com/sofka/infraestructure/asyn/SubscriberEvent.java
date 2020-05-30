@@ -28,8 +28,8 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
     /**
      * Instantiates a new Subscriber event.
      *
-     * @param repository    the repository
-     * @param eventBus      the event bus
+     * @param repository the repository
+     * @param eventBus   the event bus
      */
     public SubscriberEvent(EventStoreRepository repository, EventBus eventBus) {
         this.repository = repository;
@@ -82,7 +82,7 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
     public void onError(Throwable throwable) {
         logger.log(Level.SEVERE, "Error on event", throwable.getCause());
         Optional.ofNullable(eventBus).ifPresent(bus -> {
-            var identify = ((UnexpectedException)throwable).getIdentify();
+            var identify = ((UnexpectedException) throwable).getIdentify();
             var event = new ErrorEvent(identify, throwable);
             bus.publishError(event);
         });

@@ -1,7 +1,6 @@
 package co.com.sofka.domain.generic;
 
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -89,9 +88,9 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
      * @param event the event class
      * @return optional event
      */
-    public <E extends DomainEvent> Optional<E> findEventUncommitted(Class<E> event){
+    public <E extends DomainEvent> Optional<E> findEventUncommitted(Class<E> event) {
         return changeEventSubscriber.getChanges().stream()
-                .filter(event::isInstance).map(e -> (E)e)
+                .filter(event::isInstance).map(e -> (E) e)
                 .findFirst();
     }
 
@@ -101,9 +100,9 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
      * @param event the event class
      * @return stream of the events
      */
-    public <E extends DomainEvent> Stream<E> findAllEventUncommitted(Class<E> event){
+    public <E extends DomainEvent> Stream<E> findAllEventUncommitted(Class<E> event) {
         return changeEventSubscriber.getChanges().stream()
-                .filter(event::isInstance).map(e -> (E)e);
+                .filter(event::isInstance).map(e -> (E) e);
     }
 
     @Override

@@ -20,7 +20,7 @@ public interface QueryMapperRepository {
      * @param classViewModel class to mapper
      * @return ApplyQuery mode list and object
      */
-    <T extends ViewModel>  ApplyQuery<T> getDataMapped(String category, Class<T> classViewModel);
+    <T extends ViewModel> ApplyQuery<T> getDataMapped(String category, Class<T> classViewModel);
 
     /**
      * The interface linked to Query mapper repository.

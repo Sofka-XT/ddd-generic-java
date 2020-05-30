@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  * The type Query executor.
  */
 public class QueryExecutor implements QueryHandler<Map<String, String>> {
-    private static Logger logger = Logger.getLogger(QueryExecutor.class.getName());
+    private static final Logger logger = Logger.getLogger(QueryExecutor.class.getName());
 
     /**
      * The Handles.
