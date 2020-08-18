@@ -40,9 +40,10 @@ public class UseCaseHandler {
      * @param values  the values
      * @return the function subscriber
      */
+    @SuppressWarnings("unchecked")
     public <T extends UseCase.RequestValues, R extends ResponseEvents> FunctionSubscriber asyncExecutor(
             final UseCase<T, R> useCase, T values) {
-        return subscriber -> {
+        return UseCaseReplyUtil.retry(() -> subscriber -> {
             try (PublisherEvent publisher = new PublisherEvent()) {
                 publisher.subscribe(subscriber);
                 useCase.setRequest(values);
@@ -50,7 +51,7 @@ public class UseCaseHandler {
                 useCase.setUseCaseCallback((UseCase.UseCaseFormat<R>) publisher);
                 useCase.run();
             }
-        };
+        }, 5, ReplyBusinessException.class);
     }
 
     /**
@@ -62,18 +63,21 @@ public class UseCaseHandler {
      * @param values  the values
      * @return the optional
      */
+    @SuppressWarnings("unchecked")
     public <T extends UseCase.RequestValues, R extends UseCase.ResponseValues> Optional<R> syncExecutor(
             final UseCase<T, R> useCase, T values) {
+        return UseCaseReplyUtil.retry(() -> {
+            UseCaseResponse<R> useCaseResponse = new UseCaseResponse<>();
+            useCase.setRequest(values);
+            useCase.setIdentify(identifyExecutor());
+            useCase.setUseCaseCallback(useCaseResponse);
+            useCase.run();
+            if (useCaseResponse.hasError()) {
+                throw useCaseResponse.exception;
+            }
+            return Optional.ofNullable(useCaseResponse.response);
+        }, 5, ReplyBusinessException.class);
 
-        UseCaseResponse<R> useCaseResponse = new UseCaseResponse<>();
-        useCase.setRequest(values);
-        useCase.setIdentify(identifyExecutor());
-        useCase.setUseCaseCallback(useCaseResponse);
-        useCase.run();
-        if (useCaseResponse.hasError()) {
-            throw useCaseResponse.exception;
-        }
-        return Optional.ofNullable(useCaseResponse.response);
     }
 
     public String identifyExecutor() {

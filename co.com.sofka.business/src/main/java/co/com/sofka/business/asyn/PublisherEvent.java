@@ -5,6 +5,7 @@ import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.domain.generic.DomainEvent;
 
 import java.util.concurrent.SubmissionPublisher;
+import java.util.logging.Logger;
 
 /**
  * The type Publisher event.
@@ -13,9 +14,14 @@ import java.util.concurrent.SubmissionPublisher;
  */
 public final class PublisherEvent extends SubmissionPublisher<DomainEvent> implements UseCase.UseCaseFormat<ResponseEvents> {
 
+    private static final Logger logger = Logger.getLogger(PublisherEvent.class.getName());
+
     @Override
     public void onSuccess(ResponseEvents responseEvents) {
-        responseEvents.getDomainEvents().forEach(this::submit);
+        responseEvents.getDomainEvents().forEach(event -> {
+            logger.info("Publish -> " + event.type + " ### " + event.aggregateRootId());
+            submit(event);
+        });
         close();
     }
 

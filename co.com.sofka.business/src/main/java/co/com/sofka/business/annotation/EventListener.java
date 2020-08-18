@@ -11,4 +11,10 @@ import java.lang.annotation.*;
 @Target(ElementType.TYPE)
 @Inherited
 public @interface EventListener {
+    /**
+     * Name of the type event.
+     *
+     * @return the type name of the event
+     */
+    String eventType();
 }

@@ -5,6 +5,7 @@ import co.com.sofka.business.annotation.ExtensionService;
 import co.com.sofka.business.generic.ServiceBuilder;
 import co.com.sofka.business.generic.UseCase;
 import co.com.sofka.business.generic.UseCaseHandler;
+import co.com.sofka.business.repository.DomainEventRepository;
 import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.business.support.TriggeredEvent;
 import co.com.sofka.domain.generic.DomainEvent;
@@ -13,20 +14,14 @@ import co.com.sofka.infraestructure.repository.EventStoreRepository;
 import io.github.classgraph.*;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 public class ApplicationEventDrive {
     private static final Logger logger = Logger.getLogger(ApplicationEventDrive.class.getName());
-    private final Set<UseCase<TriggeredEvent<? extends DomainEvent>, ResponseEvents>> useCases;
+    private final Set<UseCaseWrap> useCases;
     private final SubscriberEvent subscriberEvent;
     private final EventStoreRepository repository;
     private final String packageUseCase;
@@ -52,32 +47,50 @@ public class ApplicationEventDrive {
             ClassInfoList classInfos = result.getClassesWithAnnotation(EventListener.class.getName());
             classInfos.parallelStream().forEach(handleClassInfo -> {
                 try {
+                    AnnotationInfo annotationInfo = handleClassInfo.getAnnotationInfo(EventListener.class.getName());
+                    String type = getEventType(annotationInfo);
                     var usecase = (UseCase<TriggeredEvent<? extends DomainEvent>, ResponseEvents>) handleClassInfo
                             .loadClass()
                             .getDeclaredConstructor().newInstance();
                     usecase.addServiceBuilder(getServiceBuilder(handleClassInfo));
-                    useCases.add(usecase);
-                    logger.info("@@@@ Registered use case for event lister --> " + usecase.getClass().getName());
+                    useCases.add(new UseCaseWrap(type, usecase));
+                    logger.info("@@@@ Registered use case for event lister --> " + usecase.getClass().getSimpleName() + "[" + type + "]");
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ignored) {
                 }
             });
         }
     }
 
+    private String getEventType(AnnotationInfo annotationInfo) {
+        return Optional.ofNullable(annotationInfo).map(annotation -> {
+            AnnotationParameterValueList paramVals = annotation.getParameterValues();
+            return (String) paramVals.getValue("eventType");
+        }).orElseThrow();
+    }
 
     public final void fire(DomainEvent domainEvent) {
         var event = Objects.requireNonNull(domainEvent);
-        useCases.forEach(useCase -> {
-            if (matchDomainEvent(event).withRequestOf(useCase)) {
-                useCase.addRepository(aggregateRootId -> repository
-                        .getEventsBy(event.getAggregateName(), aggregateRootId));
-                UseCaseHandler.getInstance()
-                        .asyncExecutor(
-                                useCase, new TriggeredEvent<>(event)
-                        ).subscribe(subscriberEvent);
-            }
-        });
+        useCases.stream()
+                .filter(useCaseWrap -> useCaseWrap.eventType.equals(domainEvent.type))
+                .forEach(useCaseWrap -> {
+                    var useCase = useCaseWrap.usecase;
+                    useCase.addRepository(new DomainEventRepository() {
+                        @Override
+                        public List<DomainEvent> getEventsBy(String aggregateRootId) {
+                            return repository.getEventsBy(event.getAggregateName(), aggregateRootId);
+                        }
 
+                        @Override
+                        public List<DomainEvent> getEventsBy(String aggregate, String aggregateRootId) {
+                            return repository.getEventsBy(aggregate, aggregateRootId);
+                        }
+                    });
+                    logger.info("Use case handler to event --> " + event.type);
+                    UseCaseHandler.getInstance()
+                            .asyncExecutor(
+                                    useCase, new TriggeredEvent<>(event)
+                            ).subscribe(subscriberEvent);
+                });
     }
 
     private ServiceBuilder getServiceBuilder(ClassInfo handleClassInfo) {
@@ -99,46 +112,14 @@ public class ApplicationEventDrive {
         }).orElse(new ServiceBuilder());
     }
 
-    private boolean isMatchWithAEvent(DomainEvent domainEvent, Method m, Class<?>[] params) {
-        boolean matchWithAEvent = false;
-        if (params[0].getCanonicalName().equals(TriggeredEvent.class.getCanonicalName())) {
-            Type returnType = m.getGenericParameterTypes()[0];
-            if (returnType instanceof ParameterizedType) {
-                ParameterizedType type = (ParameterizedType) returnType;
-                matchWithAEvent = ((Class<?>) type.getActualTypeArguments()[0])
-                        .getCanonicalName().equals(domainEvent.getClass()
-                                .getCanonicalName());
-            }
+    private static class UseCaseWrap {
+        private final UseCase<TriggeredEvent<? extends DomainEvent>, ResponseEvents> usecase;
+        private final String eventType;
+
+        public UseCaseWrap(String eventType, UseCase<TriggeredEvent<? extends DomainEvent>, ResponseEvents> usecase) {
+            this.usecase = usecase;
+            this.eventType = eventType;
         }
-        return matchWithAEvent;
     }
 
-    private ConditionalRequestUseCase matchDomainEvent(DomainEvent domainEvent) {
-        return useCaseCasted -> {
-            var useCase = Objects.requireNonNull(useCaseCasted);
-            String target = "executeUseCase";
-            boolean matchWithAEvent = false;
-            try {
-                Method m = useCase.getClass().getMethod("executeUseCase", TriggeredEvent.class);
-                if (target.equals(m.getName())) {
-                    Class<?>[] params = m.getParameterTypes();
-                    matchWithAEvent = isMatchWithAEvent(domainEvent, m, params);
-                }
-            } catch (NoSuchMethodException ignored) {
-            }
-
-            return matchWithAEvent;
-        };
-    }
-
-    @FunctionalInterface
-    private interface ConditionalRequestUseCase {
-        /**
-         * With request of boolean.
-         *
-         * @param useCaseCasted the use case casted
-         * @return the boolean
-         */
-        boolean withRequestOf(UseCase<TriggeredEvent<? extends DomainEvent>, ResponseEvents> useCaseCasted);
-    }
 }

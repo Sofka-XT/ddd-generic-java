@@ -55,24 +55,22 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
         this.subscription = subscription;
-        subscription.request(1);
+        subscription.request(100);
     }
 
     @Override
     public final void onNext(DomainEvent event) {
-        logger.info("###### Process event -> " + event.type);
-
         Optional.ofNullable(eventBus).ifPresent(bus -> {
             bus.publish(event);
-            logger.info("Event published OK");
+            logger.info("###### Event published OK");
         });
 
         Optional.ofNullable(repository).ifPresent(repo -> {
-            logger.info("Saving event for aggregate root [" + event.aggregateRootId() + "]");
+            logger.info("###### Saving event for aggregate root [" + event.aggregateRootId() + "]");
             StoredEvent storedEvent = StoredEvent.wrapEvent(event);
             Optional.ofNullable(event.aggregateRootId()).ifPresent(aggregateId -> {
                 repo.saveEvent(event.getAggregateName(), aggregateId, storedEvent);
-                logger.info("Event saved with store specification of --> " + event.getAggregateName());
+                logger.info("###### Event saved with store specification of --> " + event.getAggregateName());
             });
         });
         subscription.request(1);
@@ -80,7 +78,7 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
 
     @Override
     public void onError(Throwable throwable) {
-        logger.log(Level.SEVERE, "Error on event", throwable.getCause());
+        logger.log(Level.SEVERE, "###### Error on event", throwable.getCause());
         Optional.ofNullable(eventBus).ifPresent(bus -> {
             var identify = ((UnexpectedException) throwable).getIdentify();
             var event = new ErrorEvent(identify, throwable);

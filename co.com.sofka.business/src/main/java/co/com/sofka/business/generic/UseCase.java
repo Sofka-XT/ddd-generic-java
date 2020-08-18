@@ -3,6 +3,7 @@ package co.com.sofka.business.generic;
 import co.com.sofka.business.repository.DomainEventRepository;
 import co.com.sofka.domain.generic.DomainEvent;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -84,8 +85,31 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
     }
 
     public <T> Optional<T> getService(Class<T> clasz) {
-        Objects.requireNonNull(serviceBuilder, "the service build cannot be null, you allow use the annotation ExtensionService");
+        Objects.requireNonNull(serviceBuilder, "The service build cannot be null, you allow use the annotation ExtensionService");
         return serviceBuilder.getService(clasz);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<DomainEvent> retrieveEvents(String aggregateId) {
+        return UseCaseReplyUtil.retry(() -> {
+            var events = repository().getEventsBy(aggregateId);
+            if (!events.isEmpty()) {
+                return events;
+            }
+            throw new BusinessException(aggregateId, "Reply event for use case");
+        }, 5);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<DomainEvent> retrieveEvents() {
+        String aggregateId = identify;
+        return UseCaseReplyUtil.retry(() -> {
+            var events = repository().getEventsBy(aggregateId);
+            if (!events.isEmpty()) {
+                return events;
+            }
+            throw new BusinessException(aggregateId, "Reply event for use case");
+        }, 5);
     }
 
     /**

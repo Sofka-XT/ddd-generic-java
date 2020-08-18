@@ -26,27 +26,39 @@ public abstract class DomainEvent implements Serializable {
     private Long versionType;
 
     /**
-     * Instantiates a new Domain event.
+     * Domain Event Construct
      *
-     * @param type            the type
-     * @param aggregateRootId the identity
+     * @param type            of the event
+     * @param aggregateRootId of the event
+     * @param uuid            of the event
      */
-    public DomainEvent(final String type, String aggregateRootId) {
+    public DomainEvent(final String type, String aggregateRootId, UUID uuid) {
         this.type = type;
         this.aggregateRootId = aggregateRootId;
         this.aggregate = "default";
         this.when = Instant.now();
-        this.uuid = UUID.randomUUID();
+        this.uuid = uuid;
         this.versionType = 1L;
     }
 
+
     /**
-     * Instantiates a new Domain event.
+     * Domain Event Construct
      *
-     * @param type the type
+     * @param type of the event
+     * @param uuid of the event
+     */
+    public DomainEvent(final String type, UUID uuid) {
+        this(type, null, uuid);
+    }
+
+    /**
+     * Domain Event Construct
+     *
+     * @param type of the event
      */
     public DomainEvent(final String type) {
-        this(type, null);
+        this(type, null, UUID.randomUUID());
     }
 
     /**

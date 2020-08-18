@@ -6,12 +6,15 @@ import co.com.sofka.business.annotation.ExtensionService;
 import co.com.sofka.business.asyn.UseCaseExecutor;
 import co.com.sofka.business.generic.ServiceBuilder;
 import co.com.sofka.business.generic.UseCaseHandler;
+import co.com.sofka.business.repository.DomainEventRepository;
+import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.asyn.SubscriberEvent;
 import co.com.sofka.infraestructure.handle.CommandExecutor;
 import co.com.sofka.infraestructure.repository.EventStoreRepository;
 import io.github.classgraph.*;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -109,7 +112,17 @@ public class ApplicationCommandExecutor extends CommandExecutor {
                     .withSubscriberEvent(subscriberEvent)
                     .withUseCaseHandler(UseCaseHandler.getInstance())
                     .withServiceBuilder(getServiceBuilder(handleClassInfo))
-                    .withDomainEventRepo(aggregateRootId -> repository.getEventsBy(aggregate, aggregateRootId)));
+                    .withDomainEventRepo(new DomainEventRepository() {
+                        @Override
+                        public List<DomainEvent> getEventsBy(String aggregateRootId) {
+                            return repository.getEventsBy(aggregate, aggregateRootId);
+                        }
+
+                        @Override
+                        public List<DomainEvent> getEventsBy(String aggregate, String aggregateRootId) {
+                            return repository.getEventsBy(aggregate, aggregateRootId);
+                        }
+                    }));
             var message = String.format("@@@@ %s Registered handle command with type --> %s", aggregate, type);
             logger.info(message);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

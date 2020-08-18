@@ -15,4 +15,13 @@ public interface DomainEventRepository {
      * @return the events by
      */
     List<DomainEvent> getEventsBy(String aggregateRootId);
+
+    /**
+     * Gets events by.
+     *
+     * @param aggregate       the aggregate name
+     * @param aggregateRootId the aggregate root id
+     * @return the events by
+     */
+    List<DomainEvent> getEventsBy(String aggregate, String aggregateRootId);
 }
