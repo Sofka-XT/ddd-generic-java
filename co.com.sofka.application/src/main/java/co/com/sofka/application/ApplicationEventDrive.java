@@ -2,6 +2,7 @@ package co.com.sofka.application;
 
 import co.com.sofka.business.annotation.EventListener;
 import co.com.sofka.business.annotation.ExtensionService;
+import co.com.sofka.business.generic.BusinessException;
 import co.com.sofka.business.generic.ServiceBuilder;
 import co.com.sofka.business.generic.UseCase;
 import co.com.sofka.business.generic.UseCaseHandler;
@@ -19,9 +20,16 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
 
+/**
+ * Application Event Drive
+ * <p>
+ * In this class implement a mechanism to execute
+ * a UseCaseHandler#asyncExecutor to execute use cases asynchronously.
+ * </p>
+ */
 public class ApplicationEventDrive {
     private static final Logger logger = Logger.getLogger(ApplicationEventDrive.class.getName());
-    private final Set<UseCaseWrap> useCases;
+    private final Set<UseCase.UseCaseWrap> useCases;
     private final SubscriberEvent subscriberEvent;
     private final EventStoreRepository repository;
     private final String packageUseCase;
@@ -53,7 +61,7 @@ public class ApplicationEventDrive {
                             .loadClass()
                             .getDeclaredConstructor().newInstance();
                     usecase.addServiceBuilder(getServiceBuilder(handleClassInfo));
-                    useCases.add(new UseCaseWrap(type, usecase));
+                    useCases.add(new UseCase.UseCaseWrap(type, usecase));
                     logger.info("@@@@ Registered use case for event lister --> " + usecase.getClass().getSimpleName() + "[" + type + "]");
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ignored) {
                 }
@@ -68,12 +76,17 @@ public class ApplicationEventDrive {
         }).orElseThrow();
     }
 
+    /**
+     * This method triggers a use case registered as @EventListener().
+     *
+     * @param domainEvent event from bus or use case
+     */
     public final void fire(DomainEvent domainEvent) {
         var event = Objects.requireNonNull(domainEvent);
         useCases.stream()
-                .filter(useCaseWrap -> useCaseWrap.eventType.equals(domainEvent.type))
+                .filter(useCaseWrap -> useCaseWrap.eventType().equals(domainEvent.type))
                 .forEach(useCaseWrap -> {
-                    var useCase = useCaseWrap.usecase;
+                    var useCase = useCaseWrap.usecase();
                     useCase.addRepository(new DomainEventRepository() {
                         @Override
                         public List<DomainEvent> getEventsBy(String aggregateRootId) {
@@ -91,6 +104,21 @@ public class ApplicationEventDrive {
                                     useCase, new TriggeredEvent<>(event)
                             ).subscribe(subscriberEvent);
                 });
+    }
+
+    /**
+     * request an useCase by domain event
+     *
+     * @param domainEvent triggered
+     * @return ResponseEvents Optional
+     */
+    public final Optional<ResponseEvents> requestUseCase(DomainEvent domainEvent) {
+        var event = Objects.requireNonNull(domainEvent);
+        var wrap = useCases.stream()
+                .filter(useCaseWrap -> useCaseWrap.eventType().equals(domainEvent.type))
+                .findFirst().orElseThrow(() -> new BusinessException(domainEvent.aggregateRootId(), "The use case event listener not registered"));
+        return UseCaseHandler.getInstance()
+                .syncExecutor(wrap.usecase(), new TriggeredEvent<>(event));
     }
 
     private ServiceBuilder getServiceBuilder(ClassInfo handleClassInfo) {
@@ -111,15 +139,4 @@ public class ApplicationEventDrive {
             return serviceBuilder;
         }).orElse(new ServiceBuilder());
     }
-
-    private static class UseCaseWrap {
-        private final UseCase<TriggeredEvent<? extends DomainEvent>, ResponseEvents> usecase;
-        private final String eventType;
-
-        public UseCaseWrap(String eventType, UseCase<TriggeredEvent<? extends DomainEvent>, ResponseEvents> usecase) {
-            this.usecase = usecase;
-            this.eventType = eventType;
-        }
-    }
-
 }

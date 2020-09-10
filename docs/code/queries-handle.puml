@@ -1,0 +1,14 @@
+@startuml
+Query -> "Query Handle": [GET] find and get
+"Query Handle" -> BD: Basic Query
+BD -> "Query Handle": View Model
+"Query Handle" -> Query: Response (View Model)
+Command -> "Use Case": Request Command
+"Use Case" -> Aggregate: Behavior
+Aggregate -> Aggregate: Event Change
+Aggregate -> "Use Case": Emit Domain Events
+"Use Case" --> Bus: Publish Event
+Bus -> Listener: Domain Events
+Listener -> Materialize: Event Handle
+Materialize -> BD: Insert/Update/Delete
+@enduml

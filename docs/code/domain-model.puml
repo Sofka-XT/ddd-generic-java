@@ -1,0 +1,205 @@
+@startuml
+
+' hide the spot
+hide circle
+
+entity "[AR] Dojo" as Dojo {
+    [ID] id
+    [E] coach
+    [VO] dataInfo
+    [VO] status
+    [List] rules
+    [VO] location
+    [VO] groupGit
+    --
+    **createdGitGroup**
+    **changeStatus**
+    **updateDataInfo**
+    **addRules**
+    **removeRules**
+    **updateLocation**
+    **updateOpeningHours**
+    **updateUrlMeet**
+    **updateCoachName**
+    **updateCoachSpecialty**
+    **addAccomplishmentToCoach**
+    **removeAccomplishmentToCoach**
+
+    --
+    CreatedDojo
+    AssociatedCoach
+    CreatedDojo
+    AssociatedCoach
+    CreatedGitGroup
+    ChangedStatus
+    UpdatedDateInfo
+    AddedDojoRule
+    RemovedDojoRule
+    UpdatedLocation
+    UpdatedOpeningHours
+    UpdatedUrlMeet
+    UpdatedCoachName
+    UpdatedCoachSpecialty
+    AddedAccomplishmentToCoach
+    RemovedAccomplishmentToCoach
+}
+
+class "[VO] DataInfo" as DataInfo{
+    [String] name
+    [String] legend
+}
+class "[Enum] Status" as Status{
+    CLOSED
+    CANCELLED
+    OPEN
+}
+class "[VO] Location" as Location {
+    [String] urlMeet
+    [String] location
+    [String] description
+    [VO] openingHours
+}
+class "[VO] OpeningHours" as OpeningHours {
+    [Integer] hourStart
+    [Integer] hourEnd
+    [Enum] frequency
+}
+class "[Enum] Frequency" as Frequency{
+    MONTHLY
+    BIWEEKLY
+    WEEKLY
+    EACH_THREE_DAYS
+    WEEKENDS
+    EVERY_TWO_DAYS
+}
+entity "[E] Couch" as Couch {
+    [ID] id
+    [VO] name
+    [VO] personId
+    [VO] specialty
+    [VO] email
+    [List] accomplishment
+    --
+    **updateName**
+    **updateSpecialty**
+    **addAccomplishment**
+    **removeAccomplishment**
+}
+class "[VO] Accomplishment" as Accomplishment {
+    [String] label
+    [Int] point
+    [Date] date
+}
+entity "[AR] Clan" as Clan  {
+  [ID] id
+  [E] members
+  [VO] name
+  [VO] color
+  [VO] groupGit
+  --
+  **createGitGroup**
+  **addNewMember**
+  **addGitMember**
+  **createGitMember**
+  **revokeMember**
+  **removeGitMember**
+  **updateName**
+  **updateMemberName**
+  **addScoreToMember**
+  --
+  AddedScoreOfMember
+  UpdatedMember
+  UpdatedName
+  RevokedMember
+  RemoveGitMember
+  CreatedGitMember
+  AddedGitMember
+  AddedMember
+  CreatedGitGroup
+  CreatedClan
+}
+
+entity "[E] Member" as Member {
+  [ID] id
+  [VO] name
+  [VO] gender
+  [Boolean] isOwner
+  [VO] personId
+  [VO] memberGit
+  [List] scores
+  --
+  **addScore**
+  **updateName**
+  **updateEmail**
+  **updateGender**
+  **updateMemberGit**
+}
+
+class "[VO] Score" as Score {
+  [Int] point
+  [VO] dojoId
+  [Date] date
+}
+
+entity "[AR] Challenge" as Challenge{
+    [ID] id
+    [VO] name
+    [Set] clanIds
+    [VO] dojoId
+    [List] katas
+    [VO] assessment
+    [Boolean] isRevoked
+    [VO] durationDays
+    --
+    **updateChallenge**
+    **addNewKata**
+    **revoke**
+    **assignRepoUrl**
+    **addExercise**
+    **subscribeClan**
+    **unsubscribeClan**
+    **updateChallengeName**
+    **updateChallengeDuration**
+    **updateKata**
+    **deleteKata**
+    --
+    CreatedChallenge
+    CreatedChallenge
+    AddedKata
+    ChallengeRevoked
+    UrlRepoAssigned
+    AddedExercise
+    SubscribedClan
+    UnsubscribedClan
+    UpdatedChallengeName
+    UpdatedChallengeDuration
+    UpdatedKata
+    DeletedKata
+}
+
+entity "[E] Kata" as Kata {
+  [ID] id
+  [VO] purpose
+  [Int] limitOfTime
+  [List] exercises
+  --
+  **changeLimitOfTime**
+  **changePurpose**
+  **removeExercise**
+  **addNewExercise**
+}
+
+Challenge }o.. Dojo
+Challenge }|.. Kata
+OpeningHours ||-- Frequency
+Location ||-- OpeningHours
+Dojo ||-- Location
+Dojo ||-- DataInfo
+Dojo ||-- Status
+Couch }|-- Accomplishment
+Dojo ||-- Couch
+Dojo }o.. Clan
+Clan }|-- Member
+Member }|-- Score
+
+@enduml

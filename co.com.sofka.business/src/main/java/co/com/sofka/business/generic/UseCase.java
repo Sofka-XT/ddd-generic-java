@@ -1,11 +1,14 @@
 package co.com.sofka.business.generic;
 
 import co.com.sofka.business.repository.DomainEventRepository;
+import co.com.sofka.business.support.ResponseEvents;
+import co.com.sofka.business.support.TriggeredEvent;
 import co.com.sofka.domain.generic.DomainEvent;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 
 /**
@@ -22,6 +25,7 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
     private UseCaseFormat<P> useCaseFormat;
     private ServiceBuilder serviceBuilder;
     private DomainEventRepository repository;
+    private Set<UseCaseWrap> useCases;
 
 
     /**
@@ -84,6 +88,19 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
         this.serviceBuilder = Objects.requireNonNull(serviceBuilder);
     }
 
+    /**
+     * add Use Cases Set
+     * @param useCases set
+     */
+    public void addUseCases(Set<UseCaseWrap> useCases) {
+        this.useCases = Objects.requireNonNull(useCases);
+    }
+
+    /**
+     * Get service class
+     * @param class of the service
+     * @return class service optional
+     */
     public <T> Optional<T> getService(Class<T> clasz) {
         Objects.requireNonNull(serviceBuilder, "The service build cannot be null, you allow use the annotation ExtensionService");
         return serviceBuilder.getService(clasz);
@@ -112,12 +129,21 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
         }, 5);
     }
 
+    public final Optional<ResponseEvents> requestUseCase(DomainEvent domainEvent) {
+        var event = Objects.requireNonNull(domainEvent);
+        var wrap = useCases.stream()
+                .filter(useCaseWrap -> useCaseWrap.eventType.equals(domainEvent.type))
+                .findFirst().orElseThrow(() -> new BusinessException(identify, "The use case event listener not registered"));
+        return UseCaseHandler.getInstance()
+                .syncExecutor(wrap.usecase, new TriggeredEvent<>(event));
+    }
+
     /**
      * Execute use case.
      *
      * @param objectInput the object input
      */
-    public abstract void executeUseCase(Q objectInput);
+    public abstract void executeUseCase(Q input);
 
     public void setIdentify(String identify) {
         this.identify = identify;
@@ -174,6 +200,29 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
          * @param exception the exception
          */
         void onError(RuntimeException exception);
+    }
+
+    /**
+     * Use case wrap for associate event type and use case
+     */
+    public static class UseCaseWrap {
+        private final UseCase<TriggeredEvent<? extends DomainEvent>, ResponseEvents> usecase;
+        private final String eventType;
+
+
+        public UseCaseWrap(String eventType, UseCase<TriggeredEvent<? extends DomainEvent>, ResponseEvents> usecase) {
+            this.usecase = usecase;
+            this.eventType = eventType;
+        }
+
+
+        public UseCase<TriggeredEvent<? extends DomainEvent>, ResponseEvents> usecase() {
+            return usecase;
+        }
+
+        public String eventType() {
+            return eventType;
+        }
     }
 
 }

@@ -25,6 +25,7 @@ import java.util.logging.Logger;
  * <p>
  * This class is implemented to execute the commands from a controller.
  * Use this class within your Rest Controller or your service to execute a use case.
+ * </p>
  */
 public class ApplicationCommandExecutor extends CommandExecutor {
     private static final Logger logger = Logger.getLogger(ApplicationCommandExecutor.class.getName());

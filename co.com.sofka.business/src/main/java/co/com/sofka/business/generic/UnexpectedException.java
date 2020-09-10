@@ -36,6 +36,11 @@ public class UnexpectedException extends RuntimeException {
         this.request = request;
     }
 
+    /**
+     * Get identify exception
+     *
+     * @return string id
+     */
     public String getIdentify() {
         return identify;
     }

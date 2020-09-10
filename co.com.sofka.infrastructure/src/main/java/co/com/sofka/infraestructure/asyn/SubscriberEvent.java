@@ -74,6 +74,7 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
             });
         });
         subscription.request(1);
+        Sleeper.sleepOneSecond();
     }
 
     @Override
@@ -90,5 +91,15 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
     @Override
     public void onComplete() {
         logger.log(Level.INFO, "-- Completed");
+    }
+
+    private static class Sleeper {
+        private static void sleepOneSecond() {
+            try {
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

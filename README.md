@@ -30,6 +30,22 @@ Desde el punto de vista táctico, se requiere aplicar algunos conceptos fundamen
 - Por commands, events y queries (CQRS)
 - Por capas
 
+
+#### Motivation
+A domain-oriented designer, clean architecture, and clear business domain specs are used.
+
+The CQRS pattern will be used with Event Sourcing + EDA. It is segregated into two Queries and Commands applications. Commands are executed with a single instruction or entrypoint. Los Queries also has two unique entrypoints (one for lists and one for the unique model). The databases are managed as collections.
+
+### Executor Command
+![domain model](docs/executor_command.png)
+
+### Queries Handle
+![domain model](docs/queries_handle.png)
+
+### Domain model
+
+![domain model](docs/domain_model.png)
+
 ## Instalación 
 
 Generic dependency for ddd Java - [https://mvnrepository.com/artifact/co.com.sofka/domain-driven-design](https://mvnrepository.com/artifact/co.com.sofka/domain-driven-design)

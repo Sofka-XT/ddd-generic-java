@@ -60,8 +60,7 @@ public abstract class CommandExecutor implements CommandHandler<Map<String, Stri
             useCaseExecutor.withAggregateId(args.get("aggregateId"));
         }
 
-        useCaseExecutor.accept(args);
-        useCaseExecutor.run();
+        useCaseExecutor.executor(args);
         request = useCaseExecutor.request();
     }
 

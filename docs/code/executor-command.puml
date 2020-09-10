@@ -1,0 +1,10 @@
+@startuml
+UI -> "Command Handle": [POST] Request Command
+"Command Handle" -> UI: Response OK 200
+"Command Handle" --> "Use Case": Executor Async
+"Use Case" -> Aggregate: Behavior
+Aggregate -> Aggregate: Event Change
+Aggregate -> "Use Case": Emit Domain Events
+"Use Case" -> Infrastructure: Domain Events
+Infrastructure --> UI: Domain Events
+@enduml

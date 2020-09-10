@@ -17,6 +17,7 @@ import java.util.logging.Logger;
  * <p>
  * This class is implemented to execute the queries from a controller.
  * Use this class within your Rest Controller or your service to execute a query.
+ * </p>
  */
 public class ApplicationQueryExecutor extends QueryExecutor {
     private static final Logger logger = Logger.getLogger(ApplicationQueryExecutor.class.getName());

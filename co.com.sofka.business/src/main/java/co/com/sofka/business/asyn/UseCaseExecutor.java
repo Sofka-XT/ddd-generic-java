@@ -7,22 +7,24 @@ import co.com.sofka.business.repository.DomainEventRepository;
 import co.com.sofka.business.support.ResponseEvents;
 import co.com.sofka.domain.generic.DomainEvent;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 /**
  * The type Use case executor.
  */
 public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
+    private static final Logger logger = Logger.getLogger(UseCaseExecutor.class.getName());
     private Flow.Subscriber<? super DomainEvent> subscriberEvent;
     private DomainEventRepository repository;
     private String aggregateId;
     private UseCaseHandler useCaseHandler;
     private ServiceBuilder serviceBuilder;
     private UseCase.RequestValues request;
+    private Map<String, String> headers;
+    private Set<UseCase.UseCaseWrap> useCases;
 
     public abstract void run();
 
@@ -43,8 +45,7 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
      * @return useCaseHandler
      */
     public UseCaseHandler useCaseHandler() {
-        Objects.requireNonNull(useCaseHandler, "There is no handle for this execution, consider using the withUseCaseHandler method");
-        return useCaseHandler;
+        return Optional.ofNullable(useCaseHandler).orElse(UseCaseHandler.getInstance());
     }
 
     /**
@@ -77,6 +78,53 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
         return request;
     }
 
+    /**
+     * Get headers configured
+     *
+     * @return headers values
+     */
+    public Map<String, String> headers(){
+        return Optional.ofNullable(headers).orElse(new HashMap<>());
+    }
+
+    /**
+     * Get Service Builder
+     * @return serviceBuilder
+     */
+    public ServiceBuilder serviceBuilder() {
+        return serviceBuilder;
+    }
+
+
+    /**
+     * Get service registered
+     *
+     * @param class for find service
+     * @return serviceClass
+     */
+    public <T> Optional<T> getService(Class<T> clasz) {
+        Objects.requireNonNull(serviceBuilder, "the service build cannot be null, you allow use the annotation ExtensionService");
+        return serviceBuilder.getService(clasz);
+    }
+
+    /**
+     * Set Use Case Wrap
+     * @return useCases
+     */
+    public Set<UseCase.UseCaseWrap> useCases() {
+        return useCases;
+    }
+
+    /**
+     * With use cases case executor.
+     *
+     * @param useCase set
+     * @return the use case executor
+     */
+    public UseCaseExecutor withUseCases(Set<UseCase.UseCaseWrap> useCases) {
+        this.useCases = Objects.requireNonNull(useCases, "use cases is required");
+        return this;
+    }
 
     /**
      * With subscriber event use case executor.
@@ -89,6 +137,16 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
         return this;
     }
 
+    /**
+     * With headers use case executor.
+     *
+     * @param headers the http or metadata
+     * @return the use case executor
+     */
+    public UseCaseExecutor withHeaders(Map<String, String> headers) {
+        this.headers = Objects.requireNonNull(headers, "headers is required");
+        return this;
+    }
 
     /**
      * With domain event repo use case executor.
@@ -135,23 +193,44 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     }
 
     /**
-     * Executor use case
+     * executor use case
+     * @param args map of the arguments
+     * @param headers map of the headers
+     */
+    public void executor(Map<String, String> args, Map<String, String> headers){
+        withHeaders(headers).accept(args);
+        run();
+    }
+
+    /**
+     * executor use case
+     * @param args map of the arguments
+     */
+    public void executor(Map<String, String> args){
+        accept(args);
+        run();
+    }
+
+    /**
+     * Executor use case asynchronously
      *
      * @param useCase the use case
      * @param request the request for use case
      */
     public <T extends UseCase.RequestValues, R extends ResponseEvents> void runUseCase(UseCase<T, R> useCase, T request) {
         this.request = request;
-        useCase.addRepository(repository);
+        Optional.ofNullable(repository).ifPresentOrElse(useCase::addRepository, () ->
+                logger.warning("No repository found for use case")
+        );
+        Optional.ofNullable(serviceBuilder).ifPresentOrElse(useCase::addServiceBuilder, () ->
+                logger.warning("No service builder found for use case")
+        );
+        Optional.ofNullable(useCases).ifPresentOrElse(useCase::addUseCases, () ->
+                logger.warning("No uses cases found for use case")
+        );
         useCaseHandler()
                 .setIdentifyExecutor(aggregateId())
                 .asyncExecutor(useCase, request)
                 .subscribe(subscriberEvent());
     }
-
-    public <T> Optional<T> getService(Class<T> clasz) {
-        Objects.requireNonNull(serviceBuilder, "the service build cannot be null, you allow use the annotation ExtensionService");
-        return serviceBuilder.getService(clasz);
-    }
-
 }
