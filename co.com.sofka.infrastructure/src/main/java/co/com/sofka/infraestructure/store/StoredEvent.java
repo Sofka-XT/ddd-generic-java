@@ -4,6 +4,7 @@ import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.DeserializeEventException;
 import co.com.sofka.infraestructure.event.EventSerializer;
 
+import java.time.Instant;
 import java.util.Date;
 
 /**
@@ -42,7 +43,7 @@ public final class StoredEvent {
      */
     public static StoredEvent wrapEvent(DomainEvent domainEvent) {
         return new StoredEvent(domainEvent.getClass().getCanonicalName(),
-                new Date(domainEvent.when.toEpochMilli()),
+                new Date(),
                 EventSerializer.instance().serialize(domainEvent)
         );
     }
