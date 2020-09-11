@@ -53,7 +53,7 @@ Generic dependency for ddd Java - [https://mvnrepository.com/artifact/co.com.sof
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>domain-driven-design</artifactId>
-       <version>0.7.4</version>
+       <version>0.7.5</version>
        <type>pom</type>
      </dependency>
 ```
@@ -64,31 +64,31 @@ Si se require dividir los conceptos se puede usar de forma independeiente de la 
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>domain</artifactId>
-       <version>0.7.4</version>
+       <version>0.7.5</version>
      </dependency>
 ```
 ```
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>business</artifactId>
-       <version>0.7.4</version>
+       <version>0.7.5</version>
      </dependency>
 ```
 ```
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>infrastructure</artifactId>
-       <version>0.7.4</version>
+       <version>0.7.5</version>
      </dependency>
 ```
 ```
     <dependency>
        <groupId>co.com.sofka</groupId>
        <artifactId>application</artifactId>
-       <version>0.7.4</version>
+       <version>0.7.5</version>
      </dependency>
 ```
-> Aun esta en fase de desarrollo y de validación, trabajar con la versión 0.6 para experimentar y poner en practica los conceptos de DDD, aun no se recomienda llevarlo a producción. 
+> Aun esta en fase de desarrollo y de validación, trabajar con la versión 0.7 para experimentar y poner en practica los conceptos de DDD, aun no se recomienda llevarlo a producción. 
 
 ## Conceptos e implementación 
 

@@ -36,10 +36,10 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
     }
 
     /**
-     * Append change behavior subscriber . change apply.
+     * Append change change event subscriber . change apply.
      *
      * @param event the event
-     * @return the behavior subscriber . change apply
+     * @return the change event subscriber . change apply
      */
     protected ChangeEventSubscriber.ChangeApply appendChange(DomainEvent event) {
         var nameClass = entityId.getClass().getSimpleName();
@@ -52,7 +52,7 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
     /**
      * Subscribe.
      *
-     * @param eventChange the event behavior
+     * @param eventChange the event change
      */
     protected final void subscribe(EventChange eventChange) {
         changeEventSubscriber.subscribe(eventChange);
@@ -75,7 +75,7 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
     }
 
     /**
-     * Clear all events
+     * Refund event.
      */
     public void refundEvent() {
         changeEventSubscriber.getChanges().clear();
@@ -83,10 +83,11 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
 
 
     /**
-     * Find event uncommitted
+     * Find event uncommitted optional.
      *
-     * @param event the event class
-     * @return optional event
+     * @param <E>   the type parameter
+     * @param event the event
+     * @return the optional
      */
     public <E extends DomainEvent> Optional<E> findEventUncommitted(Class<E> event) {
         return changeEventSubscriber.getChanges().stream()
@@ -95,10 +96,11 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
     }
 
     /**
-     * Find all events uncommitted
+     * Find all event uncommitted stream.
      *
-     * @param event the event class
-     * @return stream of the events
+     * @param <E>   the type parameter
+     * @param event the event
+     * @return the stream
      */
     public <E extends DomainEvent> Stream<E> findAllEventUncommitted(Class<E> event) {
         return changeEventSubscriber.getChanges().stream()

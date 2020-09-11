@@ -5,7 +5,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 /**
- * The type Event behavior.
+ * The type Event change.
  */
 public abstract class EventChange {
 
@@ -15,9 +15,9 @@ public abstract class EventChange {
     protected Set<Consumer<? super DomainEvent>> behaviors = new HashSet<>();
 
     /**
-     * Give.
+     * Apply.
      *
-     * @param changeEvent the behavior
+     * @param changeEvent the change event
      */
     protected void apply(Consumer<? extends DomainEvent> changeEvent) {
         behaviors.add((Consumer<? super DomainEvent>) changeEvent);

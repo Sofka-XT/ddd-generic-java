@@ -3,9 +3,7 @@ package co.com.sofka.business.generic;
 import co.com.sofka.domain.generic.Command;
 
 /**
- * Business exception
- * <p>
- * Business exceptions thrown by the use case
+ * The type Business exception.
  */
 public class BusinessException extends UnexpectedException {
 
@@ -16,8 +14,8 @@ public class BusinessException extends UnexpectedException {
      *
      * @param identify  the identify
      * @param message   the message
-     * @param throwable the throwable and cause of the problem
-     * @param command   the command executed
+     * @param throwable the throwable
+     * @param command   the command
      */
     public BusinessException(String identify, String message, Throwable throwable, Command command) {
         super(identify, message, throwable);
@@ -29,7 +27,7 @@ public class BusinessException extends UnexpectedException {
      *
      * @param identify  the identify
      * @param message   the message
-     * @param throwable the throwable and cause of the problem
+     * @param throwable the throwable
      */
     public BusinessException(String identify, String message, Throwable throwable) {
         this(identify, message, throwable, null);
@@ -46,9 +44,9 @@ public class BusinessException extends UnexpectedException {
     }
 
     /**
-     * Command executed
+     * Gets command.
      *
-     * @return Command
+     * @return the command
      */
     public Command getCommand() {
         return command;

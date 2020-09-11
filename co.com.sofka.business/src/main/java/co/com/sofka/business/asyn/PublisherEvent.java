@@ -10,13 +10,14 @@ import java.util.logging.Logger;
 
 /**
  * The type Publisher event.
- * <p>
- * With this class, events are published asynchronously, supported by a thread pool.
  */
 public final class PublisherEvent extends SubmissionPublisher<DomainEvent> implements UseCase.UseCaseFormat<ResponseEvents> {
 
     private static final Logger logger = Logger.getLogger(PublisherEvent.class.getName());
 
+    /**
+     * Instantiates a new Publisher event.
+     */
     public PublisherEvent(){
         super(ForkJoinPool.commonPool(), 2);
     }

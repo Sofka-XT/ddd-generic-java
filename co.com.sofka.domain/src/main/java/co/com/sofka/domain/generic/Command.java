@@ -4,7 +4,7 @@ package co.com.sofka.domain.generic;
 import java.io.Serializable;
 
 /**
- * The type Command.
+ * The interface Command.
  */
 public interface Command extends Serializable {
 }

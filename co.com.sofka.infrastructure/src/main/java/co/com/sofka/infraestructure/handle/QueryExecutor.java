@@ -20,9 +20,9 @@ public class QueryExecutor implements QueryHandler<Map<String, String>> {
     protected Map<String, Function<Map<String, String>, ?>> handles = new ConcurrentHashMap<>();
 
     /**
-     * Add.
+     * Put.
      *
-     * @param queryPath the path of the query route
+     * @param queryPath the query path
      * @param function  the function
      */
     protected void put(String queryPath, Function<Map<String, String>, ?> function) {

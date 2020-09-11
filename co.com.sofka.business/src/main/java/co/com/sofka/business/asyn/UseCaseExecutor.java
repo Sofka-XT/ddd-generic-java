@@ -26,12 +26,15 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     private Map<String, String> headers;
     private Set<UseCase.UseCaseWrap> useCases;
 
+    /**
+     * Run.
+     */
     public abstract void run();
 
     /**
-     * Subscriber event flow subscriber.
+     * Subscriber event flow . subscriber.
      *
-     * @return the flow subscriber
+     * @return the flow . subscriber
      */
     public Flow.Subscriber<? super DomainEvent> subscriberEvent() {
         Objects.requireNonNull(subscriberEvent, "If the subscriber is not identified, consider using the withSubscriberEvent method");
@@ -40,18 +43,18 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
 
 
     /**
-     * Use case handler
+     * Use case handler use case handler.
      *
-     * @return useCaseHandler
+     * @return the use case handler
      */
     public UseCaseHandler useCaseHandler() {
         return Optional.ofNullable(useCaseHandler).orElse(UseCaseHandler.getInstance());
     }
 
     /**
-     * Domain event repository
+     * Repository domain event repository.
      *
-     * @return the repository
+     * @return the domain event repository
      */
     public DomainEventRepository repository() {
         Objects.requireNonNull(repository, "No repository identified, consider using the withDomainEventRepo method");
@@ -59,9 +62,9 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     }
 
     /**
-     * String the aggregate root id
+     * Aggregate id string.
      *
-     * @return the aggregate id
+     * @return the string
      */
     public String aggregateId() {
         Objects.requireNonNull(aggregateId, "Aggregate identifier not available, consider using withAggregateId method");
@@ -70,26 +73,27 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
 
 
     /**
-     * Get useCase request value
+     * Request use case . request values.
      *
-     * @return request value
+     * @return the use case . request values
      */
     public UseCase.RequestValues request() {
         return request;
     }
 
     /**
-     * Get headers configured
+     * Headers map.
      *
-     * @return headers values
+     * @return the map
      */
     public Map<String, String> headers(){
         return Optional.ofNullable(headers).orElse(new HashMap<>());
     }
 
     /**
-     * Get Service Builder
-     * @return serviceBuilder
+     * Service builder service builder.
+     *
+     * @return the service builder
      */
     public ServiceBuilder serviceBuilder() {
         return serviceBuilder;
@@ -97,10 +101,11 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
 
 
     /**
-     * Get service registered
+     * Gets service.
      *
-     * @param class for find service
-     * @return serviceClass
+     * @param <T>   the type parameter
+     * @param clasz the clasz
+     * @return the service
      */
     public <T> Optional<T> getService(Class<T> clasz) {
         Objects.requireNonNull(serviceBuilder, "the service build cannot be null, you allow use the annotation ExtensionService");
@@ -108,17 +113,18 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     }
 
     /**
-     * Set Use Case Wrap
-     * @return useCases
+     * Use cases set.
+     *
+     * @return the set
      */
     public Set<UseCase.UseCaseWrap> useCases() {
         return useCases;
     }
 
     /**
-     * With use cases case executor.
+     * With use cases use case executor.
      *
-     * @param useCase set
+     * @param useCases the use cases
      * @return the use case executor
      */
     public UseCaseExecutor withUseCases(Set<UseCase.UseCaseWrap> useCases) {
@@ -140,7 +146,7 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     /**
      * With headers use case executor.
      *
-     * @param headers the http or metadata
+     * @param headers the headers
      * @return the use case executor
      */
     public UseCaseExecutor withHeaders(Map<String, String> headers) {
@@ -182,9 +188,9 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     }
 
     /**
-     * With service builder.
+     * With service builder use case executor.
      *
-     * @param serviceBuilder the service builder constructor
+     * @param serviceBuilder the service builder
      * @return the use case executor
      */
     public UseCaseExecutor withServiceBuilder(ServiceBuilder serviceBuilder) {
@@ -193,9 +199,10 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     }
 
     /**
-     * executor use case
-     * @param args map of the arguments
-     * @param headers map of the headers
+     * Executor.
+     *
+     * @param args    the args
+     * @param headers the headers
      */
     public void executor(Map<String, String> args, Map<String, String> headers){
         withHeaders(headers).accept(args);
@@ -203,8 +210,9 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     }
 
     /**
-     * executor use case
-     * @param args map of the arguments
+     * Executor.
+     *
+     * @param args the args
      */
     public void executor(Map<String, String> args){
         accept(args);
@@ -212,10 +220,12 @@ public abstract class UseCaseExecutor implements Consumer<Map<String, String>> {
     }
 
     /**
-     * Executor use case asynchronously
+     * Run use case.
      *
+     * @param <T>     the type parameter
+     * @param <R>     the type parameter
      * @param useCase the use case
-     * @param request the request for use case
+     * @param request the request
      */
     public <T extends UseCase.RequestValues, R extends ResponseEvents> void runUseCase(UseCase<T, R> useCase, T request) {
         this.request = request;

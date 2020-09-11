@@ -20,16 +20,13 @@ public abstract class CommandExecutor implements CommandHandler<Map<String, Stri
      */
     protected Map<String, Consumer<Map<String, String>>> handles = new ConcurrentHashMap<>();
 
-    /**
-     * Object Returned command
-     */
     private UseCase.RequestValues request;
 
 
     /**
      * Put.
      *
-     * @param type     the type of the command
+     * @param type     the type
      * @param consumer the consumer
      */
     protected void put(String type, Consumer<Map<String, String>> consumer) {
@@ -65,9 +62,9 @@ public abstract class CommandExecutor implements CommandHandler<Map<String, Stri
     }
 
     /**
-     * Use case request values
+     * Request use case . request values.
      *
-     * @return request requerid for use case
+     * @return the use case . request values
      */
     public UseCase.RequestValues request() {
         return request;

@@ -8,39 +8,40 @@ import java.util.List;
 
 /**
  * The interface Query mapper repository.
- * <p>
- * This interface must be implemented to map the views that can be as models and model list.
  */
 public interface QueryMapperRepository {
 
     /**
-     * Get data mapped.
+     * Gets data mapped.
      *
-     * @param category       table and collection
-     * @param classViewModel class to mapper
-     * @return ApplyQuery mode list and object
+     * @param <T>            the type parameter
+     * @param category       the category
+     * @param classViewModel the class view model
+     * @return the data mapped
      */
     <T extends ViewModel> ApplyQuery<T> getDataMapped(String category, Class<T> classViewModel);
 
     /**
-     * The interface linked to Query mapper repository.
-     * <p>
-     * Query models of one view and multiple views.
+     * The interface Apply query.
+     *
+     * @param <T> the type parameter
      */
     interface ApplyQuery<T extends ViewModel> {
         /**
-         * Apply as a list
+         * Apply as list list.
          *
-         * @param query the object query
-         * @return the list view model
+         * @param <Q>   the type parameter
+         * @param query the query
+         * @return the list
          */
         <Q extends Query> List<T> applyAsList(Q query);
 
         /**
-         * Apply as a object
+         * Apply as element t.
          *
-         * @param query the object query
-         * @return the object view model
+         * @param <Q>   the type parameter
+         * @param query the query
+         * @return the t
          */
         <Q extends Query> T applyAsElement(Q query);
     }

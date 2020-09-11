@@ -4,7 +4,6 @@ import co.com.sofka.business.generic.ServiceBuilder;
 import co.com.sofka.business.generic.UseCase;
 import co.com.sofka.business.generic.UseCaseHandler;
 import co.com.sofka.business.repository.DomainEventRepository;
-import co.com.sofka.business.support.ResponseEvents;
 
 import java.util.*;
 import java.util.function.Function;
@@ -27,9 +26,9 @@ public abstract class UseCaseExecutor<T, R extends UseCase.ResponseValues> imple
     private Set<UseCase.UseCaseWrap> useCases;
 
     /**
-     * With service builder.
+     * With service builder use case executor.
      *
-     * @param serviceBuilder the service builder constructor
+     * @param serviceBuilder the service builder
      * @return the use case executor
      */
     public UseCaseExecutor<T, R> withServiceBuilder(ServiceBuilder serviceBuilder) {
@@ -41,7 +40,7 @@ public abstract class UseCaseExecutor<T, R extends UseCase.ResponseValues> imple
     /**
      * With headers use case executor.
      *
-     * @param headers the http or metadata
+     * @param headers the headers
      * @return the use case executor
      */
     public UseCaseExecutor<T, R> withHeaders(Map<String, String> headers) {
@@ -83,9 +82,9 @@ public abstract class UseCaseExecutor<T, R extends UseCase.ResponseValues> imple
     }
 
     /**
-     * With use cases case executor.
+     * With use cases use case executor.
      *
-     * @param useCase set
+     * @param useCases the use cases
      * @return the use case executor
      */
     public UseCaseExecutor<T, R> withUseCases(Set<UseCase.UseCaseWrap> useCases) {
@@ -94,17 +93,18 @@ public abstract class UseCaseExecutor<T, R extends UseCase.ResponseValues> imple
     }
 
     /**
-     * Get headers configured
+     * Headers map.
      *
-     * @return headers values
+     * @return the map
      */
     public Map<String, String> headers(){
         return Optional.ofNullable(headers).orElse(new HashMap<>());
     }
 
     /**
-     * Set Use Case Wrap
-     * @return useCases
+     * Use cases set.
+     *
+     * @return the set
      */
     public Set<UseCase.UseCaseWrap> useCases() {
         return useCases;
@@ -112,8 +112,9 @@ public abstract class UseCaseExecutor<T, R extends UseCase.ResponseValues> imple
 
 
     /**
-     * aggregate id
-     * @return string id
+     * Aggregate id string.
+     *
+     * @return the string
      */
     public String aggregateId() {
         Objects.requireNonNull(aggregateId, "Aggregate identifier not available, consider using withAggregateId method");
@@ -121,17 +122,18 @@ public abstract class UseCaseExecutor<T, R extends UseCase.ResponseValues> imple
     }
 
     /**
-     * Get Service Builder
-     * @return serviceBuilder
+     * Service builder service builder.
+     *
+     * @return the service builder
      */
     public ServiceBuilder serviceBuilder() {
         return serviceBuilder;
     }
 
     /**
-     * Domain event repository
+     * Repository domain event repository.
      *
-     * @return the repository
+     * @return the domain event repository
      */
     public DomainEventRepository repository() {
         Objects.requireNonNull(repository, "No repository identified, consider using the withDomainEventRepo method");
@@ -139,20 +141,22 @@ public abstract class UseCaseExecutor<T, R extends UseCase.ResponseValues> imple
     }
 
     /**
-     * Use case handler
+     * Use case handler use case handler.
      *
-     * @return useCaseHandler
+     * @return the use case handler
      */
     public UseCaseHandler useCaseHandler() {
         return Optional.ofNullable(useCaseHandler).orElse(UseCaseHandler.getInstance());
     }
 
     /**
-     * Executor use case synchronously
+     * Run syn use case optional.
      *
-     *  @param useCase the use case
-     * @param request the request for use case
-     * @return request optional
+     * @param <T>     the type parameter
+     * @param <R>     the type parameter
+     * @param useCase the use case
+     * @param request the request
+     * @return the optional
      */
     public <T extends UseCase.RequestValues, R extends UseCase.ResponseValues> Optional<R> runSynUseCase(UseCase<T, R> useCase, T request) {
         Optional.ofNullable(repository).ifPresentOrElse(useCase::addRepository, () ->

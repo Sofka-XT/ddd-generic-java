@@ -19,7 +19,7 @@ public interface DomainEventRepository {
     /**
      * Gets events by.
      *
-     * @param aggregate       the aggregate name
+     * @param aggregate       the aggregate
      * @param aggregateRootId the aggregate root id
      * @return the events by
      */

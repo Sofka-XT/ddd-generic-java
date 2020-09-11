@@ -3,25 +3,23 @@ package co.com.sofka.business.annotation;
 import java.lang.annotation.*;
 
 /**
- * The interface command type.
- * <p>
- * This annotation determines the type of command and the name of the aggregate in which it should be used to store the event thrown by the aggregate.
+ * The interface Command type.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Inherited
 public @interface CommandType {
     /**
-     * Name of the type command.
+     * Name string.
      *
-     * @return the type name of the command
+     * @return the string
      */
     String name();
 
     /**
-     * String aggregate Name.
+     * Aggregate string.
      *
-     * @return the name of the aggregate
+     * @return the string
      */
     String aggregate();
 }

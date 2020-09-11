@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 /**
- * The type Behavior subscriber.
+ * The type Change event subscriber.
  */
 public class ChangeEventSubscriber {
     private final List<DomainEvent> changes = new LinkedList<>();
@@ -36,7 +36,7 @@ public class ChangeEventSubscriber {
     /**
      * Subscribe.
      *
-     * @param eventChange the event behavior
+     * @param eventChange the event change
      */
     public final void subscribe(EventChange eventChange) {
         this.observables.addAll(eventChange.behaviors);

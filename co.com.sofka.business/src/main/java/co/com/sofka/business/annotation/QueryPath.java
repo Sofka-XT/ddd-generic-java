@@ -3,18 +3,16 @@ package co.com.sofka.business.annotation;
 import java.lang.annotation.*;
 
 /**
- * The interface Query handles.
- * <p>
- * This annotation determines the path of query.
+ * The interface Query path.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 @Inherited
 public @interface QueryPath {
     /**
-     * The path of the query.
+     * Name string.
      *
-     * @return the path
+     * @return the string
      */
     String name();
 }

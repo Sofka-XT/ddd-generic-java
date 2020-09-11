@@ -7,6 +7,8 @@ import java.util.stream.Stream;
 
 /**
  * The interface Query repository.
+ *
+ * @param <T> the type parameter
  */
 public interface QueryRepository<T> {
     /**

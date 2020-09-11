@@ -13,11 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Application query Executor
- * <p>
- * This class is implemented to execute the queries from a controller.
- * Use this class within your Rest Controller or your service to execute a query.
- * </p>
+ * The type Application query executor.
  */
 public class ApplicationQueryExecutor extends QueryExecutor {
     private static final Logger logger = Logger.getLogger(ApplicationQueryExecutor.class.getName());
@@ -25,10 +21,10 @@ public class ApplicationQueryExecutor extends QueryExecutor {
     private final String packageQueries;
 
     /**
-     * Construct new application query
+     * Instantiates a new Application query executor.
      *
-     * @param packageQueries  the path package for queries
-     * @param queryMapperRepo the repository mapper
+     * @param packageQueries  the package queries
+     * @param queryMapperRepo the query mapper repo
      */
     public ApplicationQueryExecutor(
             String packageQueries,

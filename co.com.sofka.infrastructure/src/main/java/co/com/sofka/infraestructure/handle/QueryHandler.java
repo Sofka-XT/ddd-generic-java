@@ -12,20 +12,20 @@ import java.util.List;
  */
 public interface QueryHandler<Q> {
     /**
-     * Search view model.
+     * Get view model.
      *
-     * @param path  the query
-     * @param query object
+     * @param path  the path
+     * @param query the query
      * @return the view model
      */
     ViewModel get(String path, Q query);
 
     /**
-     * List view model
+     * Find list.
      *
-     * @param path  the query
-     * @param query object
-     * @return the list view model
+     * @param path  the path
+     * @param query the query
+     * @return the list
      */
     List<ViewModel> find(String path, Q query);
 }

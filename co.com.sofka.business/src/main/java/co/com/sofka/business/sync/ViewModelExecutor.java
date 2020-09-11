@@ -9,11 +9,9 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * Query executor
- * <p>
- * This class allows you to run the view models for the queries and the query handler
+ * The type View model executor.
  *
- * @param <T>
+ * @param <T> the type parameter
  */
 public abstract class ViewModelExecutor<T> implements Function<Map<String, String>, T> {
 
@@ -21,9 +19,10 @@ public abstract class ViewModelExecutor<T> implements Function<Map<String, Strin
     private QueryRepository<T> queryRepository;
 
     /**
-     * Witch query mapper repository
+     * Witch query mapper repository view model executor.
      *
      * @param queryMapperRepository the query mapper repository
+     * @return the view model executor
      */
     public ViewModelExecutor<T> witchQueryMapperRepository(QueryMapperRepository queryMapperRepository) {
         this.queryMapperRepository = queryMapperRepository;
@@ -31,9 +30,10 @@ public abstract class ViewModelExecutor<T> implements Function<Map<String, Strin
     }
 
     /**
-     * Witch query repository
+     * Witch query repository view model executor.
      *
      * @param queryRepository the query repository
+     * @return the view model executor
      */
     public ViewModelExecutor<T> witchQueryRepository(QueryRepository<T> queryRepository) {
         this.queryRepository = queryRepository;
@@ -41,7 +41,7 @@ public abstract class ViewModelExecutor<T> implements Function<Map<String, Strin
     }
 
     /**
-     * query mapper repository
+     * Query mapper repository query mapper repository.
      *
      * @return the query mapper repository
      */
@@ -51,7 +51,7 @@ public abstract class ViewModelExecutor<T> implements Function<Map<String, Strin
     }
 
     /**
-     * Query repository
+     * Query repository query repository.
      *
      * @return the query repository
      */
@@ -61,11 +61,12 @@ public abstract class ViewModelExecutor<T> implements Function<Map<String, Strin
     }
 
     /**
-     * Get data mapped
+     * Gets data mapped.
      *
-     * @param category       table and collection
-     * @param classViewModel class to mapper
-     * @return ApplyQuery to list or model object
+     * @param <M>            the type parameter
+     * @param category       the category
+     * @param classViewModel the class view model
+     * @return the data mapped
      */
     public <M extends ViewModel> QueryMapperRepository.ApplyQuery<M> getDataMapped(String category, Class<M> classViewModel) {
         return queryMapperRepository()

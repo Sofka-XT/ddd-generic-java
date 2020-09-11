@@ -21,11 +21,7 @@ import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
- * Application Event Drive
- * <p>
- * In this class implement a mechanism to execute
- * a UseCaseHandler#asyncExecutor to execute use cases asynchronously.
- * </p>
+ * The type Application event drive.
  */
 public class ApplicationEventDrive {
     private static final Logger logger = Logger.getLogger(ApplicationEventDrive.class.getName());
@@ -34,10 +30,23 @@ public class ApplicationEventDrive {
     private final EventStoreRepository repository;
     private final String packageUseCase;
 
+    /**
+     * Instantiates a new Application event drive.
+     *
+     * @param packageUseCase  the package use case
+     * @param subscriberEvent the subscriber event
+     */
     public ApplicationEventDrive(String packageUseCase, SubscriberEvent subscriberEvent) {
         this(packageUseCase, subscriberEvent, null);
     }
 
+    /**
+     * Instantiates a new Application event drive.
+     *
+     * @param packageUseCase  the package use case
+     * @param subscriberEvent the subscriber event
+     * @param repository      the repository
+     */
     public ApplicationEventDrive(String packageUseCase, SubscriberEvent subscriberEvent, EventStoreRepository repository) {
         this.subscriberEvent = subscriberEvent;
         this.packageUseCase = packageUseCase;
@@ -77,9 +86,9 @@ public class ApplicationEventDrive {
     }
 
     /**
-     * This method triggers a use case registered as @EventListener().
+     * Fire.
      *
-     * @param domainEvent event from bus or use case
+     * @param domainEvent the domain event
      */
     public final void fire(DomainEvent domainEvent) {
         var event = Objects.requireNonNull(domainEvent);
@@ -107,10 +116,10 @@ public class ApplicationEventDrive {
     }
 
     /**
-     * request an useCase by domain event
+     * Request use case optional.
      *
-     * @param domainEvent triggered
-     * @return ResponseEvents Optional
+     * @param domainEvent the domain event
+     * @return the optional
      */
     public final Optional<ResponseEvents> requestUseCase(DomainEvent domainEvent) {
         var event = Objects.requireNonNull(domainEvent);

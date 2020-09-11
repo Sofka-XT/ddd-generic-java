@@ -1,7 +1,7 @@
 package co.com.sofka.domain.generic;
 
 /**
- * The interface is for incremental num type of the event
+ * The interface Incremental.
  */
 public interface Incremental {
 }

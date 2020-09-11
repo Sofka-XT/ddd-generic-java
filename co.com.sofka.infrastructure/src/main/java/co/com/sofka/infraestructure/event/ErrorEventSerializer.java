@@ -6,7 +6,7 @@ import java.lang.reflect.Type;
 
 
 /**
- * The type Event serializer.
+ * The type Error event serializer.
  */
 public final class ErrorEventSerializer extends AbstractSerializer {
 
@@ -17,9 +17,9 @@ public final class ErrorEventSerializer extends AbstractSerializer {
     }
 
     /**
-     * Instance event serializer.
+     * Instance error event serializer.
      *
-     * @return the event serializer
+     * @return the error event serializer
      */
     public static synchronized ErrorEventSerializer instance() {
         if (ErrorEventSerializer.eventSerializer == null) {

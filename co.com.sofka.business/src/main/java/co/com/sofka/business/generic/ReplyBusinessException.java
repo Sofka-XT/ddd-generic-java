@@ -2,19 +2,17 @@ package co.com.sofka.business.generic;
 
 
 /**
- * Business exception
- * <p>
- * Business exceptions thrown by the use case
+ * The type Reply business exception.
  */
 public class ReplyBusinessException extends UnexpectedException {
 
 
     /**
-     * Instantiates a new Business exception.
+     * Instantiates a new Reply business exception.
      *
      * @param identify  the identify
      * @param message   the message
-     * @param throwable the throwable and cause of the problem
+     * @param throwable the throwable
      */
     public ReplyBusinessException(String identify, String message, Throwable throwable) {
         super(identify, message, throwable);
@@ -22,7 +20,7 @@ public class ReplyBusinessException extends UnexpectedException {
 
 
     /**
-     * Instantiates a new Business exception.
+     * Instantiates a new Reply business exception.
      *
      * @param identify the identify
      * @param message  the message

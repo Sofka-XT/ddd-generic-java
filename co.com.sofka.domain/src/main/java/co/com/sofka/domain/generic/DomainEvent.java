@@ -26,11 +26,11 @@ public abstract class DomainEvent implements Serializable {
     private Long versionType;
 
     /**
-     * Domain Event Construct
+     * Instantiates a new Domain event.
      *
-     * @param type            of the event
-     * @param aggregateRootId of the event
-     * @param uuid            of the event
+     * @param type            the type
+     * @param aggregateRootId the aggregate root id
+     * @param uuid            the uuid
      */
     public DomainEvent(final String type, String aggregateRootId, UUID uuid) {
         this.type = type;
@@ -43,19 +43,19 @@ public abstract class DomainEvent implements Serializable {
 
 
     /**
-     * Domain Event Construct
+     * Instantiates a new Domain event.
      *
-     * @param type of the event
-     * @param uuid of the event
+     * @param type the type
+     * @param uuid the uuid
      */
     public DomainEvent(final String type, UUID uuid) {
         this(type, null, uuid);
     }
 
     /**
-     * Domain Event Construct
+     * Instantiates a new Domain event.
      *
-     * @param type of the event
+     * @param type the type
      */
     public DomainEvent(final String type) {
         this(type, null, UUID.randomUUID());
@@ -80,9 +80,9 @@ public abstract class DomainEvent implements Serializable {
     }
 
     /**
-     * Aggregate root id identity.
+     * Aggregate root id string.
      *
-     * @return the identity
+     * @return the string
      */
     public String aggregateRootId() {
         return aggregateRootId;
@@ -91,14 +91,14 @@ public abstract class DomainEvent implements Serializable {
     /**
      * Sets aggregate root id.
      *
-     * @param aggregateRootId the identity
+     * @param aggregateRootId the aggregate root id
      */
     public void setAggregateRootId(String aggregateRootId) {
         this.aggregateRootId = Objects.requireNonNull(aggregateRootId, "The aggregateRootId cannot be a value null");
     }
 
     /**
-     * get aggregate name
+     * Gets aggregate name.
      *
      * @return the aggregate name
      */
@@ -107,7 +107,7 @@ public abstract class DomainEvent implements Serializable {
     }
 
     /**
-     * set aggregate name
+     * Sets aggregate name.
      *
      * @param aggregate the aggregate
      */

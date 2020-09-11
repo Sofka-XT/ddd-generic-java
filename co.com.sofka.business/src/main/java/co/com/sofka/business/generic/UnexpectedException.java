@@ -10,8 +10,9 @@ public class UnexpectedException extends RuntimeException {
     /**
      * Instantiates a new Unexpected exception.
      *
-     * @param message the message
-     * @param cause   the cause
+     * @param identify the identify
+     * @param message  the message
+     * @param cause    the cause
      */
     public UnexpectedException(String identify, String message, Throwable cause) {
         super(message, cause);
@@ -37,9 +38,9 @@ public class UnexpectedException extends RuntimeException {
     }
 
     /**
-     * Get identify exception
+     * Gets identify.
      *
-     * @return string id
+     * @return the identify
      */
     public String getIdentify() {
         return identify;

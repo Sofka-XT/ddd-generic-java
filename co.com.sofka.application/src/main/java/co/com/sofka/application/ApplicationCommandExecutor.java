@@ -21,11 +21,7 @@ import java.util.logging.Logger;
 
 
 /**
- * Application command executor
- * <p>
- * This class is implemented to execute the commands from a controller.
- * Use this class within your Rest Controller or your service to execute a use case.
- * </p>
+ * The type Application command executor.
  */
 public class ApplicationCommandExecutor extends CommandExecutor {
     private static final Logger logger = Logger.getLogger(ApplicationCommandExecutor.class.getName());
@@ -36,11 +32,11 @@ public class ApplicationCommandExecutor extends CommandExecutor {
 
 
     /**
-     * Construct to new application command
+     * Instantiates a new Application command executor.
      *
-     * @param packageUseCase  the path package of the use cases
-     * @param subscriberEvent the subscriber to async process
-     * @param repository      the repository to store event
+     * @param packageUseCase  the package use case
+     * @param subscriberEvent the subscriber event
+     * @param repository      the repository
      */
     public ApplicationCommandExecutor(
             String packageUseCase,

@@ -80,10 +80,21 @@ public class UseCaseHandler {
 
     }
 
+    /**
+     * Identify executor string.
+     *
+     * @return the string
+     */
     public String identifyExecutor() {
         return identifyExecutor;
     }
 
+    /**
+     * Sets identify executor.
+     *
+     * @param identifyExecutor the identify executor
+     * @return the identify executor
+     */
     public UseCaseHandler setIdentifyExecutor(String identifyExecutor) {
         this.identifyExecutor = identifyExecutor;
         return this;

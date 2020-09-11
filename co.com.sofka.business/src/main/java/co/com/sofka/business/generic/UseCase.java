@@ -80,32 +80,41 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
     }
 
     /**
-     * With service builder.
+     * Add service builder.
      *
-     * @param serviceBuilder the service builder constructor
+     * @param serviceBuilder the service builder
      */
     public void addServiceBuilder(ServiceBuilder serviceBuilder) {
         this.serviceBuilder = Objects.requireNonNull(serviceBuilder);
     }
 
     /**
-     * add Use Cases Set
-     * @param useCases set
+     * Add use cases.
+     *
+     * @param useCases the use cases
      */
     public void addUseCases(Set<UseCaseWrap> useCases) {
         this.useCases = Objects.requireNonNull(useCases);
     }
 
     /**
-     * Get service class
-     * @param class of the service
-     * @return class service optional
+     * Gets service.
+     *
+     * @param <T>   the type parameter
+     * @param clasz the clasz
+     * @return the service
      */
     public <T> Optional<T> getService(Class<T> clasz) {
         Objects.requireNonNull(serviceBuilder, "The service build cannot be null, you allow use the annotation ExtensionService");
         return serviceBuilder.getService(clasz);
     }
 
+    /**
+     * Retrieve events list.
+     *
+     * @param aggregateId the aggregate id
+     * @return the list
+     */
     @SuppressWarnings("unchecked")
     public List<DomainEvent> retrieveEvents(String aggregateId) {
         return UseCaseReplyUtil.retry(() -> {
@@ -117,6 +126,11 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
         }, 5);
     }
 
+    /**
+     * Retrieve events list.
+     *
+     * @return the list
+     */
     @SuppressWarnings("unchecked")
     public List<DomainEvent> retrieveEvents() {
         String aggregateId = identify;
@@ -129,6 +143,12 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
         }, 5);
     }
 
+    /**
+     * Request use case optional.
+     *
+     * @param domainEvent the domain event
+     * @return the optional
+     */
     public final Optional<ResponseEvents> requestUseCase(DomainEvent domainEvent) {
         var event = Objects.requireNonNull(domainEvent);
         var wrap = useCases.stream()
@@ -141,18 +161,33 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
     /**
      * Execute use case.
      *
-     * @param objectInput the object input
+     * @param input the input
      */
     public abstract void executeUseCase(Q input);
 
+    /**
+     * Sets identify.
+     *
+     * @param identify the identify
+     */
     public void setIdentify(String identify) {
         this.identify = identify;
     }
 
+    /**
+     * Add repository.
+     *
+     * @param repository the repository
+     */
     public void addRepository(DomainEventRepository repository) {
         this.repository = repository;
     }
 
+    /**
+     * Repository domain event repository.
+     *
+     * @return the domain event repository
+     */
     public DomainEventRepository repository() {
         return repository;
     }
@@ -203,23 +238,39 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
     }
 
     /**
-     * Use case wrap for associate event type and use case
+     * The type Use case wrap.
      */
     public static class UseCaseWrap {
         private final UseCase<TriggeredEvent<? extends DomainEvent>, ResponseEvents> usecase;
         private final String eventType;
 
 
+        /**
+         * Instantiates a new Use case wrap.
+         *
+         * @param eventType the event type
+         * @param usecase   the usecase
+         */
         public UseCaseWrap(String eventType, UseCase<TriggeredEvent<? extends DomainEvent>, ResponseEvents> usecase) {
             this.usecase = usecase;
             this.eventType = eventType;
         }
 
 
+        /**
+         * Usecase use case.
+         *
+         * @return the use case
+         */
         public UseCase<TriggeredEvent<? extends DomainEvent>, ResponseEvents> usecase() {
             return usecase;
         }
 
+        /**
+         * Event type string.
+         *
+         * @return the string
+         */
         public String eventType() {
             return eventType;
         }

@@ -8,13 +8,28 @@ import java.util.UUID;
  */
 public class ErrorEvent {
 
+    /**
+     * The When.
+     */
     public final Instant when;
+    /**
+     * The Uuid.
+     */
     public final UUID uuid;
+    /**
+     * The Identify.
+     */
     public final String identify;
+    /**
+     * The Error.
+     */
     public final Throwable error;
 
     /**
      * Instantiates a new Error event.
+     *
+     * @param identify  the identify
+     * @param throwable the throwable
      */
     public ErrorEvent(String identify, Throwable throwable) {
         this.identify = identify;
