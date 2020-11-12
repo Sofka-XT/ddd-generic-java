@@ -12,9 +12,9 @@ import java.util.logging.Logger;
 /**
  * The type Command executor.
  */
-public abstract class CommandExecutor implements CommandHandler<Map<String, String>> {
+public abstract class AsyncCommandExecutor implements AsyncCommandHandler<Map<String, String>> {
 
-    private static final Logger logger = Logger.getLogger(CommandExecutor.class.getName());
+    private static final Logger logger = Logger.getLogger(AsyncCommandExecutor.class.getName());
     /**
      * The Handles.
      */

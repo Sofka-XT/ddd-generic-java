@@ -6,7 +6,7 @@ package co.com.sofka.infraestructure.handle;
  * @param <T> the type parameter
  */
 @FunctionalInterface
-public interface CommandHandler<T> {
+public interface AsyncCommandHandler<T> {
     /**
      * Execute.
      *

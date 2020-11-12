@@ -5,11 +5,13 @@ import co.com.sofka.business.annotation.CommandType;
 import co.com.sofka.business.annotation.ExtensionService;
 import co.com.sofka.business.asyn.UseCaseExecutor;
 import co.com.sofka.business.generic.ServiceBuilder;
+import co.com.sofka.business.generic.UseCase;
 import co.com.sofka.business.generic.UseCaseHandler;
 import co.com.sofka.business.repository.DomainEventRepository;
 import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.asyn.SubscriberEvent;
-import co.com.sofka.infraestructure.handle.CommandExecutor;
+import co.com.sofka.infraestructure.handle.AsyncCommandExecutor;
+import co.com.sofka.infraestructure.handle.SyncCommandExecutor;
 import co.com.sofka.infraestructure.repository.EventStoreRepository;
 import io.github.classgraph.*;
 
@@ -23,8 +25,8 @@ import java.util.logging.Logger;
 /**
  * The type Application command executor.
  */
-public class ApplicationCommandExecutor extends CommandExecutor {
-    private static final Logger logger = Logger.getLogger(ApplicationCommandExecutor.class.getName());
+public class ApplicationSyncCommandExecutor extends SyncCommandExecutor<UseCase.RequestValues, UseCase.ResponseValues> {
+    private static final Logger logger = Logger.getLogger(ApplicationSyncCommandExecutor.class.getName());
     private final SubscriberEvent subscriberEvent;
     private final EventStoreRepository repository;
 
@@ -38,7 +40,7 @@ public class ApplicationCommandExecutor extends CommandExecutor {
      * @param subscriberEvent the subscriber event
      * @param repository      the repository
      */
-    public ApplicationCommandExecutor(
+    public ApplicationSyncCommandExecutor(
             String packageUseCase,
             SubscriberEvent subscriberEvent,
             EventStoreRepository repository) {
