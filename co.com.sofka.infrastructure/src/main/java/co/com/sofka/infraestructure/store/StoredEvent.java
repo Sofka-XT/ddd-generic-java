@@ -4,7 +4,6 @@ import co.com.sofka.domain.generic.DomainEvent;
 import co.com.sofka.infraestructure.DeserializeEventException;
 import co.com.sofka.infraestructure.event.EventSerializer;
 
-import java.time.Instant;
 import java.util.Date;
 
 /**

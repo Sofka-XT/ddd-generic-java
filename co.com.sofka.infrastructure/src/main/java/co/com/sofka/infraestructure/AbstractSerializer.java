@@ -25,6 +25,15 @@ public abstract class AbstractSerializer {
                 .create();
     }
 
+    /**
+     * Gets gson.
+     *
+     * @return the gson
+     */
+    public Gson getGson() {
+        return gson;
+    }
+
     private static class DateSerializer implements JsonSerializer<Instant> {
         @Override
         public JsonElement serialize(Instant source, Type typeOfSource, JsonSerializationContext context) {

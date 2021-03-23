@@ -1,14 +1,14 @@
 package co.com.sofka.business.generic;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The type Service builder.
  */
 public class ServiceBuilder {
-    private final List<Object> builder = new ArrayList<>();
+    private final Map<String, Object> builder = new ConcurrentHashMap<>();
 
     /**
      * Add service service builder.
@@ -17,9 +17,10 @@ public class ServiceBuilder {
      * @return the service builder
      */
     public ServiceBuilder addService(Object object) {
-        builder.add(object);
+        builder.put(object.getClass().getCanonicalName(), object);
         return this;
     }
+
 
     /**
      * Gets service.
@@ -29,9 +30,18 @@ public class ServiceBuilder {
      * @return the service
      */
     public <T> Optional<T> getService(Class<T> clasz) {
-        return builder.stream().filter(clasz::isInstance)
+        return builder.values().stream().filter(clasz::isInstance)
                 .map(inst -> (T) inst)
                 .findFirst();
     }
 
+    /**
+     * Exist boolean.
+     *
+     * @param loadClass the load class
+     * @return the boolean
+     */
+    public boolean exist(Class<?> loadClass) {
+        return builder.containsKey(loadClass.getCanonicalName());
+    }
 }

@@ -1,11 +1,9 @@
 package co.com.sofka.infraestructure.handle;
 
-import co.com.sofka.business.asyn.UseCaseCommandExecutor;
+import co.com.sofka.business.asyn.UseCaseArgumentExecutor;
+import co.com.sofka.business.generic.ServiceBuilder;
 import co.com.sofka.business.generic.UseCase;
-import co.com.sofka.domain.generic.Command;
-import co.com.sofka.infraestructure.controller.CommandWrapperSerializer;
 
-import java.lang.reflect.ParameterizedType;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,15 +12,15 @@ import java.util.logging.Logger;
 
 
 /**
- * The type Command executor.
+ * The type Argument executor.
  */
-public abstract class CommandExecutor implements CommandHandler<String> {
+public abstract class ArgumentExecutor implements CommandHandler<Map<String, String>> {
 
-    private static final Logger logger = Logger.getLogger(CommandExecutor.class.getName());
+    private static final Logger logger = Logger.getLogger(ArgumentExecutor.class.getName());
     /**
      * The Handles.
      */
-    protected Map<String, Consumer<Command>> handles = new ConcurrentHashMap<>();
+    protected Map<String, Consumer<Map<String, String>>> handles = new ConcurrentHashMap<>();
 
     private UseCase.RequestValues request;
 
@@ -33,13 +31,17 @@ public abstract class CommandExecutor implements CommandHandler<String> {
      * @param type     the type
      * @param consumer the consumer
      */
-    protected void put(String type, Consumer<Command> consumer) {
+    protected void put(String type, Consumer<Map<String, String>> consumer) {
         handles.put(type, consumer);
     }
 
     @Override
-    public final void execute(String json) {
-        var commandRequired = CommandWrapperSerializer.instance().deserialize(json);
+    public final void execute(Map<String, String> args) {
+        var commandRequired = new CommandWrapper(
+                args.get("commandType"),
+                args.get("aggregateId"),
+                args
+        );
 
         if (Objects.isNull(commandRequired.getCommandType()) || commandRequired.getCommandType().isBlank()) {
             throw new IllegalArgumentException("The commandType of the aggregate must be specified");
@@ -61,16 +63,13 @@ public abstract class CommandExecutor implements CommandHandler<String> {
     private void executeCommand(CommandWrapper commandWrapper) {
         logger.info("####### Executor Command #######");
         var consumer = handles.get(commandWrapper.getCommandType());
-        var useCaseExecutor = (UseCaseCommandExecutor) consumer;
+        var useCaseExecutor = (UseCaseArgumentExecutor) consumer;
 
-        if (!Objects.isNull(commandWrapper.getAggregateId()) || !commandWrapper.getAggregateId().isBlank()) {
+        if (!Objects.isNull(commandWrapper.getAggregateId()) && !commandWrapper.getAggregateId().isBlank()) {
             useCaseExecutor.withAggregateId(commandWrapper.getAggregateId());
         }
 
-        useCaseExecutor.executor(commandWrapper.valueOf(
-                ((ParameterizedType) useCaseExecutor.getClass().getGenericSuperclass())
-                        .getActualTypeArguments()[0]
-        ));
+        useCaseExecutor.executor((Map<String, String>) commandWrapper.getPayLoad());
         request = useCaseExecutor.request();
     }
 

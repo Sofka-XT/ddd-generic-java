@@ -15,7 +15,12 @@ import co.com.sofka.infraestructure.repository.EventStoreRepository;
 import io.github.classgraph.*;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -25,10 +30,11 @@ import java.util.stream.Stream;
  */
 public class ApplicationEventDrive {
     private static final Logger logger = Logger.getLogger(ApplicationEventDrive.class.getName());
-    private final Set<UseCase.UseCaseWrap> useCases;
+    private final ConcurrentMap<String, List<UseCase.UseCaseWrap>> useCases;
     private final SubscriberEvent subscriberEvent;
     private final EventStoreRepository repository;
     private final String packageUseCase;
+    private final ServiceBuilder serviceBuilder;
 
     /**
      * Instantiates a new Application event drive.
@@ -51,7 +57,8 @@ public class ApplicationEventDrive {
         this.subscriberEvent = subscriberEvent;
         this.packageUseCase = packageUseCase;
         this.repository = repository;
-        this.useCases = new HashSet<>();
+        this.useCases = new ConcurrentHashMap<>();
+        this.serviceBuilder = new ServiceBuilder();
         initialize();
     }
 
@@ -70,7 +77,9 @@ public class ApplicationEventDrive {
                             .loadClass()
                             .getDeclaredConstructor().newInstance();
                     usecase.addServiceBuilder(getServiceBuilder(handleClassInfo));
-                    useCases.add(new UseCase.UseCaseWrap(type, usecase));
+                    List<UseCase.UseCaseWrap> list = useCases.getOrDefault(type, new ArrayList<>());
+                    list.add(new UseCase.UseCaseWrap(type, usecase));
+                    useCases.put(type, list);
                     logger.info("@@@@ Registered use case for event lister --> " + usecase.getClass().getSimpleName() + "[" + type + "]");
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ignored) {
                 }
@@ -92,27 +101,30 @@ public class ApplicationEventDrive {
      */
     public final void fire(DomainEvent domainEvent) {
         var event = Objects.requireNonNull(domainEvent);
-        useCases.stream()
-                .filter(useCaseWrap -> useCaseWrap.eventType().equals(domainEvent.type))
-                .forEach(useCaseWrap -> {
-                    var useCase = useCaseWrap.usecase();
-                    useCase.addRepository(new DomainEventRepository() {
-                        @Override
-                        public List<DomainEvent> getEventsBy(String aggregateRootId) {
-                            return repository.getEventsBy(event.getAggregateName(), aggregateRootId);
-                        }
+        Optional.ofNullable(useCases.get(domainEvent.type)).ifPresentOrElse(list -> {
+            list.forEach(useCaseWrap -> {
+                var useCase = useCaseWrap.usecase();
+                useCase.addRepository(new DomainEventRepository() {
+                    @Override
+                    public List<DomainEvent> getEventsBy(String aggregateRootId) {
+                        return repository.getEventsBy(event.getAggregateName(), aggregateRootId);
+                    }
 
-                        @Override
-                        public List<DomainEvent> getEventsBy(String aggregate, String aggregateRootId) {
-                            return repository.getEventsBy(aggregate, aggregateRootId);
-                        }
-                    });
-                    logger.info("Use case handler to event --> " + event.type);
-                    UseCaseHandler.getInstance()
-                            .asyncExecutor(
-                                    useCase, new TriggeredEvent<>(event)
-                            ).subscribe(subscriberEvent);
+                    @Override
+                    public List<DomainEvent> getEventsBy(String aggregate, String aggregateRootId) {
+                        return repository.getEventsBy(aggregate, aggregateRootId);
+                    }
                 });
+                useCase.setIdentify(domainEvent.aggregateRootId());
+                logger.info("Use case handler to use case--> " + useCase.getClass().getCanonicalName());
+                UseCaseHandler.getInstance()
+                        .asyncExecutor(
+                                useCase, new TriggeredEvent<>(event)
+                        ).subscribe(subscriberEvent);
+            });
+        }, () -> {
+            logger.info("No found use case --> " + event.type);
+        });
     }
 
     /**
@@ -123,23 +135,26 @@ public class ApplicationEventDrive {
      */
     public final Optional<ResponseEvents> requestUseCase(DomainEvent domainEvent) {
         var event = Objects.requireNonNull(domainEvent);
-        var wrap = useCases.stream()
-                .filter(useCaseWrap -> useCaseWrap.eventType().equals(domainEvent.type))
-                .findFirst().orElseThrow(() -> new BusinessException(domainEvent.aggregateRootId(), "The use case event listener not registered"));
-        return UseCaseHandler.getInstance()
-                .syncExecutor(wrap.usecase(), new TriggeredEvent<>(event));
+        var wrap = Optional.ofNullable(useCases.get(domainEvent.type))
+                .orElseThrow(() -> new BusinessException(domainEvent.aggregateRootId(), "The use case event listener not registered"));
+        if (!wrap.isEmpty()) {
+            return UseCaseHandler.getInstance()
+                    .syncExecutor(wrap.get(0).usecase(), new TriggeredEvent<>(event));
+        }
+        throw new BusinessException(domainEvent.aggregateRootId(), "The use case event listener not registered");
     }
 
     private ServiceBuilder getServiceBuilder(ClassInfo handleClassInfo) {
         AnnotationInfo annotationInfo = handleClassInfo.getAnnotationInfo(ExtensionService.class.getName());
         return Optional.ofNullable(annotationInfo).map(annotation -> {
-            ServiceBuilder serviceBuilder = new ServiceBuilder();
             AnnotationParameterValueList paramVals = annotation.getParameterValues();
             var list = (Object[]) paramVals.getValue("value");
             Stream.of(list).forEach(className -> {
                 try {
                     var ref = (AnnotationClassRef) className;
-                    serviceBuilder.addService(ref.loadClass().getDeclaredConstructor().newInstance());
+                    if (!serviceBuilder.exist(ref.loadClass())) {
+                        serviceBuilder.addService(ref.loadClass().getDeclaredConstructor().newInstance());
+                    }
                 } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                     logger.log(Level.SEVERE, "ERROR over service builder", e);
                     throw new ServiceBuildException(e);

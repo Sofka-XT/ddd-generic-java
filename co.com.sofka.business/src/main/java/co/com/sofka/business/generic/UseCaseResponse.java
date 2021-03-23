@@ -16,7 +16,7 @@ public final class UseCaseResponse<R extends UseCase.ResponseValues> implements 
     protected RuntimeException exception;
 
     @Override
-    public void onSuccess(R response) {
+    public void onResponse(R response) {
         this.response = response;
     }
 

@@ -8,9 +8,9 @@ import co.com.sofka.infraestructure.event.ErrorEvent;
 import co.com.sofka.infraestructure.repository.EventStoreRepository;
 import co.com.sofka.infraestructure.store.StoredEvent;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.Flow;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -20,7 +20,6 @@ import java.util.logging.Logger;
 public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
 
     private static final Logger logger = Logger.getLogger(SubscriberEvent.class.getName());
-
     private final EventStoreRepository repository;
     private final EventBus eventBus;
     private Flow.Subscription subscription;
@@ -60,26 +59,27 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
 
     @Override
     public final void onNext(DomainEvent event) {
-        Optional.ofNullable(eventBus).ifPresent(bus -> {
-            bus.publish(event);
-            logger.info("###### Event published OK");
-        });
+        Optional.ofNullable(eventBus).ifPresentOrElse(bus ->
+                        bus.publish(event)
+                , () ->
+                        logger.warning("No EVENT BUS configured")
+        );
 
-        Optional.ofNullable(repository).ifPresent(repo -> {
-            logger.info("###### Saving event for aggregate root [" + event.aggregateRootId() + "]");
-            StoredEvent storedEvent = StoredEvent.wrapEvent(event);
-            Optional.ofNullable(event.aggregateRootId()).ifPresent(aggregateId -> {
-                repo.saveEvent(event.getAggregateName(), aggregateId, storedEvent);
-                logger.info("###### Event saved with store specification of --> " + event.getAggregateName());
-            });
-        });
-        subscription.request(1);
-        Sleeper.sleepOneSecond();
+        Optional.ofNullable(repository).ifPresentOrElse(repo -> {
+                    StoredEvent storedEvent = StoredEvent.wrapEvent(event);
+                    Optional.ofNullable(event.aggregateRootId()).ifPresent(aggregateId -> {
+                        if (Objects.nonNull(event.getAggregateName()) && !event.getAggregateName().isBlank()) {
+                            repo.saveEvent(event.getAggregateName(), aggregateId, storedEvent);
+                        }
+                    });
+                }, () ->
+                        logger.warning("No REPOSITORY configured")
+        );
+        subscription.request(100);
     }
 
     @Override
     public void onError(Throwable throwable) {
-        logger.log(Level.SEVERE, "###### Error on event", throwable.getCause());
         Optional.ofNullable(eventBus).ifPresent(bus -> {
             var identify = ((UnexpectedException) throwable).getIdentify();
             var event = new ErrorEvent(identify, throwable);
@@ -90,16 +90,6 @@ public class SubscriberEvent implements Flow.Subscriber<DomainEvent> {
 
     @Override
     public void onComplete() {
-        logger.log(Level.INFO, "-- Completed");
     }
 
-    private static class Sleeper {
-        private static void sleepOneSecond() {
-            try {
-                Thread.sleep(1000);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }

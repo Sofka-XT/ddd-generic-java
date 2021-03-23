@@ -97,7 +97,7 @@ public abstract class UseCaseExecutor<T, R extends UseCase.ResponseValues> imple
      *
      * @return the map
      */
-    public Map<String, String> headers(){
+    public Map<String, String> headers() {
         return Optional.ofNullable(headers).orElse(new HashMap<>());
     }
 
@@ -160,7 +160,7 @@ public abstract class UseCaseExecutor<T, R extends UseCase.ResponseValues> imple
      */
     public <T extends UseCase.RequestValues, R extends UseCase.ResponseValues> Optional<R> runSynUseCase(UseCase<T, R> useCase, T request) {
         Optional.ofNullable(repository).ifPresentOrElse(useCase::addRepository, () ->
-            logger.warning("No repository found for use case")
+                logger.warning("No repository found for use case")
         );
         Optional.ofNullable(serviceBuilder).ifPresentOrElse(useCase::addServiceBuilder, () ->
                 logger.warning("No service builder found for use case")
@@ -172,8 +172,6 @@ public abstract class UseCaseExecutor<T, R extends UseCase.ResponseValues> imple
                 .setIdentifyExecutor(aggregateId())
                 .syncExecutor(useCase, request);
     }
-
-
 
 
 }

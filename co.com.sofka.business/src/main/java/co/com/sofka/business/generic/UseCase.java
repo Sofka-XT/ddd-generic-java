@@ -155,6 +155,7 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
                 .filter(useCaseWrap -> useCaseWrap.eventType.equals(domainEvent.type))
                 .findFirst().orElseThrow(() -> new BusinessException(identify, "The use case event listener not registered"));
         return UseCaseHandler.getInstance()
+                .setIdentifyExecutor(event.aggregateRootId())
                 .syncExecutor(wrap.usecase, new TriggeredEvent<>(event));
     }
 
@@ -223,11 +224,11 @@ public abstract class UseCase<Q extends UseCase.RequestValues, P extends UseCase
      */
     public interface UseCaseFormat<R> {
         /**
-         * On success.
+         * On response.
          *
          * @param output the output
          */
-        void onSuccess(R output);
+        void onResponse(R output);
 
         /**
          * On error.

@@ -42,7 +42,9 @@ public class UseCaseHandler {
      */
     @SuppressWarnings("unchecked")
     public <T extends UseCase.RequestValues, R extends ResponseEvents> FunctionSubscriber asyncExecutor(
-            final UseCase<T, R> useCase, T values) {
+            final UseCase<T, R> useCase,
+            final T values
+    ) {
         return UseCaseReplyUtil.retry(() -> subscriber -> {
             try (PublisherEvent publisher = new PublisherEvent()) {
                 publisher.subscribe(subscriber);
@@ -65,7 +67,9 @@ public class UseCaseHandler {
      */
     @SuppressWarnings("unchecked")
     public <T extends UseCase.RequestValues, R extends UseCase.ResponseValues> Optional<R> syncExecutor(
-            final UseCase<T, R> useCase, T values) {
+            final UseCase<T, R> useCase,
+            final T values
+    ) {
         return UseCaseReplyUtil.retry(() -> {
             UseCaseResponse<R> useCaseResponse = new UseCaseResponse<>();
             useCase.setRequest(values);

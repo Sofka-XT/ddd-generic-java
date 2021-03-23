@@ -22,8 +22,28 @@ public abstract class DomainEvent implements Serializable {
      */
     public final String type;
     private String aggregateRootId;
+    private String aggregateParentId;
     private String aggregate;
     private Long versionType;
+
+    /**
+     * Instantiates a new Domain event.
+     *
+     * @param type              the type
+     * @param aggregateRootId   the aggregate root id
+     * @param aggregateParentId the aggregate parent id
+     * @param uuid              the uuid
+     */
+    public DomainEvent(final String type, String aggregateRootId, String aggregateParentId, UUID uuid) {
+        this.type = type;
+        this.aggregateRootId = aggregateRootId;
+        this.aggregateParentId = aggregateParentId;
+        this.aggregate = "default";
+        this.when = Instant.now();
+        this.uuid = uuid;
+        this.versionType = 1L;
+    }
+
 
     /**
      * Instantiates a new Domain event.
@@ -32,7 +52,7 @@ public abstract class DomainEvent implements Serializable {
      * @param aggregateRootId the aggregate root id
      * @param uuid            the uuid
      */
-    public DomainEvent(final String type, String aggregateRootId, UUID uuid) {
+    public DomainEvent(final String type, String aggregateRootId,  UUID uuid) {
         this.type = type;
         this.aggregateRootId = aggregateRootId;
         this.aggregate = "default";
@@ -49,7 +69,7 @@ public abstract class DomainEvent implements Serializable {
      * @param uuid the uuid
      */
     public DomainEvent(final String type, UUID uuid) {
-        this(type, null, uuid);
+        this(type, null, null, uuid);
     }
 
     /**
@@ -58,7 +78,7 @@ public abstract class DomainEvent implements Serializable {
      * @param type the type
      */
     public DomainEvent(final String type) {
-        this(type, null, UUID.randomUUID());
+        this(type, null, null, UUID.randomUUID());
     }
 
     /**
@@ -89,12 +109,31 @@ public abstract class DomainEvent implements Serializable {
     }
 
     /**
+     * Aggregate parent id string.
+     *
+     * @return the string
+     */
+    public String aggregateParentId() {
+        return aggregateParentId;
+    }
+
+    /**
      * Sets aggregate root id.
      *
      * @param aggregateRootId the aggregate root id
      */
     public void setAggregateRootId(String aggregateRootId) {
         this.aggregateRootId = Objects.requireNonNull(aggregateRootId, "The aggregateRootId cannot be a value null");
+    }
+
+
+    /**
+     * Sets aggregate parent id.
+     *
+     * @param aggregateParentId the aggregate parent id
+     */
+    public void setAggregateParentId(String aggregateParentId) {
+        this.aggregateParentId = Objects.requireNonNull(aggregateParentId, "The aggregateParentId cannot be a value null");
     }
 
     /**

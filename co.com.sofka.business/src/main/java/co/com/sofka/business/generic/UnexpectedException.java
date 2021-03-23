@@ -5,6 +5,7 @@ package co.com.sofka.business.generic;
  */
 public class UnexpectedException extends RuntimeException {
     private final String identify;
+
     private String request;
 
     /**

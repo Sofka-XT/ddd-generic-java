@@ -2,9 +2,41 @@ package co.com.sofka.domain.generic;
 
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.util.UUID;
 
 /**
- * The interface Command.
+ * The type Command.
  */
-public interface Command extends Serializable {
+public class Command implements Serializable {
+
+    private final long when;
+    private final String uuid;
+
+
+    /**
+     * Instantiates a new Command.
+     */
+    public Command() {
+        this.uuid = UUID.randomUUID().toString();
+        this.when = Instant.now().toEpochMilli();
+    }
+
+    /**
+     * When long.
+     *
+     * @return the long
+     */
+    public long when() {
+        return when;
+    }
+
+    /**
+     * Uuid string.
+     *
+     * @return the string
+     */
+    public String uuid() {
+        return uuid;
+    }
 }

@@ -43,7 +43,7 @@ public abstract class AggregateEvent<T extends Identity> extends AggregateRoot<T
      */
     protected ChangeEventSubscriber.ChangeApply appendChange(DomainEvent event) {
         var nameClass = entityId.getClass().getSimpleName();
-        var aggregate = nameClass.replaceAll("(Identity|Id)", "").toLowerCase();
+        var aggregate = nameClass.replaceAll("(Identity|Id|ID)", "").toLowerCase();
         event.setAggregateName(aggregate);
         event.setAggregateRootId(entityId.value());
         return changeEventSubscriber.appendChange(event);

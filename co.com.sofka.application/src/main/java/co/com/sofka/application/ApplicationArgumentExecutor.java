@@ -1,7 +1,7 @@
 package co.com.sofka.application;
 
-import co.com.sofka.application.init.InitializerCommandExecutor;
-import co.com.sofka.business.asyn.UseCaseCommandExecutor;
+import co.com.sofka.application.init.InitializerArgumentExecutor;
+import co.com.sofka.business.asyn.UseCaseArgumentExecutor;
 import co.com.sofka.business.generic.ServiceBuilder;
 import co.com.sofka.business.generic.UseCaseHandler;
 import co.com.sofka.business.repository.DomainEventRepository;
@@ -19,28 +19,28 @@ import static co.com.sofka.application.init.BaseApplicationExecutor.getServiceBu
 
 
 /**
- * The type Application command executor.
+ * The type Application argument executor.
  */
-public class ApplicationCommandExecutor extends InitializerCommandExecutor {
+public class ApplicationArgumentExecutor extends InitializerArgumentExecutor {
 
-    private static final Logger logger = Logger.getLogger(ApplicationCommandExecutor.class.getName());
+    private static final Logger logger = Logger.getLogger(ApplicationArgumentExecutor.class.getName());
 
     /**
-     * Instantiates a new Application command executor.
+     * Instantiates a new Application argument executor.
      *
      * @param packageUseCase  the package use case
      * @param subscriberEvent the subscriber event
      * @param repository      the repository
      */
-    public ApplicationCommandExecutor(String packageUseCase, SubscriberEvent subscriberEvent, EventStoreRepository repository) {
+    public ApplicationArgumentExecutor(String packageUseCase, SubscriberEvent subscriberEvent, EventStoreRepository repository) {
         super(packageUseCase, subscriberEvent, repository);
     }
 
     @Override
     public void addHandle(ClassInfo handleClassInfo, ServiceBuilder serviceBuilder, String aggregate, String type) {
-        UseCaseCommandExecutor handle;
+        UseCaseArgumentExecutor handle;
         try {
-            handle = (UseCaseCommandExecutor) handleClassInfo.loadClass().getDeclaredConstructor().newInstance();
+            handle = (UseCaseArgumentExecutor) handleClassInfo.loadClass().getDeclaredConstructor().newInstance();
             var baseUseCaseExecutor = handle.withSubscriberEvent(subscriberEvent)
                     .withUseCaseHandler(UseCaseHandler.getInstance())
                     .withServiceBuilder(getServiceBuilder(serviceBuilder, handleClassInfo))
@@ -55,7 +55,7 @@ public class ApplicationCommandExecutor extends InitializerCommandExecutor {
                             return repository.getEventsBy(aggregate, aggregateRootId);
                         }
                     });
-            put(type, (UseCaseCommandExecutor) baseUseCaseExecutor);
+            put(type, (UseCaseArgumentExecutor) baseUseCaseExecutor);
             var message = String.format("@@@@ %s Registered handle command with type --> %s", aggregate, type);
             logger.info(message);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
