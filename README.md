@@ -222,14 +222,14 @@ public class Team extends AggregateEvent<TeamIdentity> {
 
 ### Comportamientos orientado a Eventos
 ```java
- public class TeamBehavior extends EventBehavior {
+ public class TeamBehavior extends EventChange {
         protected TeamBehavior(Team entity) {
-            give((CreatedTeam event) -> {
+            apply((CreatedTeam event) -> {
                 entity.students = new HashSet<>();
                 entity.name = event.getName();
             });
 
-            give((AddedStudent event) -> {
+            apply((AddedStudent event) -> {
                 var student = new Student(
                         event.getStudentIdentity(),
                         event.getName(),
@@ -239,17 +239,17 @@ public class Team extends AggregateEvent<TeamIdentity> {
                 entity.students.add(student);
             });
 
-            give((RemovedStudent event) -> entity.students
+            apply((RemovedStudent event) -> entity.students
                     .removeIf(e -> e.identity().equals(event.getIdentity())));
 
-            give((UpdatedName event) -> entity.name = event.getNewName());
+            apply((UpdatedName event) -> entity.name = event.getNewName());
 
-            give((UpdatedStudent event) -> {
+            apply((UpdatedStudent event) -> {
                 var studentUpdate = getStudentByIdentity(entity, event.getStudentIdentity());
                 studentUpdate.updateName(event.getName());
             });
 
-            give((UpdateScoreOfStudent event) -> {
+            apply((UpdateScoreOfStudent event) -> {
                 var studentUpdate = getStudentByIdentity(entity, event.getStudentIdentity());
                 studentUpdate.updateScore(event.getScore());
             });
@@ -409,7 +409,7 @@ public class CreateStudentUseCase extends UseCase<RequestCommand<AddNewStudent>,
         if(students.size() > 5){
             emit().onError(new NoMoreStudentAllowed());
         } else {
-            emit().onSuccess(aNewStudentAddedFor(team));
+            emit().onResponse(aNewStudentAddedFor(team));
         }
     }
 
