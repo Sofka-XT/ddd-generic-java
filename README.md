@@ -6,7 +6,7 @@ Sofka introduce una librería a la comunidad open source para diseñar aplicacio
 
 ### ¿Qué es DDD?
 
-*DDD (Domain-Driven Desing)* es un método de diseño para descubrir el negocio de dominio de forma clara, apoyado de patrones de diseño y estilos de arquitectura centrados en el dominio. 
+*DDD (Domain-Driven Design)* es un método de diseño para descubrir el negocio de dominio de forma clara, apoyado de patrones de diseño y estilos de arquitectura centrados en el dominio. 
 
 ### ¿Porqué DDD?
 
@@ -14,7 +14,7 @@ DDD es necesario cuando hablamos de modelamiento del negocio para grandes organi
 
 ### ¿Qué resuelve la librería?
 
-Desde el punto de vista táctico, se requiere aplicar algunos conceptos fundamentales, para poder aplicar DDD. Todo esos conceptos se tiene en la librería para interfaces o abstracciones, y además de proporcional algunos patrones de diseño que se adaptan a estilos de arquitecturas deferentes. 
+Desde el punto de vista táctico, se requiere aplicar algunos conceptos fundamentales, para poder aplicar DDD. Todos esos conceptos se tiene en la librería para interfaces o abstracciones, y además de proporcional algunos patrones de diseño que se adaptan a estilos de arquitecturas deferentes. 
 
 #### Patrones 
 - Commands y Events 
@@ -58,7 +58,7 @@ Generic dependency for ddd Java - [https://mvnrepository.com/artifact/co.com.sof
      </dependency>
 ```
 
-Si se require dividir los conceptos se puede usar de forma independeiente de la siguiente manera:
+Si se require dividir los conceptos se puede usar de forma independiente de la siguiente manera:
 
 ```
     <dependency>
@@ -92,7 +92,7 @@ Si se require dividir los conceptos se puede usar de forma independeiente de la 
 ## Conceptos e implementación 
 
 ### Entidades
-Una entidad tiene comportamientos, pero no lanza eventos como son los agregados, si tenemos una entidad suelta sin relación con el agregado entonces solo se aplica para cambiar los estados de la misma. Toda entidad depende de una ID, tal cual como el Agregado Root.
+Una entidad tiene comportamientos, pero no lanza eventos como son los agregados, si tenemos una entidad suelta sin relación con el agregado entonces solo se aplica para cambiar los estados de la misma. Toda entidad depende de un ID, tal cual como el Agregado Root.
 ```java
 public class Student extends Entity<StudentIdentity> {
 
@@ -165,7 +165,7 @@ public class Student extends Entity<StudentIdentity> {
 }
 ```
 
-> Mas adelante estaríamos realizando un tutorial para aplicarlo en una arquitectura distribuida y con CQRS+ES con una arquitectura EDA. 
+> Más adelante estaríamos realizando un tutorial para aplicarlo en una arquitectura distribuida y con CQRS+ES con una arquitectura EDA. 
 
 ### Agregado orientado a Eventos
 ```java
@@ -220,7 +220,7 @@ public class Team extends AggregateEvent<TeamIdentity> {
 }
 ```
 
-### Comportamientos orientado a Eventos
+### Comportamientos orientados a Eventos
 ```java
  public class TeamBehavior extends EventChange {
         protected TeamBehavior(Team entity) {
@@ -265,7 +265,7 @@ public class Team extends AggregateEvent<TeamIdentity> {
 ```
 
 ### Objetos de valor
-Un objeto de valor es un objeto inmutable que representa un valor de la entidad. A diferencia de la entidad es que el VO (Value Object) no tiene un identidad que la represente. 
+Un objeto de valor es un objeto inmutable que representa un valor de la entidad. A diferencia de la entidad es que el VO (Value Object) no tiene una identidad que la represente. 
 ```java
 public class DateOfBirth  implements ValueObject<String> {
     private final LocalDate date;
@@ -308,7 +308,7 @@ public class DateOfBirth  implements ValueObject<String> {
 ```
 
 ### Evento de Dominio
-Un evento de dominio esta relacionado con un Agregado Id (que es un VO), este evento es la consecuencia de un comando que ejecuta un comportamiento de un Agregado un Entidad. 
+Un evento de dominio está relacionado con un Agregado Id (que es un VO), este evento es la consecuencia de un comando que ejecuta un comportamiento de un Agregado a una Entidad. 
 ```java
 public class AddedStudent extends DomainEvent  {
 
@@ -361,7 +361,7 @@ public class CreateTeam extends Command {
 ```
 
 ### Aplicar el agregado
-Cuando se crear nuevo objeto se instancia el agregado y se le asigna el identificado que relaciona la entidad. Además de los argumentos de creación. Un agregado puede tener múltiples constructores que permiten crear el agregado.  
+Cuando se crea un nuevo objeto se instancia el agregado y se le asigna el identificado que relaciona la entidad. Además de los argumentos de creación. Un agregado puede tener múltiples constructores que permiten crear el agregado.  
 ```java
 @CommandHandles
 @CommandType(name = "training.team.create",  aggregate = "team")
@@ -460,4 +460,4 @@ public class StudentsByTeam extends ViewModelExecutor<ViewModel> {
 
 ## License
 
-Sofka Domain-Drive Desing is Open Source software released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.html).
+Sofka Domain-Drive Design is Open Source software released under the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0.html).
