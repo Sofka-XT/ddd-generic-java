@@ -113,7 +113,7 @@ public class Student extends Entity<StudentIdentity> {
         super(studentIdentity);
     }
 
-    public static Student form(StudentIdentity studentIdentity, Name name, Gender gender, DateOfBirth dateOfBirth){
+    public static Student from(StudentIdentity studentIdentity, Name name, Gender gender, DateOfBirth dateOfBirth){
         var student = new Student(studentIdentity);
         student.name = name;
         student.gender = gender;
